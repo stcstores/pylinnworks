@@ -74,13 +74,28 @@ class LinnworksAPI:
             channels.append(channel['Source'] + ' ' + channel['SubSource'])
         return channels
 
-    def get_stock_location_ids(self):
+    def get_location_info(self):
         url = self.server + '/api/Inventory/GetStockLocations'
         response = self.request(url)
-        stock_location_ids = []
+        locations = []
         for location in response:
-            stock_location_ids.append(location['StockLocationId'])
-        return stock_location_ids
+            new_location = {}
+            new_location['name'] = location['LocationName']
+            new_location['id'] = location['StockLocationId']
+            locations.append(new_location)
+        return locations
+
+    def get_location_ids(self):
+        locations = []
+        for location in self.get_location_info():
+            locations.append(location['id'])
+        return locations
+
+    def get_location_names(self):
+        locations = []
+        for location in self.get_location_info():
+            locations.append(location['name'])
+        return locations
     
 
 api = LinnworksAPI()
