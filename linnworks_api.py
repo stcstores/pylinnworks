@@ -44,7 +44,7 @@ class LinnworksAPI:
         self.server = authorize['Server']
 
     def get_categories(self):
-        url = api.server + '/api/Inventory/GetCategories'
+        url = self.server + '/api/Inventory/GetCategories'
         response = self.request(url)
         categories = []
         for category in response:
@@ -52,12 +52,20 @@ class LinnworksAPI:
         return categories
 
     def get_channels(self):
-        url = api.server + '/api/Inventory/GetChannels'
+        url = self.server + '/api/Inventory/GetChannels'
         response = self.request(url)
         channels = []
         for channel in response:
             channels.append(channel['Source'] + ' ' + channel['SubSource'])
         return channels
+
+    def get_stock_location_ids(self):
+        url = self.server + '/api/Inventory/GetStockLocations'
+        response = self.request(url)
+        stock_location_ids = []
+        for location in response:
+            stock_location_ids.append(location['StockLocationId'])
+        return stock_location_ids
     
 
 api = LinnworksAPI()
