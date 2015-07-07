@@ -43,13 +43,28 @@ class LinnworksAPI:
         self.token = authorize['Token']
         self.server = authorize['Server']
 
-    def get_categories(self):
+    def get_category_info(self):
         url = self.server + '/api/Inventory/GetCategories'
         response = self.request(url)
         categories = []
         for category in response:
-            categories.append(category['CategoryName'])
+            new_category = {}
+            new_category['name'] = category['CategoryName']
+            new_category['id'] = category['CategoryId']
+            categories.append(new_category)
         return categories
+
+    def get_category_names(self):
+        category_names = []
+        for category in self.get_category_info():
+            category_names.append(category['name'])
+        return category_names
+
+    def get_category_ids(self):
+        category_ids = []
+        for category in self.get_category_info():
+            category_ids.append(category['id'])
+        return category_ids
 
     def get_channels(self):
         url = self.server + '/api/Inventory/GetChannels'
