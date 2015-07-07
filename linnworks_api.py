@@ -47,9 +47,17 @@ class LinnworksAPI:
         url = api.server + '/api/Inventory/GetCategories'
         response = self.request(url)
         categories = []
-        for cat in response:
-            categories.append(cat['CategoryName'])
+        for category in response:
+            categories.append(category['CategoryName'])
         return categories
+
+    def get_channels(self):
+        url = api.server + '/api/Inventory/GetChannels'
+        response = self.request(url)
+        channels = []
+        for channel in response:
+            channels.append(channel['Source'] + ' ' + channel['SubSource'])
+        return channels
     
 
 api = LinnworksAPI()
