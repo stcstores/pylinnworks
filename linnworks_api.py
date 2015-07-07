@@ -20,7 +20,7 @@ class LinnworksAPI:
 
     def make_request(self, url, data=None):
         request = requests.get(url, params=data)
-        print(request.url)
+        #print(request.url)
         parsed_json = json.loads(request.text)
         #pprint(parsed_json)
         return parsed_json
@@ -43,11 +43,13 @@ class LinnworksAPI:
         self.token = authorize['Token']
         self.server = authorize['Server']
 
-    
+    def get_categories(self):
+        url = api.server + '/api/Inventory/GetCategories'
+        response = self.request(url)
+        categories = []
+        for cat in response:
+            categories.append(cat['CategoryName'])
+        return categories
     
 
 api = LinnworksAPI()
-url = api.server + '/api/Inventory/GetCategories'
-data = {'token' : api.token}
-req = api.request(url)
-
