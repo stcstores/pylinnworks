@@ -4,11 +4,12 @@ import json
 from pprint import pprint
 
 class LinnworksAPI:
+
+    
     def __init__(self):
         self.username = 'stcstores@yahoo.com'
         self.password = input('Linnworks Password: ')
         self.get_token()
-        
 
     def get_page(self, url, data=None):
         if data != None:
