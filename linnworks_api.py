@@ -22,6 +22,7 @@ class LinnworksAPI:
     def make_request(self, url, data=None):
         request = requests.get(url, params=data)
         #print(request.url)
+        #print(request.text)
         parsed_json = json.loads(request.text)
         #pprint(parsed_json)
         return parsed_json
@@ -97,6 +98,30 @@ class LinnworksAPI:
         for location in self.get_location_info():
             locations.append(location['name'])
         return locations
+
+    def get_inventory_views(self):
+        url = self.server + '/api/Inventory/GetInventoryViews'
+        response = self.request(url)
+        return response
+
+    def get_new_inventory_view(self):
+        url = self.server + '/api/Inventory/GetNewInventoryView'
+        response = self.request(url)
+        return response
+
+    def get_inventory_column_types(self):
+        url = self.server + '/api/Inventory/GetInventoryColumnTypes'
+        response = self.request(url)
+        return response
+
+    def get_inventory_items(self, start=0, count=1):
+        url = self.server + '/api/Inventory/GetInventoryItems'
+        view = json.dumps(self.get_new_inventory_view())
+        locations = json.dumps(self.get_location_ids())
+        data = {'view' : view, 'stockLocationIds' : locations, 'startIndex' : start, 'itemsCount' : count}
+        response = self.request(url, data)
+        return response
+        
     
 
 api = LinnworksAPI()
