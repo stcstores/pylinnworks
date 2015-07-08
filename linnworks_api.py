@@ -2,6 +2,8 @@ import requests
 import json
 from pprint import pprint
 
+from inventory_item import InventoryItem as InventoryItem
+
 class LinnworksAPI:
 
     
