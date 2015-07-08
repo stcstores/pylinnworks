@@ -1,4 +1,3 @@
-import urllib.request
 import requests
 import json
 from pprint import pprint
@@ -11,19 +10,11 @@ class LinnworksAPI:
         self.password = input('Linnworks Password: ')
         self.get_token()
 
-    def get_page(self, url, data=None):
-        if data != None:
-            data = urllib.parse.urlencode(data)
-            data = data.encode('utf-8')
-        with urllib.request.urlopen(url, data, timeout=120) as response:
-            page = str(response.read())
-            return page
-
     def make_request(self, url, data=None):
-        request = requests.get(url, params=data)
+        response = requests.get(url, params=data)
         #print(request.url)
         #print(request.text)
-        parsed_json = json.loads(request.text)
+        parsed_json = response.json()
         #pprint(parsed_json)
         return parsed_json
 
