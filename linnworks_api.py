@@ -12,19 +12,21 @@ class LinnworksAPI:
         self.password = input('Linnworks Password: ')
         self.get_token()
 
-    def make_request(self, url, data=None):
+    def make_request(self, url, data=None, to_json=True):
         response = requests.get(url, params=data)
         #print(request.url)
         #print(request.text)
-        parsed_json = response.json()
         #pprint(parsed_json)
-        return parsed_json
+        if to_json == True:
+            return response.json()
+        else:
+            return response
 
-    def request(self, url, data=None):
+    def request(self, url, data=None, to_json=True):
         if data == None:
             data = {}
         data['token'] = self.token
-        return self.make_request(url, data)
+        return self.make_request(url, data, to_json=to_json)
 
     def get_token(self):
         login_url = 'https://api.linnworks.net//api/Auth/Multilogin'
@@ -38,9 +40,9 @@ class LinnworksAPI:
         self.token = authorize['Token']
         self.server = authorize['Server']
 
-    def get_category_info(self):
+    def get_category_info(self, to_json=True):
         url = self.server + '/api/Inventory/GetCategories'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         categories = []
         for category in response:
             new_category = {}
@@ -61,17 +63,17 @@ class LinnworksAPI:
             category_ids.append(category['id'])
         return category_ids
 
-    def get_channels(self):
+    def get_channels(self, to_json=True):
         url = self.server + '/api/Inventory/GetChannels'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         channels = []
         for channel in response:
             channels.append(channel['Source'] + ' ' + channel['SubSource'])
         return channels
 
-    def get_location_info(self):
+    def get_location_info(self, to_json=True):
         url = self.server + '/api/Inventory/GetStockLocations'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         locations = []
         for location in response:
             new_location = {}
@@ -92,27 +94,27 @@ class LinnworksAPI:
             locations.append(location['name'])
         return locations
 
-    def get_inventory_views(self):
+    def get_inventory_views(self, to_json=True):
         url = self.server + '/api/Inventory/GetInventoryViews'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         return response
 
-    def get_new_inventory_view(self):
+    def get_new_inventory_view(self, to_json=True):
         url = self.server + '/api/Inventory/GetNewInventoryView'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         return response
 
-    def get_inventory_column_types(self):
+    def get_inventory_column_types(self, to_json=True):
         url = self.server + '/api/Inventory/GetInventoryColumnTypes'
-        response = self.request(url)
+        response = self.request(url, to_json=to_json)
         return response
 
-    def get_inventory_items(self, start=0, count=1):
+    def get_inventory_items(self, start=0, count=1, to_json=True):
         url = self.server + '/api/Inventory/GetInventoryItems'
         view = json.dumps(self.get_new_inventory_view())
         locations = json.dumps(self.get_location_ids())
         data = {'view' : view, 'stockLocationIds' : locations, 'startIndex' : start, 'itemsCount' : count}
-        response = self.request(url, data)
+        response = self.request(url, data, to_json=to_json)
         return response
         
     
