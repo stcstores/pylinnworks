@@ -10,4 +10,3 @@ class InventoryItem:
         self.purchase_price = json['PurchasePrice']
         self.retail_price = json['RetailPrice']
         self.barcode = json['Barcode']
-        

@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 
 from inventory_item import InventoryItem as InventoryItem
+from inventory import Inventory as Inventory
 
 class LinnworksAPI:
 
@@ -120,9 +121,9 @@ class LinnworksAPI:
     def get_inventory_list(self):
         item_count = self.get_inventory_items()['TotalItems']
         all_items = []
-        for item in self.get_inventory_items(count=item_count)['Items']:
-            all_items.append(InventoryItem(item))
-        return all_items
+        item_list =  self.get_inventory_items(count=item_count)['Items']
+        inventory = Inventory(item_list)
+        return inventory
         
     
 
