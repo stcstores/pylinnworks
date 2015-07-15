@@ -114,7 +114,11 @@ class LinnworksAPI:
         url = self.server + '/api/Inventory/GetInventoryItems'
         view = json.dumps(self.get_new_inventory_view())
         locations = json.dumps(self.get_location_ids())
-        data = {'view' : view, 'stockLocationIds' : locations, 'startIndex' : start, 'itemsCount' : count}
+        data = {'view' : view,
+                'stockLocationIds' : locations,
+                'startIndex' : start,
+                'itemsCount' : count
+                }
         response = self.request(url, data, to_json=to_json)
         return response
 
