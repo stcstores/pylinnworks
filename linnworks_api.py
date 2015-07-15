@@ -125,6 +125,16 @@ class LinnworksAPI:
         inventory = Inventory(item_list)
         return inventory
         
-    
+    def get_inventory_item_by_id(self, stock_id):
+        url = self.server + '/api/Inventory/GetInventoryItemById'
+        data = {'id' : stock_id}
+        response = self.request(url, data)
+        return response
+
+    def get_inventory_item_extended_properties(self, stock_id):
+        url = self.server + '/api/Inventory/GetInventoryItemExtendedProperties'
+        data = {'inventoryItemId' : stock_id}
+        response = self.request(url, data)
+        return response
 
 api = LinnworksAPI()
