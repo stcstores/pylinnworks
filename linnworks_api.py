@@ -63,6 +63,37 @@ class LinnworksAPI:
         for category in self.get_category_info():
             category_ids.append(category['id'])
         return category_ids
+    
+    def get_packaging_group_info(self, to_json=True):
+        url = self.server + '/api/Inventory/GetPackageGroups'
+        response = self.request(url)
+        packaging_groups = []
+        for group in response:
+            new_group = {}
+            new_group['id'] = group['Value']
+            new_group['name'] = group['Key']
+            packaging_groups.append(new_group)
+        return packaging_groups
+    
+    def get_packaging_group_names(self):
+        packaging_group_names = []
+        for group in self.get_packaging_group_info():
+            packaging_group_names.append(group['name'])
+        return packaging_group_names
+    
+    def get_shipping_method_info(self):
+        url = self.server + '/api/Orders/GetShippingMethods'
+        response = self.request(url)
+        shipping_methods = []
+        for service in response:
+            for method in service['PostalServices']:
+                new_method = {}
+                new_method['vendor'] = method['Vendor']
+                new_method['id'] = method['pkPostalServiceId']
+                new_method['tracking_required'] = method['TrackingNumberRequired']
+                new_method['name'] = method['PostalServiceName']
+                shipping_methods.append(new_method)
+        return shipping_methods
 
     def get_channels(self, to_json=True):
         url = self.server + '/api/Inventory/GetChannels'
@@ -141,7 +172,7 @@ class LinnworksAPI:
         return response
 
     def get_extended_property_names(self):
-        url = api.server + '/api/Inventory/GetExtendedPropertyNames'
+        url = self.server + '/api/Inventory/GetExtendedPropertyNames'
         response = self.request(url)
         return response
 
