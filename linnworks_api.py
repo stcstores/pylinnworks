@@ -150,5 +150,3 @@ class LinnworksAPI:
         data = {'inventoryItemId' : stock_id}
         response = self.request(url, data)
         return response
-
-api = LinnworksAPI()
