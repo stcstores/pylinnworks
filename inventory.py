@@ -5,12 +5,19 @@ from lstools . table import Table as Table
 class Inventory():
 
 
-    def __init__(self, item_list):
+    def __init__(self, item_list, api):
         self.item_list = item_list
+        self.api = api
 
+        self.extended_properties = api.get_extended_property_names()
+        
         self.items = []
+        i = 1
         for item in item_list:
-            self.items.append(InventoryItem(item))
+            self.items.append(InventoryItem(item, self))
+            print(str(i) + ' / ' + str(len(item_list)))
+            i += 1
+
 
     def to_table(self):
         header = ['SKU', 'Title', 'Purchase Price', 'Retail Price', 'Barcode']
