@@ -110,9 +110,10 @@ class LinnworksAPI:
         response = self.request(url, to_json=to_json)
         return response
 
-    def get_inventory_items(self, start=0, count=1, to_json=True):
+    def get_inventory_items(self, start=0, count=1, to_json=True, view=None):
         url = self.server + '/api/Inventory/GetInventoryItems'
-        view = json.dumps(self.get_new_inventory_view())
+        if view == None:
+            view = json.dumps(self.get_new_inventory_view())
         locations = json.dumps(self.get_location_ids())
         data = {'view' : view,
                 'stockLocationIds' : locations,
@@ -122,17 +123,26 @@ class LinnworksAPI:
         response = self.request(url, data, to_json=to_json)
         return response
 
-    def get_inventory_list(self):
-        item_count = self.get_inventory_items()['TotalItems']
+    def get_inventory_list(self, view=None):
+        item_count = self.get_inventory_items(start=0,
+                count=1, view=None)['TotalItems']
+        
         all_items = []
-        item_list =  self.get_inventory_items(count=item_count)['Items']
-        inventory = Inventory(item_list)
+        item_list =  self.get_inventory_items(start=0,
+                count=item_count, view=view)['Items']
+        
+        inventory = Inventory(item_list, self)
         return inventory
         
     def get_inventory_item_by_id(self, stock_id):
         url = self.server + '/api/Inventory/GetInventoryItemById'
         data = {'id' : stock_id}
         response = self.request(url, data)
+        return response
+
+    def get_extended_property_names(self):
+        url = api.server + '/api/Inventory/GetExtendedPropertyNames'
+        response = self.request(url)
         return response
 
     def get_inventory_item_extended_properties(self, stock_id):
