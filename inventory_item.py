@@ -14,7 +14,7 @@ class InventoryItem:
         self.barcode = json['Barcode']
         
     def get_all_details(self):
-        self.get_inventory_item_deatils()
+        self.get_inventory_item_details()
         self.get_extended_properties()
         
     def get_inventory_item_details(self):
