@@ -181,3 +181,9 @@ class LinnworksAPI:
         data = {'inventoryItemId' : stock_id}
         response = self.request(url, data)
         return response
+    
+    def get_new_sku(self):
+        url = self.server + '/api/Stock/GetNewSKU'
+        response = self.request(url)
+        return response
+    
