@@ -187,3 +187,10 @@ class LinnworksAPI:
         response = self.request(url)
         return response
     
+    def sku_exists(self, sku):
+        url = self.server + '/api/Stock/SKUExists'
+        data = {'SKU' : sku}
+        response = self.request(url, data)
+        return response
+    
+    
