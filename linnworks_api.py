@@ -155,8 +155,7 @@ class LinnworksAPI:
         return response
 
     def get_inventory_list(self, view=None):
-        item_count = self.get_inventory_items(start=0,
-                count=1, view=None)['TotalItems']
+        item_count = self.get_item_count()
         
         all_items = []
         item_list =  self.get_inventory_items(start=0,
@@ -164,6 +163,12 @@ class LinnworksAPI:
         
         inventory = Inventory(item_list, self)
         return inventory
+    
+    def get_item_count(self):
+        request = self.get_inventory_items(start=0, count=1, view=None)
+        item_count = request['TotalItems']
+        return item_count
+    
         
     def get_inventory_item_by_id(self, stock_id):
         url = self.server + '/api/Inventory/GetInventoryItemById'
