@@ -97,6 +97,13 @@ class LinnworksAPI:
                 new_method['name'] = method['PostalServiceName']
                 shipping_methods.append(new_method)
         return shipping_methods
+    
+    def get_shipping_method_names(self, ):
+        shipping_group_names = []
+        for group in self.get_shipping_method_info():
+            shipping_group_names.append(group['name'])
+        return shipping_group_names
+    
 
     def get_channels(self, to_json=True):
         url = self.server + '/api/Inventory/GetChannels'
