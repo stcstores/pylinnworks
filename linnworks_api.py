@@ -8,9 +8,12 @@ from . inventory import Inventory as Inventory
 class LinnworksAPI:
 
     
-    def __init__(self):
+    def __init__(self, password=None):
         self.username = 'stcstores@yahoo.com'
-        self.password = input('Linnworks Password: ')
+        if self.password == None:
+            self.password = input('Linnworks Password: ')
+        else:
+            self.password = password
         self.get_token()
 
     def make_request(self, url, data=None, to_json=True):
