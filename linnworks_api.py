@@ -10,7 +10,7 @@ class LinnworksAPI:
     
     def __init__(self, password=None):
         self.username = 'stcstores@yahoo.com'
-        if self.password == None:
+        if password == None:
             self.password = input('Linnworks Password: ')
         else:
             self.password = password
