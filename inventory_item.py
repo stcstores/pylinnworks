@@ -11,23 +11,24 @@ class InventoryItem:
             self.get_stock_id()
         self.json = None
         self.inventory = None
-        self.sku = None
-        self.title = None
-        self.purchase_price = None
-        self.retail_price = None
-        self.barcode = None
-        self.category = None
-        self.depth = None
-        self.height = None
-        self.package_group_id = None
-        self.package_group = None
-        self.postage_service_id = None
-        self.postage_service = None
-        self.tax_rate = ''
-        self.variation_group_name = None
-        self.weight = None
-        self.width = None
-        self.quantity = None
+        self.sku = ''
+        self.title = ''
+        self.purchase_price = 0
+        self.retail_price = 0
+        self.barcode = ''
+        self.category_id = ''
+        self.category = ''
+        self.depth = ''
+        self.height = ''
+        self.package_group_id = ''
+        self.package_group = ''
+        self.postage_service_id = ''
+        self.postage_service = ''
+        self.tax_rate = 0
+        self.variation_group_name = ''
+        self.weight = 0
+        self.width = 0
+        self.quantity = 0
         self.extended_properties = {}
         
     def load_from_json(self, json, inventory):
@@ -51,7 +52,7 @@ class InventoryItem:
         self.get_inventory_item_details()
         self.get_extended_properties()
         
-    def get_inventoryItem_dict(self):
+    def get_create_inventoryItem_dict(self):
         inventoryItem = {}
         inventoryItem['ItemNumber'] = str(self.sku)
         inventoryItem['ItemTitle'] = str(self.title)
@@ -62,14 +63,46 @@ class InventoryItem:
         inventoryItem['TaxRate'] = str(self.tax_rate)
         inventoryItem['StockItemId'] = str(self.stock_id)
         return inventoryItem
+    
+    def get_inventoryItem_dict(self):
+        inventoryItem = {}
+        inventoryItem['ItemNumber'] = str(self.sku)
+        inventoryItem['ItemTitle'] = str(self.title)
+        inventoryItem['BarcodeNumber'] = str(self.barcode)
+        inventoryItem['PurchasePrice'] = str(self.purchase_price)
+        inventoryItem['RetailPrice'] = str(self.retail_price)
+        inventoryItem['Quantity'] = str(self.quantity)
+        inventoryItem['TaxRate'] = str(self.tax_rate)
+        inventoryItem['StockItemId'] = str(self.stock_id)
+        inventoryItem['VariationGroupName'] = str(self.variation_group_name)
+        inventoryItem['MetaData'] = ''
+        inventoryItem['CategoryId'] = str(self.category_id)
+        inventoryItem['PackageGroupId'] = str(self.package_group_id)
+        inventoryItem['PostalServiceId'] = str(self.postage_service_id)
+        inventoryItem['Weight'] = str(self.weight)
+        inventoryItem['Width'] = str(self.width)
+        inventoryItem['Depth'] = str(self.depth)
+        inventoryItem['Height'] = str(self.height)
+        return inventoryItem
         
     def create_item(self):
         for prop in (self.stock_id, self.sku, self.title):
             assert(prop != None)
             
-        inventoryItem = self.get_inventoryItem_dict()
+        inventoryItem = self.get_create_inventoryItem_dict()
         
         request_url = self.api.server + '/api/Inventory/AddInventoryItem'
+        data = {'inventoryItem': json.dumps(inventoryItem)}
+        
+        return self.api.request(request_url, data, False)
+    
+    def update_item(self):
+        for prop in (self.stock_id, self.sku, self.title):
+            assert(prop != None)
+            
+        inventoryItem = self.get_inventoryItem_dict()
+        
+        request_url = self.api.server + '/api/Inventory/UpdateInventoryItem'
         data = {'inventoryItem': json.dumps(inventoryItem)}
         
         return self.api.request(request_url, data, False)
