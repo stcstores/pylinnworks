@@ -1,4 +1,5 @@
 import uuid
+import json
 
 class InventoryItem:
 
@@ -22,10 +23,11 @@ class InventoryItem:
         self.package_group = None
         self.postage_service_id = None
         self.postage_service = None
-        self.tax_rate = None
+        self.tax_rate = ''
         self.variation_group_name = None
         self.weight = None
         self.width = None
+        self.quantity = None
         self.extended_properties = {}
         
     def load_from_json(self, json, inventory):
@@ -44,46 +46,31 @@ class InventoryItem:
         
     def get_sku(self):
         self.sku = self.api.get_new_sku()
-    
         
     def get_all_details(self):
         self.get_inventory_item_details()
         self.get_extended_properties()
         
-    def get_inventory_item_details(self):
-        self.inventory_item_request = self.api.get_inventory_item_by_id(
-                self.stock_id)
+    def get_inventoryItem_dict(self):
+        inventoryItem = {}
+        inventoryItem['ItemNumber'] = str(self.sku)
+        inventoryItem['ItemTitle'] = str(self.title)
+        inventoryItem['BarcodeNumber'] = str(self.barcode)
+        inventoryItem['PurchasePrice'] = str(self.purchase_price)
+        inventoryItem['RetailPrice'] = str(self.retail_price)
+        inventoryItem['Quantity'] = str(self.quantity)
+        inventoryItem['TaxRate'] = str(self.tax_rate)
+        inventoryItem['StockItemId'] = str(self.stock_id)
+        return inventoryItem
         
-        self.category_id = self.inventory_item_request['CategoryId']
-        self.category = self.inventory.category_lookup[self.category_id]
-        self.depth = self.inventory_item_request['Depth']
-        self.height = self.inventory_item_request['Height']
-        self.package_group_id = self.inventory_item_request['PackageGroupId']
-        self.package_group = self.inventory.postage_group_lookup[
-                self.package_group_id]
-        self.postage_service_id = self.inventory_item_request['PostalServiceId']
-        self.postal_service = self.inventory.postal_service_lookup[
-                self.postage_service_id]
-        self.tax_rate = self.inventory_item_request['TaxRate']
-        self.variation_group_name = self.inventory_item_request[
-                'VariationGroupName']
-        self.weight = self.inventory_item_request['Weight']
-        self.width = self.inventory_item_request['Width']
-        
-    def get_extended_properties(self):
-        
-        self.extended_properties_request = self.api.get_inventory_item_extended_properties(self.stock_id)
-        
-        #Linnworks API contains spelling error ProperyName
-        
-        for prop in self.extended_properties_request:
-            if prop['ProperyName'] not in self.inventory.extended_properties:
-                self.inventory.extended_properties.append(prop['ProperyName'])
+    def create_item(self):
+        for prop in (self.stock_id, self.sku, self.title):
+            assert(prop != None)
             
-        self.extended_properties = {}
+        inventoryItem = self.get_inventoryItem_dict()
         
-        for property_name in self.inventory.extended_properties:
-            self.extended_properties[property_name] = ''
+        request_url = self.api.server + '/api/Inventory/AddInventoryItem'
+        data = {'inventoryItem': json.dumps(inventoryItem)}
         
-        for prop in self.extended_properties_request:
-            self.extended_properties[prop['ProperyName']] = prop['PropertyValue']
+        return self.api.request(request_url, data, False)
+    
