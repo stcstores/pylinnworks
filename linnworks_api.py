@@ -154,11 +154,14 @@ class LinnworksAPI:
         response = self.request(url, data, to_json=to_json)
         return response
 
-    def get_inventory_list(self, view=None):
-        item_count = self.get_item_count()
+    def get_inventory_list(self, view=None, start=0, count=None):
+        if count == None:
+            item_count = self.get_item_count()
+        else:
+            item_count = count
         
         all_items = []
-        item_list =  self.get_inventory_items(start=0,
+        item_list =  self.get_inventory_items(start=start,
                 count=item_count, view=view)['Items']
         
         inventory = Inventory(item_list, self)
