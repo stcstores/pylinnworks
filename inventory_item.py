@@ -1,10 +1,13 @@
-
+import uuid
 
 class InventoryItem:
 
-    def __init__(self, api, stock_id):
+    def __init__(self, api, stock_id=None):
         self.api = api
-        self.stock_id = stock_id
+        if stock_id != None:
+            self.stock_id = stock_id
+        else:
+            self.get_stock_id()
         self.json = None
         self.inventory = None
         self.sku = None
@@ -35,6 +38,13 @@ class InventoryItem:
         self.purchase_price = json['PurchasePrice']
         self.retail_price = json['RetailPrice']
         self.barcode = json['Barcode']
+        
+    def get_stock_id(self):
+        self.stock_id = str(uuid.uuid4())
+        
+    def get_sku(self):
+        self.sku = self.api.get_new_sku()
+    
         
     def get_all_details(self):
         self.get_inventory_item_details()
