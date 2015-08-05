@@ -211,4 +211,12 @@ class LinnworksAPI:
         response = self.request(url, data)
         return response
     
+    def upload_image(self, filename, filepath):
+        url = self.server + '/api/Uploader/UploadFile?type=Image&expiredInHours=24&token='
+        url += self.token
+        files = {filename : open(filepath, 'rb')}
+        response = requests.post(url, files=files)
+        return response
+    
+    
     
