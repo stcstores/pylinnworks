@@ -9,6 +9,7 @@ class LinnworksAPI:
 
     
     def __init__(self, password=None):
+        self.session = requests.Session()
         self.username = 'stcstores@yahoo.com'
         if password == None:
             self.password = input('Linnworks Password: ')
@@ -17,10 +18,7 @@ class LinnworksAPI:
         self.get_token()
 
     def make_request(self, url, data=None, to_json=True):
-        response = requests.get(url, params=data)
-        #print(request.url)
-        #print(request.text)
-        #pprint(parsed_json)
+        response = self.session.get(url, params=data)request
         if to_json == True:
             return response.json()
         else:
@@ -215,7 +213,7 @@ class LinnworksAPI:
         url = self.server + '/api/Uploader/UploadFile?type=Image&expiredInHours=24&token='
         url += self.token
         files = {filename : open(filepath, 'rb')}
-        response = requests.post(url, files=files)
+        response = self.session.post(url, files=files)
         return response
     
     
