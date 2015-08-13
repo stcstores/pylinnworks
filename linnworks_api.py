@@ -18,7 +18,7 @@ class LinnworksAPI:
         self.get_token()
 
     def make_request(self, url, data=None, to_json=True):
-        response = self.session.get(url, params=data)request
+        response = self.session.get(url, params=data)
         if to_json == True:
             return response.json()
         else:
@@ -153,6 +153,8 @@ class LinnworksAPI:
         url = self.server + '/api/Inventory/GetInventoryItems'
         if view == None:
             view = json.dumps(self.get_new_inventory_view())
+        else:
+            view = json.dumps(view)
         locations = json.dumps(self.get_location_ids())
         data = {'view' : view,
                 'stockLocationIds' : locations,
@@ -181,11 +183,43 @@ class LinnworksAPI:
         return item_count
     
         
-    def get_inventory_item_by_id(self, stock_id):
+    def get_inventory_item_by_id(self, stock_id, inventory_item=True):
         url = self.server + '/api/Inventory/GetInventoryItemById'
         data = {'id' : stock_id}
         response = self.request(url, data)
-        return response
+        if inventory_item != True:
+            return response
+        else:
+            item = InventoryItem(self, stock_id)
+            item.sku = response['ItemNumber']
+            item.title = response['ItemTitle']
+            item.purchase_price = response['PurchasePrice']
+            item.retail_price = response['RetailPrice']
+            item.barcode = response['BarcodeNumber']
+            item.category_id = response['CategoryId']
+            item.depth = response['Depth']
+            item.height = response['Height']
+            item.package_group_id = response['PackageGroupId']
+            item.postage_service_id = response['PostalServiceId']
+            item.tax_rate = response['TaxRate']
+            item.variation_group_name = response['VariationGroupName']
+            item.weight = response['Weight']
+            item.width = response['Width']
+            item.quantity = response['Quantity']
+
+            for category in self.get_category_info():
+                if category['id'] == item.category_id:
+                    item.category = category['name']
+
+            for package_group in self.get_packaging_group_info():
+                if package_group['id'] == item.package_group_id:
+                    item.package_group = package_group['name']
+
+            for postage_service in self.get_shipping_method_info():
+                if postage_service['id'] == item.postage_service:
+                    item.postage_service = postage_service['name']
+
+            return item
 
     def get_extended_property_names(self):
         url = self.server + '/api/Inventory/GetExtendedPropertyNames'
@@ -216,5 +250,13 @@ class LinnworksAPI:
         response = self.session.post(url, files=files)
         return response
     
-    
-    
+    def create_variation_group(self, parent_guid, parent_sku, parent_title, variation_guids):
+        url = self.server + '/api/Stock/CreateVariationGroup'
+        template = {}
+        template['ParentSKU'] = parent_sku
+        template['VariationGroupName'] = parent_title
+        template['ParentStockItemId'] = parent_guid
+        template['VariationItemIds'] = variation_guids
+        data = {'template' : json.dumps(template)}
+        response = self.request(url, data)
+        return response
