@@ -206,6 +206,7 @@ class LinnworksAPI:
             item.weight = response['Weight']
             item.width = response['Width']
             item.quantity = response['Quantity']
+            item.meta_data = response['MetaData']
 
             for category in self.get_category_info():
                 if category['id'] == item.category_id:
@@ -260,3 +261,40 @@ class LinnworksAPI:
         data = {'template' : json.dumps(template)}
         response = self.request(url, data)
         return response
+    
+    def get_variation_group_guid_by_SKU(self, sku):
+        url = self.server + '/api/Stock/SearchVariationGroups'
+        data = {}
+        data['searchText'] = str(sku)
+        data['searchType'] = 'ParentSKU'
+        data['entriesPerPage'] = '100'
+        data['pageNumber'] = 1
+        response = self.request(url, data)
+        print(response)
+        return response['Data'][0]['pkVariationItemId']
+        
+    def get_variation_group_inventory_item_by_SKU(self, sku):
+        guid = self.get_variation_group_guid_by_SKU(sku)
+        item = self.get_inventory_item_by_id(guid)
+        return item
+    
+    def get_item_stock_id_by_SKU(self, sku):
+        view = self.get_new_inventory_view()
+        view['Columns'] = []
+        _filter = {}
+        _filter['Value'] = str(sku)
+        _filter['Field'] = 'String'
+        _filter['FilterName'] = 'SKU'
+        _filter['FilterNameExact'] = ''
+        _filter['Condition'] = 'Equals'
+        view['Filters'] = [_filter]
+        
+        response = self.get_inventory_items(view=view)
+        stock_id = response['Items'][0]['Id']
+        return stock_id
+    
+    def get_inventory_item_by_SKU(self, sku):
+        guid = self.get_item_stock_id_by_SKU(sku)
+        item = self.get_inventory_item_by_id(guid)
+        return item
+    
