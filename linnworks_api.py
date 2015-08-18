@@ -9,6 +9,12 @@ class LinnworksAPI:
 
     
     def __init__(self, password=None):
+        """Object with methods to simplify calls to linnworks.net API.
+        
+        Args:
+            password (str): User password. If not provided as argument it will
+            be requesed as an input().
+        """
         self.session = requests.Session()
         self.username = 'stcstores@yahoo.com'
         if password == None:
