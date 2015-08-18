@@ -29,6 +29,7 @@ class InventoryItem:
         self.weight = 0
         self.width = 0
         self.quantity = 0
+        self.meta_data = ''
         self.extended_properties = {}
         
     def load_from_json(self, json, inventory):
@@ -75,7 +76,7 @@ class InventoryItem:
         inventoryItem['TaxRate'] = str(self.tax_rate)
         inventoryItem['StockItemId'] = str(self.stock_id)
         inventoryItem['VariationGroupName'] = str(self.variation_group_name)
-        inventoryItem['MetaData'] = ''
+        inventoryItem['MetaData'] = str(self.meta_data)
         inventoryItem['CategoryId'] = str(self.category_id)
         inventoryItem['PackageGroupId'] = str(self.package_group_id)
         inventoryItem['PostalServiceId'] = str(self.postage_service_id)
