@@ -238,7 +238,7 @@ class LinnworksAPI:
             Inventory View for use with calls to GetInventory.
         """
         url = self.server + '/api/Inventory/GetNewInventoryView'
-        response = self.request(url, to_json=to_json)
+        response = self.request(url)
         return response
     
 
