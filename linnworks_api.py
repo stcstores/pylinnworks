@@ -438,7 +438,7 @@ class LinnworksAPI:
         return response
     
     
-    def get_variation_group_guid_by_SKU(self, sku):
+    def get_id_by_SKU(self, sku):
         """Returns:
             stock_id of variation group parent with passed sku.
         """
@@ -457,12 +457,12 @@ class LinnworksAPI:
         """Returns:
             InventoryItem() of variation group parent with passed sku.
         """
-        guid = self.get_variation_group_guid_by_SKU(sku)
+        guid = self.get_id_by_SKU(sku)
         item = self.get_inventory_item_by_id(guid)
         return item
     
     
-    def get_item_stock_id_by_SKU(self, sku):
+    def get_variation_group_id_by_SKU(self, sku):
         """Returns:
             stock_id of item with the passed sku.
         """
@@ -485,6 +485,6 @@ class LinnworksAPI:
         """Returns:
             InventroyItem() for item with passed sku.
         """
-        guid = self.get_item_stock_id_by_SKU(sku)
+        guid = self.get_variation_group_id_by_SKU(sku)
         item = self.get_inventory_item_by_id(guid)
         return item
