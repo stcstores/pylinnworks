@@ -1,5 +1,6 @@
 import uuid
 import json
+import requests
 
 class InventoryItem:
 
@@ -30,7 +31,7 @@ class InventoryItem:
         self.width = 0
         self.quantity = 0
         self.meta_data = ''
-        self.extended_properties = {}
+        self.extended_properties = _ExtendedProperties(self)
         
     def load_from_json(self, json, inventory):
         self.json = json
@@ -108,3 +109,138 @@ class InventoryItem:
         
         return self.api.request(request_url, data, False)
     
+    def update_all(self):
+        self.update_item()
+        self.extended_properties.update()
+    
+    
+    def load_extended_properties(self):
+        self.extended_properties.load()
+            
+            
+class _ExtendedProperties():
+    
+    
+    def __init__(self, item):
+        self.item = item
+        self.extended_properties = []
+        self.load()
+        
+        
+    def load(self):
+        response = self.item.api.get_inventory_item_extended_properties(self.item.stock_id)
+        for _property in response:
+            self.add(json=_property)
+        
+    def add(self, json):
+        self.extended_properties.append(_ExtendedProperty(self.item, json=json))
+        
+    def create(self, name='', value='', property_type='Attribute'):
+        prop = _ExtendedProperty(self.item)
+        prop.name = name
+        prop.value = value
+        prop.type = property_type
+        
+        self.extended_properties.append(prop)
+        
+    def upload_new(self):
+        new_properties = []
+        for prop in self.extended_properties:
+            if prop.on_server == False:
+                new_properties.append(prop)
+                
+        if len(new_properties) > 0:
+            item_arrays = []
+            for prop in new_properties:
+                item_arrays.append(prop.get_json())
+                
+            data = {'inventoryItemExtendedProperties' : json.dumps(item_arrays)}
+            
+            api = self.item.api
+            url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
+            response = requests.post(url, data=data, params={'token' : api.token})
+            return response
+    
+    def update_existing(self):
+        new_properties = []
+        for prop in self.extended_properties:
+            if prop.on_server == True:
+                new_properties.append(prop)
+                
+        if len(new_properties) > 0:
+            item_arrays = []
+            for prop in new_properties:
+                item_arrays.append(prop.get_json())
+                
+            data = {'inventoryItemExtendedProperties' : json.dumps(item_arrays)}
+            
+            api = self.item.api
+            url = api.server + '/api/Inventory/UpdateInventoryItemExtendedProperties'
+            response = requests.post(url, data=data, params={'token' : api.token})
+            return response
+    
+        
+    def update(self):
+        self.upload_new()
+        self.update_existing()
+        
+    def __getitem__(self, key):
+        if type(key) == int:
+            return self.extended_properties[key]
+        elif type(key) == str:
+            for prop in self.extended_properties:
+                if prop.name == key:
+                    return prop
+    
+    def __iter__(self):
+        for prop in self.extended_properties:
+            yield prop
+    
+    
+    
+
+class _ExtendedProperty():
+    
+    
+    def __init__(self, item, json=None):
+        self.item = item
+        self.type = ''
+        self.value = ''
+        self.name = ''
+        self.on_server = False
+        
+        if json != None:
+            self.load_from_json(json)
+            self.on_server = True
+        else:
+            self.guid = str(uuid.uuid4())
+            self.on_server = False
+            
+    def load_from_json(self, json):
+        self.type = json['PropertyType']
+        self.value = json['PropertyValue']
+        self.name = json['ProperyName']
+        self.guid = json['pkRowId']
+        
+    def get_json(self):
+        data = {}
+        data['pkRowId'] = self.guid
+        data['fkStockItemId'] = self.item.stock_id
+        data['ProperyName'] = self.name
+        data['PropertyValue'] = self.value
+        data['PropertyType'] = self.type
+        return data
+        
+    def update(self):
+        api = self.item.api
+        url = api.server + '/api/Inventory/UpdateInventoryItemExtendedProperties'
+        data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
+        response = requests.post(url, data=data, params={'token' : api.token})
+        return response
+    
+    def create(self):
+        api = self.item.api
+        url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
+        data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
+        response = requests.post(url, data=data, params={'token' : api.token})
+        return response
