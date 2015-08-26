@@ -129,6 +129,20 @@ class _ExtendedProperties():
         self.extended_properties = []
         self.load()
         
+    def __getitem__(self, key):
+        if type(key) == int:
+            return self.extended_properties[key]
+        elif type(key) == str:
+            for prop in self.extended_properties:
+                if prop.name == key:
+                    return prop
+    
+    def __iter__(self):
+        for prop in self.extended_properties:
+            yield prop
+            
+    def __len__(self):
+        return len(self.extended_properties)
         
     def load(self):
         response = self.item.api.get_inventory_item_extended_properties(self.item.stock_id)
@@ -186,20 +200,6 @@ class _ExtendedProperties():
     def update(self):
         self.upload_new()
         self.update_existing()
-        
-    def __getitem__(self, key):
-        if type(key) == int:
-            return self.extended_properties[key]
-        elif type(key) == str:
-            for prop in self.extended_properties:
-                if prop.name == key:
-                    return prop
-    
-    def __iter__(self):
-        for prop in self.extended_properties:
-            yield prop
-    
-    
     
 
 class _ExtendedProperty():
