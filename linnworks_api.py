@@ -35,21 +35,22 @@ class LinnworksAPI:
         self.get_token()
         
 
-    def make_request(self, url, data=None, to_json=True):
+    def make_request(self, url, data=None, params=None, to_json=True):
         """Request resource URL
         
         Arguments:
             url (str): URL of resource to be requested.
             
         Keyword arguments:
-            data --  dict containing GET request variables. (Default None)
+            params --  dict containing GET request variables. (Default None)
+            data --  dict containing POST request variables. (Default None)
             to_json -- If True method returns parsed JSON. (Default True)
                 
         Returns:
             If to_json is True return response as parsed JSON. Otherwise return
             requests.Request object.
         """
-        response = self.session.get(url, params=data)
+        response = self.session.post(url, data=data, params=params)
         if to_json == True:
             return response.json()
         else:
@@ -69,10 +70,8 @@ class LinnworksAPI:
             If to_json is True return response as parsed JSON. Otherwise return
             requests.Request object.
         """
-        if data == None:
-            data = {}
-        data['token'] = self.token
-        return self.make_request(url, data, to_json=to_json)
+        params = {'token' : self.token}
+        return self.make_request(url, data=data, params=params, to_json=to_json)
 
     def get_token(self):
         """Make authentication requests and set ``self.token`` and
