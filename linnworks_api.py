@@ -34,7 +34,6 @@ class LinnworksAPI:
             self.password = password
         self.get_token()
         
-
     def make_request(self, url, data=None, params=None):
         """Request resource URL
         
@@ -84,8 +83,7 @@ class LinnworksAPI:
     def create_guid(self):
         """Return new ``GUID``."""
         return str(uuid.uuid4())
-    
-
+        
     def get_category_info(self):
         """Return *category* information as ``dict``."""
         url = self.server + '/api/Inventory/GetCategories'
@@ -98,24 +96,21 @@ class LinnworksAPI:
             new_category['id'] = category['CategoryId']
             categories.append(new_category)
         return categories
-    
-
+        
     def get_category_names(self):
         """Return *category* names as ``list``."""
         category_names = []
         for category in self.get_category_info():
             category_names.append(category['name'])
         return category_names
-    
-
+        
     def get_category_ids(self):
         """Return *category* IDs as ``list``."""
         category_ids = []
         for category in self.get_category_info():
             category_ids.append(category['id'])
         return category_ids
-    
-    
+        
     def get_packaging_group_info(self):
         """Return *packaging group* information as ``dict``."""
         url = self.server + '/api/Inventory/GetPackageGroups'
@@ -128,16 +123,14 @@ class LinnworksAPI:
             new_group['name'] = group['Key']
             packaging_groups.append(new_group)
         return packaging_groups
-    
-    
+        
     def get_packaging_group_names(self):
         """Return *packaging group* names as ``list``."""
         packaging_group_names = []
         for group in self.get_packaging_group_info():
             packaging_group_names.append(group['name'])
         return packaging_group_names
-    
-    
+        
     def get_shipping_method_info(self):
         """Return *shipping method* information and return as ``dict``."""
         url = self.server + '/api/Orders/GetShippingMethods'
@@ -153,16 +146,14 @@ class LinnworksAPI:
                 new_method['name'] = method['PostalServiceName']
                 shipping_methods.append(new_method)
         return shipping_methods
-    
-    
+        
     def get_shipping_method_names(self):
         """Return *shipping method* as ``list``."""
         shipping_group_names = []
         for group in self.get_shipping_method_info():
             shipping_group_names.append(group['name'])
         return shipping_group_names
-    
-    
+        
     def get_location_info(self):
         """Return *location* names and IDs and return as ``dict``."""
         url = self.server + '/api/Inventory/GetStockLocations'
@@ -175,24 +166,21 @@ class LinnworksAPI:
             new_location['id'] = location['StockLocationId']
             locations.append(new_location)
         return locations
-    
-    
+        
     def get_location_names(self):
         """Return *location* names as ``list``."""
         locations = []
         for location in self.get_location_info():
             locations.append(location['name'])
         return locations
-    
-
+        
     def get_location_ids(self):
         """Return *location* IDs as ``list``."""
         locations = []
         for location in self.get_location_info():
             locations.append(location['id'])
         return locations
-    
-
+        
     def get_channels(self):
         """Return *channel* information as ``dict``."""
         url = self.server + '/api/Inventory/GetChannels'
@@ -202,31 +190,27 @@ class LinnworksAPI:
         for channel in response_json:
             channels.append(channel['Source'] + ' ' + channel['SubSource'])
         return channels
-
-
+    
     def get_inventory_views(self):
         """Return ``list`` of *inventory views*."""
         url = self.server + '/api/Inventory/GetInventoryViews'
         response = self.request(url)
         response_json = response.json()
         return response_json
-    
-
+        
     def get_new_inventory_view(self):
         """Returns default *inventory view*."""
         url = self.server + '/api/Inventory/GetNewInventoryView'
         response = self.request(url)
         response_json = response.json()
         return response_json
-    
-
+        
     def get_inventory_column_types(self):
         """Return ``list`` of *column types*."""
         url = self.server + '/api/Inventory/GetInventoryColumnTypes'
         response = self.request(url)
         return response
-    
-
+        
     def get_inventory_items(self, start=0, count=1, view=None):
         """Rquest *inventory items*.
         
@@ -252,8 +236,7 @@ class LinnworksAPI:
         response = self.request(url, data)
         response_json = response.json()
         return response_json
-    
-
+        
     def get_inventory_list(self, view=None,start=0, count=None):
         """Return *inventory items* as ``inventory.Inventory`` object.
         
@@ -280,14 +263,12 @@ class LinnworksAPI:
         
         inventory = Inventory(item_list, self)
         return inventory
-    
-    
+        
     def get_item_count(self):
         """Return number of items in *inventory*."""
         request = self.get_inventory_items(start=0, count=1, view=None)
         item_count = request['TotalItems']
         return item_count
-        
         
     def get_inventory_item_by_id(self, stock_id, inventory_item=True):
         """Returns **inventory item** data for the item with the specifed
@@ -341,16 +322,14 @@ class LinnworksAPI:
                     item.postage_service = postage_service['name']
             
             return item
-    
-    
+        
     def get_extended_property_names(self):
         """Return ``list`` of *extended property* names."""
         url = self.server + '/api/Inventory/GetExtendedPropertyNames'
         response = self.request(url)
         response_json = response.json()
         return response_json
-    
-
+        
     def get_inventory_item_extended_properties(self, stock_id):
         """Return ``dict`` of *extended properties* names and IDs.
         
@@ -362,16 +341,14 @@ class LinnworksAPI:
         response = self.request(url, data)
         response_json = response.json()
         return response_json
-    
-    
+        
     def get_new_sku(self):
         """Return unsed product SKU."""
         url = self.server + '/api/Stock/GetNewSKU'
         response = self.request(url)
         response_json = response.json()
         return response_json
-    
-    
+        
     def sku_exists(self, sku):
         """Return True if sku exists for item on Linnworks server."""
         url = self.server + '/api/Stock/SKUExists'
@@ -379,8 +356,7 @@ class LinnworksAPI:
         response = self.request(url, data)
         response_json = response.json()
         return response_json
-    
-    
+        
     def upload_image(self, filename, filepath):
         """Upload image file to Linnworks Server.
         
@@ -398,8 +374,7 @@ class LinnworksAPI:
         response = self.session.post(url, files=files)
         response_json = response.json()
         return response_json
-    
-    
+        
     def create_variation_group(self, parent_title, variation_guids,
             parent_guid=None, parent_sku=None):
         """Create a variation group.
@@ -434,8 +409,7 @@ class LinnworksAPI:
             return True
         else:
             return response
-    
-    
+        
     def get_variation_group_id_by_SKU(self, sku):
         """Return *stock id* for *variation group* with SKU ``sku``."""
         url = self.server + '/api/Stock/SearchVariationGroups'
@@ -447,7 +421,6 @@ class LinnworksAPI:
         response = self.request(url, data)
         response_json = response.json()
         return response_json['Data'][0]['pkVariationItemId']
-    
         
     def get_variation_group_inventory_item_by_SKU(self, sku):
         """Return ``inventory_item.InventoryItem`` containing *variation group*
@@ -456,8 +429,7 @@ class LinnworksAPI:
         guid = self.get_variation_group_id_by_SKU(sku)
         item = self.get_inventory_item_by_id(guid)
         return item
-    
-    
+        
     def get_inventory_item_id_by_SKU(self, sku):
         """Return *stock id* for *inventory item* with SKU ``sku``."""
         view = self.get_new_inventory_view()
@@ -473,8 +445,7 @@ class LinnworksAPI:
         response = self.get_inventory_items(view=view)
         stock_id = response['Items'][0]['Id']
         return stock_id
-    
-    
+        
     def get_inventory_item_by_SKU(self, sku):
         """Return ``inventory_item.InventoryItem`` containing *inventory item*
         with SKU ``sku``.
