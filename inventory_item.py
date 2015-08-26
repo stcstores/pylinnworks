@@ -48,16 +48,15 @@ class InventoryItem:
         self.barcode = json['Barcode']
         
     def get_stock_id(self):
+        """Returns new GUID."""
         self.stock_id = str(uuid.uuid4())
         
-    def get_sku(self):
+    def create_sku(self):
+        """Returns new *SKU*."""
         self.sku = self.api.get_new_sku()
         
-    def get_all_details(self):
-        self.get_inventory_item_details()
-        self.get_extended_properties()
-        
     def get_create_inventoryItem_dict(self):
+        """Return ``dict`` for use with ``AddInventoryItem`` API request."""
         inventoryItem = {}
         inventoryItem['ItemNumber'] = str(self.sku)
         inventoryItem['ItemTitle'] = str(self.title)
@@ -70,6 +69,7 @@ class InventoryItem:
         return inventoryItem
     
     def get_inventoryItem_dict(self):
+        """Return ``dict`` for use with ``UpdateInventoryItem`` API request."""
         inventoryItem = {}
         inventoryItem['ItemNumber'] = str(self.sku)
         inventoryItem['ItemTitle'] = str(self.title)
@@ -91,6 +91,7 @@ class InventoryItem:
         return inventoryItem
         
     def create_item(self):
+        """Make request to create new *inventory item* on Linnworks server."""
         for prop in (self.stock_id, self.sku, self.title):
             assert(prop != None)
             
@@ -102,6 +103,9 @@ class InventoryItem:
         return self.api.request(request_url, data, False)
     
     def update_item(self):
+        """Make request to create update existing *inventory item* on Linnworks
+        server.
+        """
         for prop in (self.stock_id, self.sku, self.title):
             assert(prop != None)
             
@@ -113,11 +117,15 @@ class InventoryItem:
         return self.api.request(request_url, data, False)
     
     def update_all(self):
+        """Update *inventory item* and it's *extended properties* on Linnworks
+        server.
+        """
         self.update_item()
         self.extended_properties.update()
     
     
     def load_extended_properties(self):
+        """Get *extended properties* for item from Linnworks server."""
         self.extended_properties.load()
             
             
