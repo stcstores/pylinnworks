@@ -228,8 +228,7 @@ class LinnworksAPI:
         return response
     
 
-    def get_inventory_items(self, start=0, count=1, to_json=True,
-                            view=self.get_new_inventory_view()):
+    def get_inventory_items(self, start=0, count=1, to_json=True, view=None):
         """Rquest *inventory items*.
         
         Keyword arguments:
@@ -243,6 +242,8 @@ class LinnworksAPI:
             If to_json is True return response as parsed JSON. Otherwise return
             requests.Request object.
         """
+        if view == None:
+            view = self.get_new_inventory_view()
         url = self.server + '/api/Inventory/GetInventoryItems'
         view_json = json.dumps(view)
         locations = json.dumps(self.get_location_ids())
@@ -255,8 +256,7 @@ class LinnworksAPI:
         return response
     
 
-    def get_inventory_list(self, view=self.get_new_inventory_view(),
-                           start=0, count=None):
+    def get_inventory_list(self, view=None,start=0, count=None):
         """Return *inventory items* as ``inventory.Inventory`` object.
         
         Keyword arguments:
@@ -269,6 +269,8 @@ class LinnworksAPI:
         Returns:
             ``inventory.Inventory`` object.
         """
+        if view == None:
+            view = self.get_new_inventory_view()
         if count == None:
             item_count = self.get_item_count()
         else:
@@ -396,7 +398,7 @@ class LinnworksAPI:
     
     
     def create_variation_group(self, parent_title, variation_guids,
-            parent_guid=self.create_guid(), parent_sku=self.get_new_sku()):
+            parent_guid=None, parent_sku=None):
         """Create a variation group.
         
         Arguments:
@@ -413,6 +415,10 @@ class LinnworksAPI:
             True if server response is empty string. Otherwise returns the
             server response.
         """
+        if parent_guid == None:
+            parent_guid = self.create_guid()
+        if parent_sku == None:
+            parent_sku = self.get_new_sku()
         url = self.server + '/api/Stock/CreateVariationGroup'
         template = {}
         template['ParentSKU'] = parent_sku
