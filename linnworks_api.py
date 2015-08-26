@@ -4,6 +4,7 @@
 the linnworks.net API.
 """
 
+import os
 import requests
 import json
 import uuid
@@ -34,7 +35,7 @@ class LinnworksAPI:
             self.password = password
         self.get_token()
         
-    def make_request(self, url, data=None, params=None):
+    def make_request(self, url, data=None, params=None, files=None):
         """Request resource URL
         
         Arguments:
@@ -47,10 +48,10 @@ class LinnworksAPI:
         Returns:
             ``requests.Request`` object.
         """
-        response = self.session.post(url, data=data, params=params)
+        response = self.session.post(url, data=data, params=params, files=files)
         return response
 
-    def request(self, url, data=None):
+    def request(self, url, data=None, params={}, files=None):
         """Add authentication variables and make API request.
         
         Arguments:
@@ -62,8 +63,8 @@ class LinnworksAPI:
         Returns:
             ``requests.Request`` object.
         """
-        params = {'token' : self.token}
-        return self.make_request(url, data=data, params=params)
+        params['token'] = self.token
+        return self.make_request(url, data=data, params=params, files=files)
 
     def get_token(self):
         """Make authentication requests and set ``self.token`` and
@@ -357,7 +358,7 @@ class LinnworksAPI:
         response_json = response.json()
         return response_json
         
-    def upload_image(self, filename, filepath):
+    def upload_image(self, filepath):
         """Upload image file to Linnworks Server.
         
         Arguments:
@@ -368,10 +369,11 @@ class LinnworksAPI:
             Server response as parsed JSON. This contains the id assigned to the
             image. This must be used to apply the image to a product.
         """
-        url = self.server + '/api/Uploader/UploadFile?type=Image&expiredInHours=24&token='
-        url += self.token
+        filename = os.path.basename(filepath)
+        url = self.server + '/api/Uploader/UploadFile'
+        params = {'type' : 'Image', 'expiredInHours' : '24'}
         files = {filename : open(filepath, 'rb')}
-        response = self.session.post(url, files=files)
+        response = self.request(url, params=params, files=files)
         response_json = response.json()
         return response_json
         
