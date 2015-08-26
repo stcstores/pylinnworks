@@ -33,6 +33,9 @@ class InventoryItem:
         self.meta_data = ''
         self.extended_properties = _ExtendedProperties(self)
         
+    def __str__(self):
+        return str(self.sku) + ': ' + str(self.title)
+        
     def load_from_json(self, json, inventory):
         self.json = json
         self.inventory = inventory
