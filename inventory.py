@@ -40,9 +40,11 @@ class Inventory():
             item.depth = request['Depth']
             item.height = request['Height']
             item.package_group_id = request['PackageGroupId']
-            item.package_group = self.package_group_lookup[item.package_group_id]
+            item.package_group = self.package_group_lookup[
+                item.package_group_id]
             item.postage_service_id = request['PostalServiceId']
-            item.postage_service = self.postal_service_lookup[item.postage_service_id]
+            item.postage_service = self.postal_service_lookup[
+                item.postage_service_id]
             item.tax_rate = request['TaxRate']
             item.variation_group_name = request['VariationGroupName']
             item.weight = request['Weight']
@@ -50,7 +52,8 @@ class Inventory():
             
     def get_extended_properties(self):
         for item in self.items:
-            request = self.api.get_inventory_item_extended_properties(item.stock_id)
+            request = self.api.get_inventory_item_extended_properties(
+                item.stock_id)
             for prop in request:
                 property_name = prop['ProperyName'] # API contains this spelling error
                 if property_name not in self.extended_properties:
@@ -60,7 +63,8 @@ class Inventory():
                 item.extended_properties[prop] = ''
                 
             for prop in request:
-                item.extended_properties[prop['ProperyName']] = prop['PropertyValue']   
+                item.extended_properties[prop['ProperyName']] = prop[
+                    'PropertyValue']   
             
     def get_category_lookup(self):
         category_info = self.api.get_category_info()
