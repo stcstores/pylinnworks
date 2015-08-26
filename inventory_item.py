@@ -169,6 +169,16 @@ class InventoryItem:
         prop.type = property_type
         
         self.extended_properties.append(prop)
+        
+    def add_image(self, filepath):
+        upload_response = self.api.upload_image(filepath)
+        image_guid = upload_response[0]['FileId']
+        add_url = self.api.server + '/api/Inventory/UploadImagesToInventoryItem'
+        add_data = {
+            'inventoryItemId' : self.stock_id,
+            'imageIds' : json.dumps([image_guid])}
+        add_response = self.api.request(add_url, data=add_data)
+        return add_response
 
 
 class _ExtendedProperties():
