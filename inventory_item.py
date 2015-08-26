@@ -269,6 +269,7 @@ class _ExtendedProperties():
     def update(self):
         self.upload_new()
         self.update_existing()
+        self.remove_deleted()
     
 
 class _ExtendedProperty():
