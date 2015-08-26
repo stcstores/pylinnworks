@@ -67,7 +67,7 @@ class InventoryItem:
         inventoryItem['TaxRate'] = str(self.tax_rate)
         inventoryItem['StockItemId'] = str(self.stock_id)
         return inventoryItem
-    
+        
     def get_inventoryItem_dict(self):
         """Return ``dict`` for use with ``UpdateInventoryItem`` API request."""
         inventoryItem = {}
@@ -101,7 +101,7 @@ class InventoryItem:
         data = {'inventoryItem': json.dumps(inventoryItem)}
         
         return self.api.request(request_url, data, False)
-    
+        
     def update_item(self):
         """Make request to create update existing *inventory item* on Linnworks
         server.
@@ -115,20 +115,62 @@ class InventoryItem:
         data = {'inventoryItem': json.dumps(inventoryItem)}
         
         return self.api.request(request_url, data, False)
-    
+        
     def update_all(self):
         """Update *inventory item* and it's *extended properties* on Linnworks
         server.
         """
         self.update_item()
         self.extended_properties.update()
-    
-    
+        
     def load_extended_properties(self):
         """Get *extended properties* for item from Linnworks server."""
         self.extended_properties.load()
-            
-            
+        
+    def get_extended_properties_dict(self):
+        """Return ``dict`` containing *extended_properties* names and values."""
+        properties = {}
+        for prop in self.extended_properties:
+            if prop.delete == False:
+                properties[prop.name] = prop.value
+        return properties
+        
+    def get_extended_properties_list(self):
+        """Return ``list`` containing ``dict``s of *extended properties*
+        details.
+        """
+        properties = []
+        for prop in self.extended_properties:
+            if prop.delete == False:
+                new_prop = {
+                    'name' : prop.name,
+                    'value' : prop.value,
+                    'type' : prop.type,
+                    'guid' : prop.guid
+                }
+                properties.append(new_prop)
+        return properties
+        
+    def create_extended_property(self, name='', value='',
+            property_type='Attribute'):
+        """Add extended property to item.
+        
+        Arguments:
+            name -- Name of new extended property.
+            value -- Value of new extended prperty.
+        
+        Keyword Arguments:
+            property_type -- Type of new extended property
+                Defaults to 'Attribute'.
+        """
+        prop = _ExtendedProperty(self)
+        prop.name = name
+        prop.value = value
+        prop.type = property_type
+        
+        self.extended_properties.append(prop)
+
+
 class _ExtendedProperties():
     
     
@@ -145,7 +187,7 @@ class _ExtendedProperties():
             for prop in self.extended_properties:
                 if prop.name == key:
                     return prop
-    
+        
     def __iter__(self):
         for prop in self.extended_properties:
             yield prop
@@ -153,8 +195,12 @@ class _ExtendedProperties():
     def __len__(self):
         return len(self.extended_properties)
         
+    def append(self, extended_property):
+        self.extended_properties.append(extended_property)
+        
     def load(self):
-        response = self.item.api.get_inventory_item_extended_properties(self.item.stock_id)
+        response = self.item.api.get_inventory_item_extended_properties(
+            self.item.stock_id)
         for _property in response:
             self.add(json=_property)
         
@@ -166,27 +212,28 @@ class _ExtendedProperties():
         prop.name = name
         prop.value = value
         prop.type = property_type
-        
         self.extended_properties.append(prop)
+        return prop
+        
+    def create_on_server(self, name='', value='', property_type='Attribute'):
+        prop = self.create(name=name, value=value, property_type=property_type)
+        prop.create()
         
     def upload_new(self):
         new_properties = []
         for prop in self.extended_properties:
             if prop.on_server == False:
                 new_properties.append(prop)
-                
         if len(new_properties) > 0:
             item_arrays = []
             for prop in new_properties:
                 item_arrays.append(prop.get_json())
-                
             data = {'inventoryItemExtendedProperties' : json.dumps(item_arrays)}
-            
             api = self.item.api
             url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
             response = requests.post(url, data=data, params={'token' : api.token})
             return response
-    
+        
     def update_existing(self):
         new_properties = []
         for prop in self.extended_properties:
@@ -204,7 +251,20 @@ class _ExtendedProperties():
             url = api.server + '/api/Inventory/UpdateInventoryItemExtendedProperties'
             response = requests.post(url, data=data, params={'token' : api.token})
             return response
-    
+        
+    def remove_deleted(self):
+        api = self.item.api
+        items_to_delete = []
+        for prop in self:
+            if prop.delete == True:
+                items_to_delete.append(prop.guid)
+        
+        if len(items_to_delete) > 0:
+            data = {'inventoryItemId' : self.item.stock_id,
+                'inventoryItemExtendedPropertyIds' : json.dumps(items_to_delete)}
+            url = api.server + '/api/Inventory/DeleteInventoryItemExtendedProperties'
+            response = requests.post(url, data, params={'token' : api.token})
+            return response
         
     def update(self):
         self.upload_new()
@@ -220,6 +280,7 @@ class _ExtendedProperty():
         self.value = ''
         self.name = ''
         self.on_server = False
+        self.delete = False
         
         if json != None:
             self.load_from_json(json)
@@ -249,10 +310,22 @@ class _ExtendedProperty():
         data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
         response = requests.post(url, data=data, params={'token' : api.token})
         return response
-    
+        
     def create(self):
         api = self.item.api
         url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
         data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
         response = requests.post(url, data=data, params={'token' : api.token})
+        return response
+        
+    def remove(self):
+        self.delete = True
+        
+    def delete_from_server(self):
+        api = self.item.api
+        data = {'inventoryItemId' : self.item.stock_id,
+            'inventoryItemExtendedPropertyIds' : json.dumps([self.guid])}
+        
+        url = api.server + '/api/Inventory/DeleteInventoryItemExtendedProperties'
+        response = api.request(url, data, to_json=False)
         return response
