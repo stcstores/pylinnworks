@@ -132,10 +132,11 @@ class InventoryItem:
 class _ExtendedProperties():
     
     
-    def __init__(self, item):
+    def __init__(self, item, load=True):
         self.item = item
         self.extended_properties = []
-        self.load()
+        if load == True:
+            self.load()
         
     def __getitem__(self, key):
         if type(key) == int:
