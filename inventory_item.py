@@ -100,7 +100,7 @@ class InventoryItem:
         request_url = self.api.server + '/api/Inventory/AddInventoryItem'
         data = {'inventoryItem': json.dumps(inventoryItem)}
         
-        return self.api.request(request_url, data, False)
+        return self.api.request(request_url, data)
         
     def update_item(self):
         """Make request to create update existing *inventory item* on Linnworks
@@ -114,7 +114,7 @@ class InventoryItem:
         request_url = self.api.server + '/api/Inventory/UpdateInventoryItem'
         data = {'inventoryItem': json.dumps(inventoryItem)}
         
-        return self.api.request(request_url, data, False)
+        return self.api.request(request_url, data)
         
     def update_all(self):
         """Update *inventory item* and it's *extended properties* on Linnworks
@@ -231,7 +231,7 @@ class _ExtendedProperties():
             data = {'inventoryItemExtendedProperties' : json.dumps(item_arrays)}
             api = self.item.api
             url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
-            response = requests.post(url, data=data, params={'token' : api.token})
+            response = api.request(url, data)
             return response
         
     def update_existing(self):
@@ -249,7 +249,7 @@ class _ExtendedProperties():
             
             api = self.item.api
             url = api.server + '/api/Inventory/UpdateInventoryItemExtendedProperties'
-            response = requests.post(url, data=data, params={'token' : api.token})
+            response = api.request(url, data)
             return response
         
     def remove_deleted(self):
@@ -263,7 +263,7 @@ class _ExtendedProperties():
             data = {'inventoryItemId' : self.item.stock_id,
                 'inventoryItemExtendedPropertyIds' : json.dumps(items_to_delete)}
             url = api.server + '/api/Inventory/DeleteInventoryItemExtendedProperties'
-            response = requests.post(url, data, params={'token' : api.token})
+            response = api.request(url, data)
             return response
         
     def update(self):
@@ -309,14 +309,14 @@ class _ExtendedProperty():
         api = self.item.api
         url = api.server + '/api/Inventory/UpdateInventoryItemExtendedProperties'
         data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
-        response = requests.post(url, data=data, params={'token' : api.token})
+        response = api.request(url, data)
         return response
         
     def create(self):
         api = self.item.api
         url = api.server + '/api/Inventory/CreateInventoryItemExtendedProperties'
         data = {'inventoryItemExtendedProperties' : json.dumps([self.get_json()])}
-        response = requests.post(url, data=data, params={'token' : api.token})
+        response = api.request(url, data)
         return response
         
     def remove(self):
@@ -328,5 +328,5 @@ class _ExtendedProperty():
             'inventoryItemExtendedPropertyIds' : json.dumps([self.guid])}
         
         url = api.server + '/api/Inventory/DeleteInventoryItemExtendedProperties'
-        response = api.request(url, data, to_json=False)
+        response = api.request(url, data)
         return response

@@ -35,28 +35,23 @@ class LinnworksAPI:
         self.get_token()
         
 
-    def make_request(self, url, data=None, params=None, to_json=True):
+    def make_request(self, url, data=None, params=None):
         """Request resource URL
         
         Arguments:
-            url (str): URL of resource to be requested.
+            url -- URL of resource to be requested.
             
         Keyword arguments:
-            params --  dict containing GET request variables. (Default None)
             data --  dict containing POST request variables. (Default None)
-            to_json -- If True method returns parsed JSON. (Default True)
-                
+            params --  dict containing GET request variables. (Default None)
+            
         Returns:
-            If to_json is True return response as parsed JSON. Otherwise return
-            requests.Request object.
+            ``requests.Request`` object.
         """
         response = self.session.post(url, data=data, params=params)
-        if to_json == True:
-            return response.json()
-        else:
-            return response
+        return response
 
-    def request(self, url, data=None, to_json=True):
+    def request(self, url, data=None):
         """Add authentication variables and make API request.
         
         Arguments:
@@ -64,14 +59,12 @@ class LinnworksAPI:
             
         Keyword Arguments:
             data -- ``dict`` of GET variables (Default None)
-            to_json -- If True method returns parsed JSON. (Default True)
             
         Returns:
-            If to_json is True return response as parsed JSON. Otherwise return
-            requests.Request object.
+            ``requests.Request`` object.
         """
         params = {'token' : self.token}
-        return self.make_request(url, data=data, params=params, to_json=to_json)
+        return self.make_request(url, data=data, params=params)
 
     def get_token(self):
         """Make authentication requests and set ``self.token`` and
@@ -80,11 +73,11 @@ class LinnworksAPI:
         login_url = 'https://api.linnworks.net//api/Auth/Multilogin'
         auth_url =  'https://api.linnworks.net//api/Auth/Authorize'
         login_data = {'userName' : self.username, 'password' : self.password}
-        multilogin = self.make_request(login_url, login_data)
+        multilogin = self.make_request(login_url, login_data).json()
         self.user_id = multilogin[0]['Id']
         auth_data = login_data
         auth_data['userId'] = self.user_id
-        authorize = self.make_request(auth_url, auth_data)
+        authorize = self.make_request(auth_url, auth_data).json()
         self.token = authorize['Token']
         self.server = authorize['Server']
         
@@ -97,8 +90,9 @@ class LinnworksAPI:
         """Return *category* information as ``dict``."""
         url = self.server + '/api/Inventory/GetCategories'
         response = self.request(url)
+        response_json = response.json()
         categories = []
-        for category in response:
+        for category in response_json:
             new_category = {}
             new_category['name'] = category['CategoryName']
             new_category['id'] = category['CategoryId']
@@ -126,8 +120,9 @@ class LinnworksAPI:
         """Return *packaging group* information as ``dict``."""
         url = self.server + '/api/Inventory/GetPackageGroups'
         response = self.request(url)
+        response_json = response.json()
         packaging_groups = []
-        for group in response:
+        for group in response_json:
             new_group = {}
             new_group['id'] = group['Value']
             new_group['name'] = group['Key']
@@ -147,8 +142,9 @@ class LinnworksAPI:
         """Return *shipping method* information and return as ``dict``."""
         url = self.server + '/api/Orders/GetShippingMethods'
         response = self.request(url)
+        response_json = response.json()
         shipping_methods = []
-        for service in response:
+        for service in response_json:
             for method in service['PostalServices']:
                 new_method = {}
                 new_method['vendor'] = method['Vendor']
@@ -171,8 +167,9 @@ class LinnworksAPI:
         """Return *location* names and IDs and return as ``dict``."""
         url = self.server + '/api/Inventory/GetStockLocations'
         response = self.request(url)
+        response_json = response.json()
         locations = []
-        for location in response:
+        for location in response_json:
             new_location = {}
             new_location['name'] = location['LocationName']
             new_location['id'] = location['StockLocationId']
@@ -200,8 +197,9 @@ class LinnworksAPI:
         """Return *channel* information as ``dict``."""
         url = self.server + '/api/Inventory/GetChannels'
         response = self.request(url)
+        response_json = response.json()
         channels = []
-        for channel in response:
+        for channel in response_json:
             channels.append(channel['Source'] + ' ' + channel['SubSource'])
         return channels
 
@@ -210,24 +208,26 @@ class LinnworksAPI:
         """Return ``list`` of *inventory views*."""
         url = self.server + '/api/Inventory/GetInventoryViews'
         response = self.request(url)
-        return response
+        response_json = response.json()
+        return response_json
     
 
     def get_new_inventory_view(self):
         """Returns default *inventory view*."""
         url = self.server + '/api/Inventory/GetNewInventoryView'
         response = self.request(url)
-        return response
+        response_json = response.json()
+        return response_json
     
 
     def get_inventory_column_types(self):
         """Return ``list`` of *column types*."""
         url = self.server + '/api/Inventory/GetInventoryColumnTypes'
-        response = self.request(url, to_json=to_json)
+        response = self.request(url)
         return response
     
 
-    def get_inventory_items(self, start=0, count=1, to_json=True, view=None):
+    def get_inventory_items(self, start=0, count=1, view=None):
         """Rquest *inventory items*.
         
         Keyword arguments:
@@ -235,11 +235,9 @@ class LinnworksAPI:
             count -- Number of items to be returned. Default 1.
             view: InventoryView ``JSON`` object to filter results. Default will
                 return any item.
-            to_json -- If True method returns parsed JSON. (Default True)
             
         Returns:
-            If to_json is True return response as parsed JSON. Otherwise return
-            requests.Request object.
+            ``requests.Request`` object.
         """
         if view == None:
             view = self.get_new_inventory_view()
@@ -251,8 +249,9 @@ class LinnworksAPI:
                 'startIndex' : start,
                 'itemsCount' : count
                 }
-        response = self.request(url, data, to_json=to_json)
-        return response
+        response = self.request(url, data)
+        response_json = response.json()
+        return response_json
     
 
     def get_inventory_list(self, view=None,start=0, count=None):
@@ -307,7 +306,7 @@ class LinnworksAPI:
         """
         url = self.server + '/api/Inventory/GetInventoryItemById'
         data = {'id' : stock_id}
-        response = self.request(url, data)
+        response = self.request(url, data).json()
         if inventory_item != True:
             return response
         else:
@@ -348,7 +347,8 @@ class LinnworksAPI:
         """Return ``list`` of *extended property* names."""
         url = self.server + '/api/Inventory/GetExtendedPropertyNames'
         response = self.request(url)
-        return response
+        response_json = response.json()
+        return response_json
     
 
     def get_inventory_item_extended_properties(self, stock_id):
@@ -360,14 +360,16 @@ class LinnworksAPI:
         url = self.server + '/api/Inventory/GetInventoryItemExtendedProperties'
         data = {'inventoryItemId' : stock_id}
         response = self.request(url, data)
-        return response
+        response_json = response.json()
+        return response_json
     
     
     def get_new_sku(self):
         """Return unsed product SKU."""
         url = self.server + '/api/Stock/GetNewSKU'
         response = self.request(url)
-        return response
+        response_json = response.json()
+        return response_json
     
     
     def sku_exists(self, sku):
@@ -375,7 +377,8 @@ class LinnworksAPI:
         url = self.server + '/api/Stock/SKUExists'
         data = {'SKU' : sku}
         response = self.request(url, data)
-        return response
+        response_json = response.json()
+        return response_json
     
     
     def upload_image(self, filename, filepath):
@@ -393,7 +396,8 @@ class LinnworksAPI:
         url += self.token
         files = {filename : open(filepath, 'rb')}
         response = self.session.post(url, files=files)
-        return response
+        response_json = response.json()
+        return response_json
     
     
     def create_variation_group(self, parent_title, variation_guids,
@@ -426,7 +430,7 @@ class LinnworksAPI:
         template['VariationItemIds'] = variation_guids
         data = {'template' : json.dumps(template)}
         response = self.request(url, data)
-        if response == '':
+        if response.text == '':
             return True
         else:
             return response
@@ -441,8 +445,8 @@ class LinnworksAPI:
         data['entriesPerPage'] = '100'
         data['pageNumber'] = 1
         response = self.request(url, data)
-        print(response)
-        return response['Data'][0]['pkVariationItemId']
+        response_json = response.json()
+        return response_json['Data'][0]['pkVariationItemId']
     
         
     def get_variation_group_inventory_item_by_SKU(self, sku):
