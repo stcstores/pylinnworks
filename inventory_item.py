@@ -1,10 +1,26 @@
+#!/usr/bin/env python3
+
+"""This module contains the ``InventoryItem`` class to be used as a container
+for Linnworks Inventory Items."""
+
 import uuid
 import json
 import requests
 
-class InventoryItem:
 
+class InventoryItem:
+    
+    
     def __init__(self, api, stock_id=None):
+        """Create class variables and set ``self.stock_id`` if not passed.
+        
+        Arguments:
+            api -- ``LinnworksAPI`` object to be used for API calls.
+            
+        Keyword Arguments:
+            stock_id -- Items ``GUID`` *Stock ID*. If None one will be generated.
+                (Defualt None)
+        """
         self.api = api
         if stock_id != None:
             self.stock_id = stock_id
@@ -171,6 +187,11 @@ class InventoryItem:
         self.extended_properties.append(prop)
         
     def add_image(self, filepath):
+        """Add image to item.
+        
+        Arguments:
+            filepath -- Path to image to be uploaded.
+        """
         upload_response = self.api.upload_image(filepath)
         image_guid = upload_response[0]['FileId']
         add_url = self.api.server + '/api/Inventory/UploadImagesToInventoryItem'
