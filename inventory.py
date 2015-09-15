@@ -1,6 +1,6 @@
 from . inventory_item import InventoryItem as InventoryItem
 
-from . lstools . table import Table as Table
+from lstools import Table as Table
 
 class Inventory():
 
