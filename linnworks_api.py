@@ -455,3 +455,40 @@ class LinnworksAPI:
         guid = self.get_inventory_item_id_by_SKU(sku)
         item = self.get_inventory_item_by_id(guid)
         return item
+    
+    def get_all_open_order_ids(self, filters={}):
+        """Return list containing **order guid** for all current **open orders**
+        
+        Keyword Arguments:
+            filters -- **filter** object as ''dict''. Defaults to empty ''dict''.
+        """
+        fulfilment_center = '00000000-0000-0000-0000-000000000000'
+        for location in self.get_location_info():
+            if location['name'] == 'Default':
+                fulfilment_center = location['id']
+        
+        data = {'filters' : json.dumps('{}'),
+                'fulfilmentCenter' : fulfilment_center,
+                'additionalFilter' : ''}
+        url = self.server + '/api/Orders/GetAllOpenOrders'
+        response = self.request(url, data)
+        order_ids = response.json()
+        return order_ids
+    
+    def get_all_open_orders(self, filters={}):
+        
+        order_ids = self.get_all_open_order_ids(filters=filters)
+        fulfilment_location_id = '00000000-0000-0000-0000-000000000000'
+        for location in self.get_location_info():
+            if location['name'] == 'Default':
+                fulfilment_location_id = location['id']
+        
+        data = {'ordersIds' : json.dumps(order_ids),
+                'fulfilmentLocationId' : fulfilment_location_id,
+                'loadItems' : 'true',
+                'loadAdditionalInfo' : 'true'}
+        
+        url = self.server + '/api/Orders/GetOrders'
+        
+        response = self.request(url, data)
+        return response.json()
