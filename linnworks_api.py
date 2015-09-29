@@ -492,3 +492,25 @@ class LinnworksAPI:
         
         response = self.request(url, data)
         return response.json()
+
+    def get_image_urls_by_item_id(self, item_id):
+        url = self.server + '/api/Inventory/GetInventoryItemImages'
+        data = {'inventoryItemId' : item_id}
+        response = self.request(url, data)
+        response_json = response.json()
+        image_urls = []
+        for image in response_json:
+            if image['IsMain'] == True:
+                image_url = image['Source'].replace('tumbnail_', '')
+                image_urls.append(image_url)
+        for image in response_json:
+            if image['IsMain'] != True:
+                image_url = image['Source'].replace('tumbnail_', '')
+                image_urls.append(image_url)
+        return image_urls
+
+
+    def get_image_urls_by_SKU(self, sku):
+        item_id = self.get_inventory_item_id_by_SKU(sku)
+        image_urls = self.get_image_urls_by_item_id(item_id)
+        return image_urls
