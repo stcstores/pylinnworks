@@ -307,8 +307,9 @@ class LinnworksAPI:
             item.variation_group_name = response['VariationGroupName']
             item.weight = response['Weight']
             item.width = response['Width']
-            item.quantity = response['Quantity']
             item.meta_data = response['MetaData']
+
+            item.quantity = self.get_stock_level_by_id(stock_id)
             
             for category in self.get_category_info():
                 if category['id'] == item.category_id:
@@ -514,3 +515,16 @@ class LinnworksAPI:
         item_id = self.get_inventory_item_id_by_SKU(sku)
         image_urls = self.get_image_urls_by_item_id(item_id)
         return image_urls
+
+    def get_stock_level_by_id(self, stock_id, location='Default'):
+        url = self.server + '/api/Stock/GetStockLevel'
+        data = {'stockItemId' : stock_id}
+        response = self.request(url, data)
+        for loc in response.json():
+            if loc['Location']['LocationName'] == location:
+                return loc['Available']
+        raise Exception('Location Not Valid')
+        
+    def get_stock_level_by_SKU(self, sku, location='Default'):
+        stock_id = self.get_inventory_item_id_by_SKU(sku)
+        return self.get_stock_level_by_id(stock_id, location)
