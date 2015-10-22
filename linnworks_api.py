@@ -582,3 +582,13 @@ class LinnworksAPI:
                 if channel['SubSource'] == 'stcstores.co.uk (shopify)':
                     channels['shopify'] = channel['Description']
         return channels
+
+    def get_variation_children(self, parent_guid):
+        url = self.server + '/api/Stock/GetVariationItems'
+        data = {'pkVariationItemId' : parent_guid}
+        response = self.request(url, data)
+        response_json = response.json()
+        variation_children = []
+        for child in response_json:
+            variation_children.append(child['pkStockItemId'])
+        return variation_children
