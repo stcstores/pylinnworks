@@ -528,3 +528,57 @@ class LinnworksAPI:
     def get_stock_level_by_SKU(self, sku, location='Default'):
         stock_id = self.get_inventory_item_id_by_SKU(sku)
         return self.get_stock_level_by_id(stock_id, location)
+
+    def get_channel_titles(self, guid):
+        url = self.server + '/api/Inventory/GetInventoryItemTitles'
+        data = {'inventoryItemId' : guid}
+        response = self.request(url, data)
+        response_json = response.json()
+        channels = {}
+        for channel in response_json:
+            if channel['Source'] == 'AMAZON':
+                if channel['SubSource'] == 'Stc Stores':
+                    channels['amazon'] = channel['Title']
+            elif channel['Source'] == 'EBAY':
+                if channel['SubSource'] == 'EBAY0':
+                    channels['ebay'] = channel['Title']
+            elif channel['Source'] == 'SHOPIFY':
+                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
+                    channels['shopify'] = channel['Title']
+        return channels
+
+    def get_channel_prices(self, guid):
+        url = self.server + '/api/Inventory/GetInventoryItemPrices'
+        data = {'inventoryItemId' : guid}
+        response = self.request(url, data)
+        response_json = response.json()
+        channels = {}
+        for channel in response_json:
+            if channel['Source'] == 'AMAZON':
+                if channel['SubSource'] == 'Stc Stores':
+                    channels['amazon'] = channel['Price']
+            elif channel['Source'] == 'EBAY':
+                if channel['SubSource'] == 'EBAY0':
+                    channels['ebay'] = channel['Price']
+            elif channel['Source'] == 'SHOPIFY':
+                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
+                    channels['shopify'] = channel['Price']
+        return channels
+
+    def get_channel_descriptions(self, guid):
+        url = self.server + '/api/Inventory/GetInventoryItemTitles'
+        data = {'inventoryItemId' : guid}
+        response = self.request(url, data)
+        response_json = response.json()
+        channels = {}
+        for channel in response_json:
+            if channel['Source'] == 'AMAZON':
+                if channel['SubSource'] == 'Stc Stores':
+                    channels['amazon'] = channel['Description']
+            elif channel['Source'] == 'EBAY':
+                if channel['SubSource'] == 'EBAY0':
+                    channels['ebay'] = channel['Description']
+            elif channel['Source'] == 'SHOPIFY':
+                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
+                    channels['shopify'] = channel['Description']
+        return channels
