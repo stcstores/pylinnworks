@@ -600,6 +600,9 @@ class LinnworksAPI:
         return channels
 
     def get_variation_children(self, parent_guid):
+        """Return list of GUIDs for variations in the variation group with
+        specified GUID
+        """
         url = self.server + '/api/Stock/GetVariationItems'
         data = {'pkVariationItemId': parent_guid}
         response = self.request(url, data)
@@ -608,3 +611,90 @@ class LinnworksAPI:
         for child in response_json:
             variation_children.append(child['pkStockItemId'])
         return variation_children
+
+    def make_inventory_search_filter(self, value, filter_name, condition):
+        """Returns filter object for use with inventory view object"""
+        _filter = {}
+        _filter['Value'] = str(value)
+        _filter['Field'] = 'String'
+        _filter['FilterName'] = filter_name
+        _filter['FilterNameExact'] = ''
+        _filter['Condition'] = condition
+        return _filter
+
+    def get_inventory_search_columns(self):
+        """Returns columns object for use with inventory view object.
+        Uses columns SKU and Title
+        """
+        columns = [
+            {"ColumnName": "SKU",
+                "DisplayName": "SKU",
+                "Group": "General",
+                "Field": "String",
+                "SortDirection": "None",
+                "Width": 150,
+                "IsEditable": False},
+            {"ColumnName": "Title",
+                "DisplayName": "Title",
+                "Group": "General",
+                "Field": "String",
+                "SortDirection": "None",
+                "Width": 250,
+                "IsEditable": True}]
+        return columns
+
+    def search_variation_group_title(self, title, max_count=None):
+        """Return list of dictionaries with title, sku and guid of variation
+        groups where their title contains passed title.
+        """
+        if max_count is None:
+            max_count = self.get_item_count()
+        url = self.server + '/api/Stock/SearchVariationGroups'
+        data = {
+            'searchType': 'VariationName',
+            'searchText': str(title),
+            'pageNumber': 1,
+            'entriesPerPage': max_count
+        }
+        response = self.request(url, data).json()
+        variation_groups = []
+        for group in response['Data']:
+            new_group = {}
+            new_group['guid'] = group['pkVariationItemId']
+            new_group['sku'] = group['VariationSKU']
+            new_group['title'] = group['VariationGroupName']
+            new_group['variation_group'] = True
+            variation_groups.append(new_group)
+        return variation_groups
+
+    def search_single_inventory_item_title(self, title, max_count=None):
+        """Return list of dictionaries with title, sku and guid of inventory
+        items where their title contains passed title.
+        """
+        if max_count is None:
+            max_count = self.get_item_count()
+        view = self.get_new_inventory_view()
+        view['Columns'] = self.get_inventory_search_columns()
+        view_filter = self.make_inventory_search_filter(title,
+                                                        'Title',
+                                                        'Contains')
+        view['Filters'] = [view_filter]
+        response = self.get_inventory_items(view=view, count=max_count)
+        items = []
+        for item in response['Items']:
+            new_item = {}
+            new_item['guid'] = item['Id']
+            new_item['sku'] = item['SKU']
+            new_item['title'] = item['Title']
+            new_item['variation_group'] = False
+            items.append(new_item)
+        return items
+
+    def search_inventory_item_title(self, title, max_count=None):
+        """Returns results of search_inventory_item_title and
+        search_variation_group_title as single list
+        """
+        single_items = self.search_single_inventory_item_title(title,
+                                                               max_count)
+        variation_groups = self.search_variation_group_title(title, max_count)
+        return single_items + variation_groups
