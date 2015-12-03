@@ -711,7 +711,7 @@ class LinnworksAPI:
     def process_order_by_GUID(self, guid):
         """Processes order with GUID guid"""
         url = self.server + '/api/Orders/ProcessOrder'
-        data = {'orderId': guid, scanPerformed: True}
+        data = {'orderId': guid, 'scanPerformed': True}
         response = self.request(url, data)
         return response.json()
 
