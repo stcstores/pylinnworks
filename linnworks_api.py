@@ -698,3 +698,24 @@ class LinnworksAPI:
                                                                max_count)
         variation_groups = self.search_variation_group_title(title, max_count)
         return single_items + variation_groups
+
+    def get_open_order_GUID_by_number(self, order_number):
+        """Returns GUID for open order with order number order_number"""
+        url = self.server + '/api/Orders/GetOpenOrderIdByOrderOrReferenceId'
+        data = {'orderOrReferenceId': order_number, 'filters': json.dumps({})}
+        response = self.request(url, data)
+        if response.text == 'null':
+            return None
+        return response.json()  # Remove double quote characters
+
+    def process_order_by_GUID(self, guid):
+        """Processes order with GUID guid"""
+        url = self.server + '/api/Orders/ProcessOrder'
+        data = {'orderId': guid, scanPerformed: True}
+        response = self.request(url, data)
+        return response.json()
+
+    def process_order_by_order_number(self, order_number):
+        """Processes order wtih order number order_number"""
+        guid = self.get_open_order_GUID_by_number(order_number)
+        return self.process_order_by_GUID(guid)
