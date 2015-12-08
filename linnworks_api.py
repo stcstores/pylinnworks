@@ -18,7 +18,7 @@ class LinnworksAPI:
     API and provides methods for many common API requests.
     """
 
-    def __init__(self, password=None):
+    def __init__(self, username=None, password=None):
         """Authenticate user and set ``self.token`` and ``self.server``
         variables. If password argument is None request password form user as
         ``input()``.

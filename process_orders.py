@@ -8,7 +8,7 @@ from . linnworks_api import LinnworksAPI as LinnworksAPI
 
 def process_orders():
     colorama.init()
-    api = LinnworksAPI(password='cosworth')
+    api = LinnworksAPI(username='stcstores@yahoo.com', password='cosworth')
     clear = "\n" * 100
 
     while True:
