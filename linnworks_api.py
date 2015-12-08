@@ -28,7 +28,10 @@ class LinnworksAPI:
             password -- Linnworks password (Default None)
         """
         self.session = requests.Session()
-        self.username = 'stcstores@yahoo.com'
+        if username is None:
+            self.username = input('Linnworks Username: ')
+        else:
+            self.username = username
         if password is None:
             self.password = input('Linnworks Password: ')
         else:
