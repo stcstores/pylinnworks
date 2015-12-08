@@ -22,6 +22,11 @@ def process_orders():
         if guid is None:
             cprint('Error: GUID for ' + order_number + ' not found', 'red')
             continue
+        if not api.order_is_printed(guid=guid):
+            cprint('Order Not Printed!', 'red')
+            response = input('process? y / n >').lower()
+            if response not in ('y', 'yes'):
+                continue
         api.process_order_by_GUID(guid)
         if api.get_open_order_GUID_by_number(order_number) is not None:
             cprint('Error: ' + order_number + ' may not be processed. GUID is ' + guid, 'red')
