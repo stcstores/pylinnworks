@@ -706,7 +706,7 @@ class LinnworksAPI:
         response = self.request(url, data)
         if response.text == 'null':
             return None
-        return response.json()  # Remove double quote characters
+        return response.json()
 
     def process_order_by_GUID(self, guid):
         """Processes order with GUID guid"""
@@ -719,3 +719,34 @@ class LinnworksAPI:
         """Processes order wtih order number order_number"""
         guid = self.get_open_order_GUID_by_number(order_number)
         return self.process_order_by_GUID(guid)
+
+    def get_order_data(self, guid=None, order_number=None,
+                       load_items=False, load_additional_info=False):
+        if guid is None and order_number is None:
+            raise TypeError('Neither guid or order_number was supplied.')
+        url = self.server + '/api/Orders/GetOrder'
+        data = {}
+        if guid is not None:
+            data['orderId'] = guid
+        elif order_number is not None:
+            order_guid = self.get_open_order_GUID_by_number(order_number)
+            if order_guid is None:
+                raise ValueError('order_number not in found.')
+            data['orderId'] = order_guid
+        data['fulfilmentLocationId'] = self.get_location_ids()[0]
+        data['loadItems'] = load_items
+        data['loadAdditionalInfo'] = load_additional_info
+        response = self.request(url, data)
+        return response.json()
+
+    def order_is_printed(self, guid=None, order_number=None):
+        if guid is not None:
+            order_id = guid
+        elif order_number is not None:
+            order_id = self.get_open_order_GUID_by_number(order_number)
+            if order_id is None:
+                raise ValueError('order_number not in found.')
+        elif guid is None and order_number is None:
+            raise TypeError('Neither guid or order_number was supplied.')
+        order_info = self.get_order_data(guid=order_id)
+        return order_info['GeneralInfo']['InvoicePrinted']
