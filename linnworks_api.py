@@ -8,6 +8,7 @@ import os
 import requests
 import json
 import uuid
+import re
 
 from . inventory_item import InventoryItem as InventoryItem
 from . inventory import Inventory as Inventory
@@ -723,33 +724,56 @@ class LinnworksAPI:
         guid = self.get_open_order_GUID_by_number(order_number)
         return self.process_order_by_GUID(guid)
 
-    def get_order_data(self, guid=None, order_number=None,
+    def get_order_data(self, order_number,
                        load_items=False, load_additional_info=False):
-        if guid is None and order_number is None:
-            raise TypeError('Neither guid or order_number was supplied.')
+        if self.is_guid(order_number):
+            order_id = order_number
+        else:
+            order_id = self.get_open_order_GUID_by_number(order_number)
         url = self.server + '/api/Orders/GetOrder'
         data = {}
-        if guid is not None:
-            data['orderId'] = guid
-        elif order_number is not None:
-            order_guid = self.get_open_order_GUID_by_number(order_number)
-            if order_guid is None:
-                raise ValueError('order_number not in found.')
-            data['orderId'] = order_guid
+        data['orderId'] = order_id
         data['fulfilmentLocationId'] = self.get_location_ids()[0]
         data['loadItems'] = load_items
         data['loadAdditionalInfo'] = load_additional_info
         response = self.request(url, data)
         return response.json()
 
-    def order_is_printed(self, guid=None, order_number=None):
-        if guid is not None:
-            order_id = guid
-        elif order_number is not None:
+    def order_is_printed(self, order_number):
+        if self.is_guid(order_number):
+            order_id = order_number
+        else:
             order_id = self.get_open_order_GUID_by_number(order_number)
-            if order_id is None:
-                raise ValueError('order_number not in found.')
-        elif guid is None and order_number is None:
-            raise TypeError('Neither guid or order_number was supplied.')
-        order_info = self.get_order_data(guid=order_id)
+        order_info = self.get_order_data(order_id)
         return order_info['GeneralInfo']['InvoicePrinted']
+
+    def is_guid(self, guid):
+        regex = re.compile(('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab]'
+                            '[a-f0-9]{3}-?[a-f0-9]{12}\Z'), re.I)
+        match = regex.match(guid)
+        return bool(match)
+
+    def get_open_order_ids(self):
+        url = self.server + '/api/Orders/GetAllOpenOrders'
+        data = {}
+        data['filters'] = {}
+        data['fulfilmentCenter'] = self.get_location_ids()[0]
+        data['additionalFilter'] = ''
+        response = self.request(url, data)
+        return response.json()
+
+    def count_open_orders(self):
+        order_ids = self.get_open_order_ids()
+        return len(order_ids)
+
+    def get_open_orders(self):
+        order_count = self.count_open_orders()
+        url = self.server + '/api/Orders/GetOpenOrders'
+        data = {}
+        data['entriesPerPage'] = order_count
+        data['pageNumber'] = '1'
+        data['filters'] = {}
+        data['fulfilmentCenter'] = self.get_location_ids()[0]
+        data['additionalFilter'] = ''
+        response = self.request(url, data)
+        return response.json()['Data']
