@@ -280,7 +280,6 @@ class LinnworksAPI:
             count -- Number of items to be returned. Default 1.
             view: InventoryView ``JSON`` object to filter results. Default will
                 return any item.
-            to_json -- If True method returns parsed JSON. (Default True)
 
         Returns:
             ``inventory.Inventory`` object.
