@@ -9,8 +9,10 @@ import requests
 import json
 import uuid
 import re
+from pprint import pprint
 
 from . inventory_item import InventoryItem as InventoryItem
+from . basic_item import BasicItem as BasicItem
 from . open_order import OpenOrder as OpenOrder
 from . inventory import Inventory as Inventory
 
@@ -246,7 +248,7 @@ class LinnworksAPI:
         response = self.request(url)
         return response
 
-    def get_inventory_items(self, start=0, count=1, view=None):
+    def get_inventory_items(self, start=0, count=None, view=None):
         """Rquest *inventory items*.
 
         Keyword arguments:
@@ -260,6 +262,8 @@ class LinnworksAPI:
         """
         if view is None:
             view = self.get_new_inventory_view()
+        if count is None:
+            count = self.get_item_count()
         url = self.server + '/api/Inventory/GetInventoryItems'
         view_json = json.dumps(view)
         locations = json.dumps(self.get_location_ids())
@@ -270,7 +274,11 @@ class LinnworksAPI:
                 }
         response = self.request(url, data)
         response_json = response.json()
-        return response_json
+        items = []
+        for item_data in response_json['Items']:
+            item = self.get_inventory_item_by_id(item_data['Id'])
+            items.append(item)
+        return items
 
     def get_inventory_list(self, view=None, start=0, count=None):
         """Return *inventory items* as ``inventory.Inventory`` object.
@@ -298,8 +306,18 @@ class LinnworksAPI:
 
     def get_item_count(self):
         """Return number of items in *inventory*."""
-        request = self.get_inventory_items(start=0, count=1, view=None)
-        item_count = request['TotalItems']
+        view = self.get_new_inventory_view()
+        url = self.server + '/api/Inventory/GetInventoryItems'
+        view_json = json.dumps(view)
+        locations = json.dumps(self.get_location_ids())
+        data = {'view': view_json,
+                'stockLocationIds': locations,
+                'startIndex': 0,
+                'itemsCount': 1
+                }
+        response = self.request(url, data)
+        response_json = response.json()
+        item_count = response_json['TotalItems']
         return item_count
 
     def get_inventory_item_by_id(self, stock_id, inventory_item=True):
@@ -323,7 +341,8 @@ class LinnworksAPI:
         if inventory_item is not True:
             return response
         else:
-            item = InventoryItem(self, stock_id)
+            item = BasicItem()
+            item.guid = stock_id
             item.sku = response['ItemNumber']
             item.title = response['ItemTitle']
             item.purchase_price = response['PurchasePrice']
@@ -470,7 +489,7 @@ class LinnworksAPI:
         _filter['FilterNameExact'] = ''
         _filter['Condition'] = 'Equals'
         view['Filters'] = [_filter]
-        response = self.get_inventory_items(view=view)
+        response = self.get_inventory_items(view=view, count=1)
         stock_id = response['Items'][0]['Id']
         return stock_id
 
