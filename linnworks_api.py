@@ -11,6 +11,7 @@ import uuid
 import re
 
 from . inventory_item import InventoryItem as InventoryItem
+from . open_order import OpenOrder as OpenOrder
 from . inventory import Inventory as Inventory
 
 
@@ -724,8 +725,8 @@ class LinnworksAPI:
         guid = self.get_open_order_GUID_by_number(order_number)
         return self.process_order_by_GUID(guid)
 
-    def get_order_data(self, order_number,
-                       load_items=False, load_additional_info=False):
+    def get_open_order(self, order_number,
+                       load_items=True, load_additional_info=False):
         if self.is_guid(order_number):
             order_id = order_number
         else:
@@ -737,7 +738,7 @@ class LinnworksAPI:
         data['loadItems'] = load_items
         data['loadAdditionalInfo'] = load_additional_info
         response = self.request(url, data)
-        return response.json()
+        return OpenOrder(response.json())
 
     def order_is_printed(self, order_number):
         if self.is_guid(order_number):
@@ -776,4 +777,7 @@ class LinnworksAPI:
         data['fulfilmentCenter'] = self.get_location_ids()[0]
         data['additionalFilter'] = ''
         response = self.request(url, data)
-        return response.json()['Data']
+        orders = []
+        for order_data in response.json()['Data']:
+            orders.append(OpenOrder(order_data))
+        return orders
