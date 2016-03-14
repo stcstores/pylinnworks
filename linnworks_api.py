@@ -120,6 +120,13 @@ class LinnworksAPI:
             category_ids.append(category['id'])
         return category_ids
 
+    def get_category_id(self, category_name):
+        category_info = self.get_category_info()
+        for category in category_info:
+            if category['name'] == category_name:
+                return category['id']
+        raise ValueError(category_name + " Not in Categorys")
+
     def get_packaging_group_info(self):
         """Return *packaging group* information as ``dict``."""
         url = self.server + '/api/Inventory/GetPackageGroups'
@@ -274,11 +281,13 @@ class LinnworksAPI:
                 }
         response = self.request(url, data)
         response_json = response.json()
+        """
         items = []
         for item_data in response_json['Items']:
             item = self.get_inventory_item_by_id(item_data['Id'])
             items.append(item)
-        return items
+        """
+        return response_json
 
     def get_inventory_list(self, view=None, start=0, count=None):
         """Return *inventory items* as ``inventory.Inventory`` object.
@@ -702,16 +711,9 @@ class LinnworksAPI:
                                                         'Title',
                                                         'Contains')
         view['Filters'] = [view_filter]
+        pprint(view)
         response = self.get_inventory_items(view=view, count=max_count)
-        items = []
-        for item in response['Items']:
-            new_item = {}
-            new_item['guid'] = item['Id']
-            new_item['sku'] = item['SKU']
-            new_item['title'] = item['Title']
-            new_item['variation_group'] = False
-            items.append(new_item)
-        return items
+        return response
 
     def search_inventory_item_title(self, title, max_count=None):
         """Returns results of search_inventory_item_title and
@@ -799,3 +801,35 @@ class LinnworksAPI:
         for order_data in response.json()['Data']:
             orders.append(OpenOrder(order_data))
         return orders
+
+    def update_bin_rack(self, item, value,
+        location='00000000-0000-0000-0000-000000000000'):
+        url = self.server + '/api/Inventory/UpdateInventoryItemLocationField'
+        if self.is_guid(item):
+            guid = item
+        else:
+            guid = self.get_inventory_item_id_by_SKU(item)
+        data = {
+            'fieldName': 'BinRack',
+            'fieldValue': str(value),
+            'inventoryItemId': guid,
+            'locationId': location
+        }
+        return self.request(url, data)
+
+    def update_category(self, item, category):
+        url = self.server + '/api/Inventory/UpdateInventoryItemField'
+        if self.is_guid(item):
+            guid = item
+        else:
+            guid = self.get_inventory_item_id_by_SKU(item)
+        if self.is_guid(category):
+            category_id = category
+        else:
+            category_id = self.get_category_id(category)
+        data = {
+            'fieldName': 'Category',
+            'fieldValue': category_id,
+            'inventoryItemId': guid,
+        }
+        return self.request(url, data)
