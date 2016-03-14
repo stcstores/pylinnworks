@@ -93,40 +93,6 @@ class LinnworksAPI:
         """Return new ``GUID``."""
         return str(uuid.uuid4())
 
-    def get_category_info(self):
-        """Return *category* information as ``dict``."""
-        url = self.server + '/api/Inventory/GetCategories'
-        response = self.request(url)
-        response_json = response.json()
-        categories = []
-        for category in response_json:
-            new_category = {}
-            new_category['name'] = category['CategoryName']
-            new_category['id'] = category['CategoryId']
-            categories.append(new_category)
-        return categories
-
-    def get_category_names(self):
-        """Return *category* names as ``list``."""
-        category_names = []
-        for category in self.get_category_info():
-            category_names.append(category['name'])
-        return category_names
-
-    def get_category_ids(self):
-        """Return *category* IDs as ``list``."""
-        category_ids = []
-        for category in self.get_category_info():
-            category_ids.append(category['id'])
-        return category_ids
-
-    def get_category_id(self, category_name):
-        category_info = self.get_category_info()
-        for category in category_info:
-            if category['name'] == category_name:
-                return category['id']
-        raise ValueError(category_name + " Not in Categorys")
-
     def get_packaging_group_info(self):
         """Return *packaging group* information as ``dict``."""
         url = self.server + '/api/Inventory/GetPackageGroups'
@@ -328,56 +294,6 @@ class LinnworksAPI:
         response_json = response.json()
         item_count = response_json['TotalItems']
         return item_count
-
-    def get_inventory_item_by_id(self, stock_id, inventory_item=True):
-        """Returns **inventory item** data for the item with the specifed
-        *stock id*.
-
-        Arguments:
-            stock_id -- GUID of *inventory item*.
-
-        Keyword Arguments:
-            inventory_item -- If true return ``inventory_item.InventoryItem``.
-                Else return parsed ``JSON``.
-
-        Returns:
-            If inventory_item is True returns ``inventory_item.InventoryItem``.
-            Else Parsed ``JSON``.
-        """
-        url = self.server + '/api/Inventory/GetInventoryItemById'
-        data = {'id': stock_id}
-        response = self.request(url, data).json()
-        if inventory_item is not True:
-            return response
-        else:
-            item = BasicItem()
-            item.guid = stock_id
-            item.sku = response['ItemNumber']
-            item.title = response['ItemTitle']
-            item.purchase_price = response['PurchasePrice']
-            item.retail_price = response['RetailPrice']
-            item.barcode = response['BarcodeNumber']
-            item.category_id = response['CategoryId']
-            item.depth = response['Depth']
-            item.height = response['Height']
-            item.package_group_id = response['PackageGroupId']
-            item.postage_service_id = response['PostalServiceId']
-            item.tax_rate = response['TaxRate']
-            item.variation_group_name = response['VariationGroupName']
-            item.weight = response['Weight']
-            item.width = response['Width']
-            item.meta_data = response['MetaData']
-            item.quantity = self.get_stock_level_by_id(stock_id)
-            for category in self.get_category_info():
-                if category['id'] == item.category_id:
-                    item.category = category['name']
-            for package_group in self.get_packaging_group_info():
-                if package_group['id'] == item.package_group_id:
-                    item.package_group = package_group['name']
-            for postage_service in self.get_shipping_method_info():
-                if postage_service['id'] == item.postage_service:
-                    item.postage_service = postage_service['name']
-            return item
 
     def get_extended_property_names(self):
         """Return ``list`` of *extended property* names."""
