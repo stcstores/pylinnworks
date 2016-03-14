@@ -41,13 +41,15 @@ class GetCategories(Request):
         return category_ids
 
     def id_lookup(self, category_name):
+        """Get category id for category_name"""
         for category in self.info:
             if category['name'] == category_name:
                 return category['id']
-        raise ValueError(category_name + " Not in Categorys")
+        raise ValueError(category_name + " Not in Categories")
 
     def name_lookup(self, category_id):
+        """Get category id for category_name"""
         for category in self.info:
             if category['id'] == category_id:
                 return category['name']
-        raise ValueError(category_name + " Not in Categorys")
+        raise ValueError(category_id + " Not in Categories")

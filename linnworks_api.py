@@ -93,26 +93,6 @@ class LinnworksAPI:
         """Return new ``GUID``."""
         return str(uuid.uuid4())
 
-    def get_packaging_group_info(self):
-        """Return *packaging group* information as ``dict``."""
-        url = self.server + '/api/Inventory/GetPackageGroups'
-        response = self.request(url)
-        response_json = response.json()
-        packaging_groups = []
-        for group in response_json:
-            new_group = {}
-            new_group['id'] = group['Value']
-            new_group['name'] = group['Key']
-            packaging_groups.append(new_group)
-        return packaging_groups
-
-    def get_packaging_group_names(self):
-        """Return *packaging group* names as ``list``."""
-        packaging_group_names = []
-        for group in self.get_packaging_group_info():
-            packaging_group_names.append(group['name'])
-        return packaging_group_names
-
     def get_shipping_method_info(self):
         """Return *shipping method* information and return as ``dict``."""
         url = self.server + '/api/Orders/GetShippingMethods'
