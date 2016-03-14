@@ -24,6 +24,3 @@ class BasicItem:
         self.category = None
         self.package_group = None
         self.postage_service = None
-
-    def get_inventory_self(self, api):
-        return Inventoryself(api, self.guid)
