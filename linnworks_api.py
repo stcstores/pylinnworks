@@ -124,17 +124,6 @@ class LinnworksAPI:
         return response
 
     def get_inventory_items(self, start=0, count=None, view=None):
-        """Rquest *inventory items*.
-
-        Keyword arguments:
-            start -- Index of first item to be returned. Default 0.
-            count -- Number of items to be returned. Default 1.
-            view: InventoryView ``JSON`` object to filter results. Default will
-                return any item.
-
-        Returns:
-            ``requests.Request`` object.
-        """
         if view is None:
             view = self.get_new_inventory_view()
         if count is None:
@@ -621,7 +610,7 @@ class LinnworksAPI:
         return orders
 
     def update_bin_rack(self, item, value,
-        location='00000000-0000-0000-0000-000000000000'):
+                        location='00000000-0000-0000-0000-000000000000'):
         url = self.server + '/api/Inventory/UpdateInventoryItemLocationField'
         if self.is_guid(item):
             guid = item
