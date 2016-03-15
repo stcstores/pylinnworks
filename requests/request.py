@@ -9,6 +9,11 @@ class Request():
 
     def execute(self):
         self.response = self.api.request(self.url, data=self.data)
+        try:
+            self.json = self.response.json()
+        except:
+            self.json = self.response.text
+            print(self.json)
         self.process_response(self.response)
 
     def process_response(self, response):
