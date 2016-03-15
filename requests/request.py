@@ -6,6 +6,7 @@ class Request():
     def __init__(self, api):
         self.api = api
         self.url = self.api.server + self.url_extension
+        self.execute()
 
     def execute(self):
         self.response = self.api.request(self.url, data=self.data)

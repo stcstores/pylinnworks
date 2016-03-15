@@ -12,7 +12,6 @@ class GetInfoRequest(Request):
 
     def __init__(self, api):
         super().__init__(api)
-        self.execute()
 
     def process_response(self, response):
         self.info = self.get_info()

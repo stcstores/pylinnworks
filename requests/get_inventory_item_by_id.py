@@ -12,10 +12,9 @@ class GetInventoryItemByID(Request):
     url_extension = '/api/Inventory/GetInventoryItemById'
 
     def __init__(self, api, stock_id):
-        super().__init__(api)
         self.stock_id = stock_id
         self.data = {'id': self.stock_id}
-        self.execute()
+        super().__init__(api)
 
     def to_basic_item(self):
         item_data = self.response.json()
