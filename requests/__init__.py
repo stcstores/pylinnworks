@@ -14,3 +14,4 @@ from . inventory . inventory_view_filter import InventoryViewFilter
 from . inventory . get_inventory_items import GetInventoryItems
 from . inventory . get_inventory_item_count import GetInventoryItemCount
 from . inventory . get_inventory_item_by_id import GetInventoryItemByID
+from . inventory . search_inventory_by_title import SearchInventoryByTitle
