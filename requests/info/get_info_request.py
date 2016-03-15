@@ -1,6 +1,6 @@
 """Requests category information"""
 
-from . request import Request
+from .. request import Request
 
 
 class GetInfoRequest(Request):
