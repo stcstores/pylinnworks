@@ -12,6 +12,7 @@ import json
 from .. request import Request
 from . get_inventory_views import GetInventoryViews
 from .. info . get_locations import GetLocations
+from . get_inventory_item_count import GetInventoryItemCount
 
 
 class GetInventoryItems(Request):
