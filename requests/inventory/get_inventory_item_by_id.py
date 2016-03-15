@@ -4,7 +4,7 @@ Arguments:
     stock_id -- GUID of inventory item.
 """
 
-from . request import Request
+from .. request import Request
 from linnapi.basic_item import BasicItem
 
 
