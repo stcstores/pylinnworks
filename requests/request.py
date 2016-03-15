@@ -9,7 +9,7 @@ class Request():
         self.execute()
 
     def execute(self):
-        self.response = self.api.request(self.url, data=self.data)
+        self.response = self.api.request(self.url, data=self.get_data())
         try:
             self.json = self.response.json()
         except:
@@ -19,3 +19,8 @@ class Request():
 
     def process_response(self, response):
         pass
+
+    def get_data(self):
+        data = {}
+        self.data = data
+        return data
