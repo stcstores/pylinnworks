@@ -1,4 +1,5 @@
 from . request import Request
+from . functions import *
 
 from . info . get_categories import GetCategories
 from . info . get_package_groups import GetPackageGroups
