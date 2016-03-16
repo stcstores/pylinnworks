@@ -1,3 +1,5 @@
+"""Container object for open order information """
+
 from . order_item import OrderItem as OrderItem
 
 

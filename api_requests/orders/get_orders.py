@@ -1,3 +1,5 @@
+"""Gets data for list of order IDs """
+
 import json
 
 from .. request import Request

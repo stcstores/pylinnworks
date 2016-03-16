@@ -1,3 +1,5 @@
+"""Gets order data for order with order ID order_id """
+
 from .. request import Request
 from .. info . get_locations import GetLocations
 from ... open_order import OpenOrder
