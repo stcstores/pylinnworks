@@ -4,7 +4,7 @@ from . order_item import OrderItem as OrderItem
 class OpenOrder:
 
     def __init__(self, order_data):
-        self.guid = order_data['OrderId']
+        self.order_id = order_data['OrderId']
         self.order_number = order_data['NumOrderId']
         self.customer_name = order_data['CustomerInfo']['Address']['FullName']
         self.printed = order_data['GeneralInfo']['InvoicePrinted']
