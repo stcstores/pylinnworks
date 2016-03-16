@@ -14,7 +14,7 @@ class Request():
         try:
             self.response_dict = self.response.json()
         except:
-            pass
+            self.response_dict = None
         self.process_response(self.response)
 
     def process_response(self, response):
