@@ -4,7 +4,7 @@ from .. request import Request
 from .. info . get_locations import GetLocations
 
 
-class GetOpenOrderIDs(Request):
+class GetAllOpenOrders(Request):
     url_extension = '/api/Orders/GetAllOpenOrders'
     filters = {}
     location_id = ''
