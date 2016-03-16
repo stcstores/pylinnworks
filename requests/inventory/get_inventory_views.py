@@ -33,7 +33,7 @@ class GetInventoryViews(Request):
 
     def __init__(self, api, start=0, count=0, view=None):
         super().__init__(api)
-        for view in self.json:
+        for view in self.response_dict:
             self.view_dicts.append(view)
             new_view = InventoryView()
             new_view.load_from_dict(view)

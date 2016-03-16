@@ -10,11 +10,11 @@ class Request():
 
     def execute(self):
         self.response = self.api.request(self.url, data=self.get_data())
+        self.json = response.text
         try:
-            self.json = self.response.json()
+            self.response_dict = self.response.json()
         except:
-            self.json = self.response.text
-            print(self.json)
+            pass
         self.process_response(self.response)
 
     def process_response(self, response):

@@ -21,7 +21,7 @@ class GetInventoryItemByID(Request):
         return data
 
     def to_basic_item(self):
-        item_data = self.response.json()
+        item_data = self.response_dict
         item = BasicItem()
         item.guid = self.stock_id
         item.sku = item_data['ItemNumber']

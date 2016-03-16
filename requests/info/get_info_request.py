@@ -21,7 +21,7 @@ class GetInfoRequest(Request):
     def get_info(self):
         """Return information as dict."""
         info = []
-        for info_field in self.response.json():
+        for info_field in self.response_dict:
             new_info_dict = {}
             new_info_dict['name'] = info_field[self.name_field]
             new_info_dict['id'] = info_field[self.id_field]
