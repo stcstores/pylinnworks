@@ -20,7 +20,7 @@ class GetInventoryItemCount(Request):
         super().__init__(api)
 
     def process_response(self, response):
-        self.item_count = response_dict['TotalItems']
+        self.item_count = self.response_dict['TotalItems']
 
     def get_data(self):
         data = {

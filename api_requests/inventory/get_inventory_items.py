@@ -49,12 +49,12 @@ class GetInventoryItems(Request):
         return data
 
     def process_response(self, response):
-        self.result_count = len(self.json['Items'])
+        self.result_count = len(self.response_dict['Items'])
         self.items_json = []
         self.item_titles = []
         self.skus = []
         self.guids = []
-        for item in self.json['Items']:
+        for item in self.response_dict['Items']:
             self.items_json.append(item)
             self.item_titles.append(item['Title'])
             self.skus.append(item['SKU'])
