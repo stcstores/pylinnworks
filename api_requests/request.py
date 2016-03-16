@@ -9,7 +9,9 @@ class Request():
         self.execute()
 
     def execute(self):
-        self.response = self.api.request(self.url, data=self.get_data())
+        self.response = self.api.request(self.url, data=self.get_data(),
+                                         files=self.get_files(),
+                                         params=self.get_params())
         self.json = self.response.text
         try:
             self.response_dict = self.response.json()
@@ -24,3 +26,9 @@ class Request():
         data = {}
         self.data = data
         return data
+
+    def get_files(self):
+        return None
+
+    def get_params(self):
+        return {}
