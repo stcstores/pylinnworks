@@ -22,3 +22,20 @@ def is_guid(guid):
                         '[a-f0-9]{3}-?[a-f0-9]{12}\Z'), re.I)
     match = regex.match(guid)
     return bool(match)
+
+
+def get_stock_id_by_SKU(api, sku):
+    from . inventory . inventory_view import InventoryView
+    from . inventory . inventory_view_filter import InventoryViewFilter
+    from . inventory . get_inventory_items import GetInventoryItems
+
+    view = InventoryView()
+    view.filters.append(InventoryViewFilter(
+        field='String',
+        value=sku,
+        condition='Equals',
+        filter_name='SKU',
+        filter_name_exact=''
+    ))
+    response = GetInventoryItems(api, view=view)
+    return response.response_dict['Items'][0]['Id']
