@@ -16,3 +16,5 @@ from . get_inventory_item_extended_properties import GetInventoryItemExtendedPro
 from . get_stock_level import GetStockLevel
 from . upload_file import UploadFile
 from . get_inventory_item_images import GetInventoryItemImages
+from . get_variation_items import GetVariationItems
+from . search_variation_groups import SearchVariationGroups
