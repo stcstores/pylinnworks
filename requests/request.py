@@ -10,7 +10,7 @@ class Request():
 
     def execute(self):
         self.response = self.api.request(self.url, data=self.get_data())
-        self.json = response.text
+        self.json = self.response.text
         try:
             self.response_dict = self.response.json()
         except:
