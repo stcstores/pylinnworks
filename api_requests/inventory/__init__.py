@@ -18,3 +18,4 @@ from . upload_file import UploadFile
 from . get_inventory_item_images import GetInventoryItemImages
 from . get_variation_items import GetVariationItems
 from . search_variation_groups import SearchVariationGroups
+from . create_variation_group import CreateVariationGroup
