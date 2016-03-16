@@ -14,3 +14,5 @@ from . get_inventory_column_types import GetInventoryColumnTypes
 from . get_extended_property_names import GetExtendedPropertyNames
 from . get_inventory_item_extended_properties import GetInventoryItemExtendedProperties
 from . get_stock_level import GetStockLevel
+from . upload_file import UploadFile
+from . get_inventory_item_images import GetInventoryItemImages
