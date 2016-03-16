@@ -89,103 +89,6 @@ class LinnworksAPI:
         self.token = authorize['Token']
         self.server = authorize['Server']
 
-    def create_guid(self):
-        """Return new ``GUID``."""
-        return str(uuid.uuid4())
-
-    def get_channels(self):
-        """Return *channel* information as ``dict``."""
-        url = self.server + '/api/Inventory/GetChannels'
-        response = self.request(url)
-        response_json = response.json()
-        channels = []
-        for channel in response_json:
-            channels.append(channel['Source'] + ' ' + channel['SubSource'])
-        return channels
-
-    def get_inventory_views(self):
-        """Return ``list`` of *inventory views*."""
-        url = self.server + '/api/Inventory/GetInventoryViews'
-        response = self.request(url)
-        response_json = response.json()
-        return response_json
-
-    def get_new_inventory_view(self):
-        """Returns default *inventory view*."""
-        url = self.server + '/api/Inventory/GetNewInventoryView'
-        response = self.request(url)
-        response_json = response.json()
-        return response_json
-
-    def get_inventory_column_types(self):
-        """Return ``list`` of *column types*."""
-        url = self.server + '/api/Inventory/GetInventoryColumnTypes'
-        response = self.request(url)
-        return response
-
-    def get_inventory_items(self, start=0, count=None, view=None):
-        if view is None:
-            view = self.get_new_inventory_view()
-        if count is None:
-            count = self.get_item_count()
-        url = self.server + '/api/Inventory/GetInventoryItems'
-        view_json = json.dumps(view)
-        locations = json.dumps(self.get_location_ids())
-        data = {'view': view_json,
-                'stockLocationIds': locations,
-                'startIndex': start,
-                'itemsCount': count
-                }
-        response = self.request(url, data)
-        response_json = response.json()
-        """
-        items = []
-        for item_data in response_json['Items']:
-            item = self.get_inventory_item_by_id(item_data['Id'])
-            items.append(item)
-        """
-        return response_json
-
-    def get_inventory_list(self, view=None, start=0, count=None):
-        """Return *inventory items* as ``inventory.Inventory`` object.
-
-        Keyword arguments:
-            start -- Index of first item to be returned. Default 0.
-            count -- Number of items to be returned. Default 1.
-            view: InventoryView ``JSON`` object to filter results. Default will
-                return any item.
-
-        Returns:
-            ``inventory.Inventory`` object.
-        """
-        if view is None:
-            view = self.get_new_inventory_view()
-        if count is None:
-            item_count = self.get_item_count()
-        else:
-            item_count = count
-        item_list = self.get_inventory_items(start=start,
-                                             count=item_count,
-                                             view=view)['Items']
-        inventory = Inventory(item_list, self)
-        return inventory
-
-    def get_item_count(self):
-        """Return number of items in *inventory*."""
-        view = self.get_new_inventory_view()
-        url = self.server + '/api/Inventory/GetInventoryItems'
-        view_json = json.dumps(view)
-        locations = json.dumps(self.get_location_ids())
-        data = {'view': view_json,
-                'stockLocationIds': locations,
-                'startIndex': 0,
-                'itemsCount': 1
-                }
-        response = self.request(url, data)
-        response_json = response.json()
-        item_count = response_json['TotalItems']
-        return item_count
-
     def get_extended_property_names(self):
         """Return ``list`` of *extended property* names."""
         url = self.server + '/api/Inventory/GetExtendedPropertyNames'
@@ -201,21 +104,6 @@ class LinnworksAPI:
         """
         url = self.server + '/api/Inventory/GetInventoryItemExtendedProperties'
         data = {'inventoryItemId': stock_id}
-        response = self.request(url, data)
-        response_json = response.json()
-        return response_json
-
-    def get_new_sku(self):
-        """Return unsed product SKU."""
-        url = self.server + '/api/Stock/GetNewSKU'
-        response = self.request(url)
-        response_json = response.json()
-        return response_json
-
-    def sku_exists(self, sku):
-        """Return True if sku exists for item on Linnworks server."""
-        url = self.server + '/api/Stock/SKUExists'
-        data = {'SKU': sku}
         response = self.request(url, data)
         response_json = response.json()
         return response_json
@@ -286,14 +174,6 @@ class LinnworksAPI:
         response_json = response.json()
         return response_json['Data'][0]['pkVariationItemId']
 
-    def get_variation_group_inventory_item_by_SKU(self, sku):
-        """Return ``inventory_item.InventoryItem`` containing *variation group*
-        with SKU ``sku``.
-        """
-        guid = self.get_variation_group_id_by_SKU(sku)
-        item = self.get_inventory_item_by_id(guid)
-        return item
-
     def get_inventory_item_id_by_SKU(self, sku):
         """Return *stock id* for *inventory item* with SKU ``sku``."""
         view = self.get_new_inventory_view()
@@ -308,47 +188,6 @@ class LinnworksAPI:
         response = self.get_inventory_items(view=view, count=1)
         stock_id = response['Items'][0]['Id']
         return stock_id
-
-    def get_inventory_item_by_SKU(self, sku):
-        """Return ``inventory_item.InventoryItem`` containing *inventory item*
-        with SKU ``sku``.
-        """
-        guid = self.get_inventory_item_id_by_SKU(sku)
-        item = self.get_inventory_item_by_id(guid)
-        return item
-
-    def get_all_open_order_ids(self, filters={}):
-        """Return list containing **order guid** for all current **open orders**
-
-        Keyword Arguments:
-            filters **filter** object as ''dict''. Defaults to empty ''dict''.
-        """
-        fulfilment_center = '00000000-0000-0000-0000-000000000000'
-        for location in self.get_location_info():
-            if location['name'] == 'Default':
-                fulfilment_center = location['id']
-
-        data = {'filters': json.dumps('{}'),
-                'fulfilmentCenter': fulfilment_center,
-                'additionalFilter': ''}
-        url = self.server + '/api/Orders/GetAllOpenOrders'
-        response = self.request(url, data)
-        order_ids = response.json()
-        return order_ids
-
-    def get_all_open_orders(self, filters={}):
-        order_ids = self.get_all_open_order_ids(filters=filters)
-        fulfilment_location_id = '00000000-0000-0000-0000-000000000000'
-        for location in self.get_location_info():
-            if location['name'] == 'Default':
-                fulfilment_location_id = location['id']
-        data = {'ordersIds': json.dumps(order_ids),
-                'fulfilmentLocationId': fulfilment_location_id,
-                'loadItems': 'true',
-                'loadAdditionalInfo': 'true'}
-        url = self.server + '/api/Orders/GetOrders'
-        response = self.request(url, data)
-        return response.json()
 
     def get_image_urls_by_item_id(self, item_id):
         url = self.server + '/api/Inventory/GetInventoryItemImages'
@@ -366,11 +205,6 @@ class LinnworksAPI:
                 image_urls.append(image_url)
         return image_urls
 
-    def get_image_urls_by_SKU(self, sku):
-        item_id = self.get_inventory_item_id_by_SKU(sku)
-        image_urls = self.get_image_urls_by_item_id(item_id)
-        return image_urls
-
     def get_stock_level_by_id(self, stock_id, location='Default'):
         url = self.server + '/api/Stock/GetStockLevel'
         data = {'stockItemId': stock_id}
@@ -379,64 +213,6 @@ class LinnworksAPI:
             if loc['Location']['LocationName'] == location:
                 return loc['Available']
         raise Exception('Location Not Valid')
-
-    def get_stock_level_by_SKU(self, sku, location='Default'):
-        stock_id = self.get_inventory_item_id_by_SKU(sku)
-        return self.get_stock_level_by_id(stock_id, location)
-
-    def get_channel_titles(self, guid):
-        url = self.server + '/api/Inventory/GetInventoryItemTitles'
-        data = {'inventoryItemId': guid}
-        response = self.request(url, data)
-        response_json = response.json()
-        channels = {}
-        for channel in response_json:
-            if channel['Source'] == 'AMAZON':
-                if channel['SubSource'] == 'Stc Stores':
-                    channels['amazon'] = channel['Title']
-            elif channel['Source'] == 'EBAY':
-                if channel['SubSource'] == 'EBAY0':
-                    channels['ebay'] = channel['Title']
-            elif channel['Source'] == 'SHOPIFY':
-                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
-                    channels['shopify'] = channel['Title']
-        return channels
-
-    def get_channel_prices(self, guid):
-        url = self.server + '/api/Inventory/GetInventoryItemPrices'
-        data = {'inventoryItemId': guid}
-        response = self.request(url, data)
-        response_json = response.json()
-        channels = {}
-        for channel in response_json:
-            if channel['Source'] == 'AMAZON':
-                if channel['SubSource'] == 'Stc Stores':
-                    channels['amazon'] = channel['Price']
-            elif channel['Source'] == 'EBAY':
-                if channel['SubSource'] == 'EBAY0':
-                    channels['ebay'] = channel['Price']
-            elif channel['Source'] == 'SHOPIFY':
-                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
-                    channels['shopify'] = channel['Price']
-        return channels
-
-    def get_channel_descriptions(self, guid):
-        url = self.server + '/api/Inventory/GetInventoryItemTitles'
-        data = {'inventoryItemId': guid}
-        response = self.request(url, data)
-        response_json = response.json()
-        channels = {}
-        for channel in response_json:
-            if channel['Source'] == 'AMAZON':
-                if channel['SubSource'] == 'Stc Stores':
-                    channels['amazon'] = channel['Description']
-            elif channel['Source'] == 'EBAY':
-                if channel['SubSource'] == 'EBAY0':
-                    channels['ebay'] = channel['Description']
-            elif channel['Source'] == 'SHOPIFY':
-                if channel['SubSource'] == 'stcstores.co.uk (shopify)':
-                    channels['shopify'] = channel['Description']
-        return channels
 
     def get_variation_children(self, parent_guid):
         """Return list of GUIDs for variations in the variation group with
@@ -450,37 +226,6 @@ class LinnworksAPI:
         for child in response_json:
             variation_children.append(child['pkStockItemId'])
         return variation_children
-
-    def make_inventory_search_filter(self, value, filter_name, condition):
-        """Returns filter object for use with inventory view object"""
-        _filter = {}
-        _filter['Value'] = str(value)
-        _filter['Field'] = 'String'
-        _filter['FilterName'] = filter_name
-        _filter['FilterNameExact'] = ''
-        _filter['Condition'] = condition
-        return _filter
-
-    def get_inventory_search_columns(self):
-        """Returns columns object for use with inventory view object.
-        Uses columns SKU and Title
-        """
-        columns = [
-            {"ColumnName": "SKU",
-                "DisplayName": "SKU",
-                "Group": "General",
-                "Field": "String",
-                "SortDirection": "None",
-                "Width": 150,
-                "IsEditable": False},
-            {"ColumnName": "Title",
-                "DisplayName": "Title",
-                "Group": "General",
-                "Field": "String",
-                "SortDirection": "None",
-                "Width": 250,
-                "IsEditable": True}]
-        return columns
 
     def search_variation_group_title(self, title, max_count=None):
         """Return list of dictionaries with title, sku and guid of variation
@@ -505,138 +250,3 @@ class LinnworksAPI:
             new_group['variation_group'] = True
             variation_groups.append(new_group)
         return variation_groups
-
-    def search_single_inventory_item_title(self, title, max_count=None):
-        """Return list of dictionaries with title, sku and guid of inventory
-        items where their title contains passed title.
-        """
-        if max_count is None:
-            max_count = self.get_item_count()
-        view = self.get_new_inventory_view()
-        view['Columns'] = self.get_inventory_search_columns()
-        view_filter = self.make_inventory_search_filter(title,
-                                                        'Title',
-                                                        'Contains')
-        view['Filters'] = [view_filter]
-        pprint(view)
-        response = self.get_inventory_items(view=view, count=max_count)
-        return response
-
-    def search_inventory_item_title(self, title, max_count=None):
-        """Returns results of search_inventory_item_title and
-        search_variation_group_title as single list
-        """
-        single_items = self.search_single_inventory_item_title(title,
-                                                               max_count)
-        variation_groups = self.search_variation_group_title(title, max_count)
-        return single_items + variation_groups
-
-    def get_open_order_GUID_by_number(self, order_number):
-        """Returns GUID for open order with order number order_number"""
-        url = self.server + '/api/Orders/GetOpenOrderIdByOrderOrReferenceId'
-        data = {'orderOrReferenceId': order_number, 'filters': json.dumps({})}
-        response = self.request(url, data)
-        if response.text == 'null':
-            return None
-        return response.json()
-
-    def process_order_by_GUID(self, guid):
-        """Processes order with GUID guid"""
-        url = self.server + '/api/Orders/ProcessOrder'
-        data = {'orderId': guid, 'scanPerformed': True}
-        response = self.request(url, data)
-        return response.json()
-
-    def process_order_by_order_number(self, order_number):
-        """Processes order wtih order number order_number"""
-        guid = self.get_open_order_GUID_by_number(order_number)
-        return self.process_order_by_GUID(guid)
-
-    def get_open_order(self, order_number,
-                       load_items=True, load_additional_info=False):
-        if self.is_guid(order_number):
-            order_id = order_number
-        else:
-            order_id = self.get_open_order_GUID_by_number(order_number)
-        url = self.server + '/api/Orders/GetOrder'
-        data = {}
-        data['orderId'] = order_id
-        data['fulfilmentLocationId'] = self.get_location_ids()[0]
-        data['loadItems'] = load_items
-        data['loadAdditionalInfo'] = load_additional_info
-        response = self.request(url, data)
-        return OpenOrder(response.json())
-
-    def order_is_printed(self, order_number):
-        if self.is_guid(order_number):
-            order_id = order_number
-        else:
-            order_id = self.get_open_order_GUID_by_number(order_number)
-        order_info = self.get_order_data(order_id)
-        return order_info['GeneralInfo']['InvoicePrinted']
-
-    def is_guid(self, guid):
-        regex = re.compile(('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab]'
-                            '[a-f0-9]{3}-?[a-f0-9]{12}\Z'), re.I)
-        match = regex.match(guid)
-        return bool(match)
-
-    def get_open_order_ids(self):
-        url = self.server + '/api/Orders/GetAllOpenOrders'
-        data = {}
-        data['filters'] = {}
-        data['fulfilmentCenter'] = self.get_location_ids()[0]
-        data['additionalFilter'] = ''
-        response = self.request(url, data)
-        return response.json()
-
-    def count_open_orders(self):
-        order_ids = self.get_open_order_ids()
-        return len(order_ids)
-
-    def get_open_orders(self):
-        order_count = self.count_open_orders()
-        url = self.server + '/api/Orders/GetOpenOrders'
-        data = {}
-        data['entriesPerPage'] = order_count
-        data['pageNumber'] = '1'
-        data['filters'] = {}
-        data['fulfilmentCenter'] = self.get_location_ids()[0]
-        data['additionalFilter'] = ''
-        response = self.request(url, data)
-        orders = []
-        for order_data in response.json()['Data']:
-            orders.append(OpenOrder(order_data))
-        return orders
-
-    def update_bin_rack(self, item, value,
-                        location='00000000-0000-0000-0000-000000000000'):
-        url = self.server + '/api/Inventory/UpdateInventoryItemLocationField'
-        if self.is_guid(item):
-            guid = item
-        else:
-            guid = self.get_inventory_item_id_by_SKU(item)
-        data = {
-            'fieldName': 'BinRack',
-            'fieldValue': str(value),
-            'inventoryItemId': guid,
-            'locationId': location
-        }
-        return self.request(url, data)
-
-    def update_category(self, item, category):
-        url = self.server + '/api/Inventory/UpdateInventoryItemField'
-        if self.is_guid(item):
-            guid = item
-        else:
-            guid = self.get_inventory_item_id_by_SKU(item)
-        if self.is_guid(category):
-            category_id = category
-        else:
-            category_id = self.get_category_id(category)
-        data = {
-            'fieldName': 'Category',
-            'fieldValue': category_id,
-            'inventoryItemId': guid,
-        }
-        return self.request(url, data)
