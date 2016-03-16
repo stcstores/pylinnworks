@@ -1,8 +1,8 @@
 from . update_inventory_item_field import UpdateInventoryItemField
 
 
-class UpdateInventoryItemTitle(UpdateInventoryItemField):
-    field_name = 'Title'
+class UpdateRetailPrice(UpdateInventoryItemField):
+    field_name = 'RetailPrice'
 
     def __init__(self, api, value=None, stock_id=None):
         if value is not None:
