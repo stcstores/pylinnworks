@@ -2,19 +2,17 @@ import re
 
 
 def SKU_exists(api_session, sku):
-    url = api_session.server + '/api/Stock/SKUExists'
-    data = {'SKU': sku}
-    response = api_session.request(url, data)
-    response_json = response.json()
-    return response_json
+    """Checks if sku has been used as a product SKU """
+    from . sku_exists import SKUExists
+    request = SKUExists(api_session, sku)
+    return request.response_dict
 
 
 def get_new_SKU(api_session):
     """Return unsed product SKU."""
-    url = api_session.server + '/api/Stock/GetNewSKU'
-    response = api_session.request(url)
-    response_json = response.json()
-    return response_json
+    from . get_new_sku import GetNewSKU
+    request = GetNewSKU(api_session)
+    return request.sku
 
 
 def is_guid(guid):
