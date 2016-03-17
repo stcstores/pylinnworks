@@ -11,7 +11,16 @@ class SKUExists(Request):
         super().__init__(api_session)
 
     def get_data(self):
-        self.data = {
+        data = {
             'SKU': self.sku
         }
-        return self.data
+        return data
+
+    def test_request(self):
+        assert isinstance(self.sku, str), 'sku must be string'
+        return super().test_request()
+
+    def test_response(self, response):
+        assert response.text in ('true', 'false'), \
+            response.text + " is an invalid response"
+        return super().test_response(response)

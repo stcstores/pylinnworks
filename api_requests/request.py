@@ -6,27 +6,32 @@ class Request():
     def __init__(self, api_session):
         self.api_session = api_session
         self.url = self.api_session.server + self.url_extension
-        self.execute()
+        self.data = self.get_data()
+        if self.test_request():
+            self.execute()
 
     def execute(self):
         self.response = self.api_session.request(
                                                  self.url,
-                                                 data=self.get_data(),
+                                                 data=self.data,
                                                  files=self.get_files(),
                                                  params=self.get_params())
         self.json = self.response.text
-        try:
+        if self.test_response(self.response):
             self.response_dict = self.response.json()
-        except:
-            self.response_dict = None
-        self.process_response(self.response)
+            self.process_response(self.response)
 
     def process_response(self, response):
         pass
 
+    def test_request(self):
+        return True
+
+    def test_response(self, response):
+        return True
+
     def get_data(self):
         data = {}
-        self.data = data
         return data
 
     def get_files(self):

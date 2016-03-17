@@ -3,3 +3,4 @@ from . functions import *
 from . info import *
 from . inventory import *
 from . orders import *
+from . sku_exists import SKUExists
