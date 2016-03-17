@@ -31,8 +31,8 @@ class GetInventoryViews(Request):
         )
     ]
 
-    def __init__(self, api, start=0, count=0, view=None):
-        super().__init__(api)
+    def __init__(self, api_session, start=0, count=0, view=None):
+        super().__init__(api_session)
         for view in self.response_dict:
             self.view_dicts.append(view)
             new_view = InventoryView()

@@ -10,7 +10,7 @@ class GetAllOpenOrders(Request):
     location_id = ''
     additional_filter = ''
 
-    def __init__(self, api, filters=None, location_id=None,
+    def __init__(self, api_session, filters=None, location_id=None,
                  additional_filter=None):
         if filters is not None:
             self.filters = filters
@@ -18,7 +18,7 @@ class GetAllOpenOrders(Request):
             self.location_id = location_id
         else:
             self.location_id = GetLocations.default
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

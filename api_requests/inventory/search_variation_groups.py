@@ -9,7 +9,7 @@ class SearchVariationGroups(Request):
     count = 99999999
     page_number = 1
 
-    def __init__(self, api, search_type, search_text=None,
+    def __init__(self, api_session, search_type, search_text=None,
                  page_number=None, count=None):
         if search_type is not None:
             self.search_type = search_type
@@ -19,7 +19,7 @@ class SearchVariationGroups(Request):
             self.page_number = page_number
         if count is not None:
             self.count = count
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

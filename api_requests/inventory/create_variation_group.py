@@ -10,7 +10,7 @@ class CreateVariationGroup(Request):
     url_extension = '/api/Stock/CreateVariationGroup'
     children_ids = []
 
-    def __init__(self, api, sku=None, title=None, stock_id=None,
+    def __init__(self, api_session, sku=None, title=None, stock_id=None,
                  children_ids=None):
         if sku is not None:
             self.sku = sku
@@ -24,7 +24,7 @@ class CreateVariationGroup(Request):
             self.stock_id = str(uuid.uuid4)
         if children_ids is not None:
             self.children_ids = children_ids
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         template = {}

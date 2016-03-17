@@ -10,8 +10,8 @@ class GetOpenOrder(Request):
     load_items = True
     load_additional_info = False
 
-    def __init__(self, api, order_id, location_id=None, load_items=None,
-                 load_additional_info=None):
+    def __init__(self, api_session, order_id, location_id=None,
+                 load_items=None, load_additional_info=None):
         self.order_id = order_id
         if location_id is not None:
             self.location_id = location_id
@@ -23,7 +23,7 @@ class GetOpenOrder(Request):
             self.load_items = load_items
         if load_additional_info is not None:
             self.load_additional_info = load_additional_info
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

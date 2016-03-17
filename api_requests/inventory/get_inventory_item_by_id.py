@@ -11,9 +11,9 @@ from linnapi.basic_item import BasicItem
 class GetInventoryItemByID(Request):
     url_extension = '/api/Inventory/GetInventoryItemById'
 
-    def __init__(self, api, stock_id):
+    def __init__(self, api_session, stock_id):
         self.stock_id = stock_id
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {'id': self.stock_id}
@@ -39,14 +39,14 @@ class GetInventoryItemByID(Request):
         item.weight = item_data['Weight']
         item.width = item_data['Width']
         item.meta_data = item_data['MetaData']
-        item.quantity = self.api.get_stock_level_by_id(self.stock_id)
-        for category in self.api.get_category_info():
+        item.quantity = self.api_session.get_stock_level_by_id(self.stock_id)
+        for category in self.api_session.get_category_info():
             if category['id'] == item.category_id:
                 item.category = category['name']
-        for package_group in self.api.get_packaging_group_info():
+        for package_group in self.api_session.get_packaging_group_info():
             if package_group['id'] == item.package_group_id:
                 item.package_group = package_group['name']
-        for postage_service in self.api.get_shipping_method_info():
+        for postage_service in self.api_session.get_shipping_method_info():
             if postage_service['id'] == item.postage_service:
                 item.postage_service = postage_service['name']
         return item

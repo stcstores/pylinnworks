@@ -22,21 +22,22 @@ class GetInventoryItems(Request):
     view = None
     locations = []
 
-    def __init__(self, api, start=0, count=0, view=None, locations=None):
+    def __init__(self, api_session, start=0, count=0, view=None,
+                 locations=None):
         self.start = 0
         if count == 0:
-            self.count = GetInventoryItemCount(api).item_count
+            self.count = GetInventoryItemCount(api_session).item_count
         else:
             self.count = count
         if view is None:
-            self.view = GetInventoryViews(api)[0]
+            self.view = GetInventoryViews(api_session)[0]
         else:
             self.view = view
         if locations is None:
-            self.locations = GetLocations(api).ids
+            self.locations = GetLocations(api_session).ids
         else:
             self.location = locations
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

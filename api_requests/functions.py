@@ -1,18 +1,18 @@
 import re
 
 
-def SKU_exists(api, sku):
-    url = api.server + '/api/Stock/SKUExists'
+def SKU_exists(api_session, sku):
+    url = api_session.server + '/api/Stock/SKUExists'
     data = {'SKU': sku}
-    response = api.request(url, data)
+    response = api_session.request(url, data)
     response_json = response.json()
     return response_json
 
 
-def get_new_SKU(api):
+def get_new_SKU(api_session):
     """Return unsed product SKU."""
-    url = api.server + '/api/Stock/GetNewSKU'
-    response = api.request(url)
+    url = api_session.server + '/api/Stock/GetNewSKU'
+    response = api_session.request(url)
     response_json = response.json()
     return response_json
 
@@ -24,7 +24,7 @@ def is_guid(guid):
     return bool(match)
 
 
-def get_stock_id_by_SKU(api, sku):
+def get_stock_id_by_SKU(api_session, sku):
     from . inventory . inventory_view import InventoryView
     from . inventory . inventory_view_filter import InventoryViewFilter
     from . inventory . get_inventory_items import GetInventoryItems
@@ -37,5 +37,5 @@ def get_stock_id_by_SKU(api, sku):
         filter_name='SKU',
         filter_name_exact=''
     ))
-    response = GetInventoryItems(api, view=view)
+    response = GetInventoryItems(api_session, view=view)
     return response.response_dict['Items'][0]['Id']

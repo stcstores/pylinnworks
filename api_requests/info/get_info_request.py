@@ -10,8 +10,8 @@ class GetInfoRequest(Request):
     id_field = ''
     default = '00000000-0000-0000-0000-000000000000'
 
-    def __init__(self, api):
-        super().__init__(api)
+    def __init__(self, api_session):
+        super().__init__(api_session)
 
     def process_response(self, response):
         self.info = self.get_info()

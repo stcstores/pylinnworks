@@ -10,12 +10,12 @@ class GetOpenOrderIDByOrderOrReferenceID(Request):
     filters = {}
     order_number = ''
 
-    def __init__(self, api, order_number=None, filters=None):
+    def __init__(self, api_session, order_number=None, filters=None):
         if order_number is not None:
             self.order_number = order_number
         if filters is not None:
             self.filters = filters
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

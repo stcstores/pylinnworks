@@ -3,15 +3,17 @@ class Request():
     data = {}
     response = None
 
-    def __init__(self, api):
-        self.api = api
-        self.url = self.api.server + self.url_extension
+    def __init__(self, api_session):
+        self.api_session = api_session
+        self.url = self.api_session.server + self.url_extension
         self.execute()
 
     def execute(self):
-        self.response = self.api.request(self.url, data=self.get_data(),
-                                         files=self.get_files(),
-                                         params=self.get_params())
+        self.response = self.api_session.request(
+                                                 self.url,
+                                                 data=self.get_data(),
+                                                 files=self.get_files(),
+                                                 params=self.get_params())
         self.json = self.response.text
         try:
             self.response_dict = self.response.json()

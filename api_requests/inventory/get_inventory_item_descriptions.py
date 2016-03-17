@@ -6,9 +6,9 @@ from .. request import Request
 class GetInventoryItemDescriptions(Request):
     url_extension = '/api/Inventory/GetInventoryItemDescriptions'
 
-    def __init__(self, api, stock_id):
+    def __init__(self, api_session, stock_id):
         self.stock_id = stock_id
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

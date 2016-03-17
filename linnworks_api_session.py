@@ -17,7 +17,7 @@ from . open_order import OpenOrder as OpenOrder
 from . inventory import Inventory as Inventory
 
 
-class LinnworksAPI:
+class LinnworksAPISession:
     """Main wrapper class for linnworks.net API. Allows authentication with
     API and provides methods for many common API requests.
     """

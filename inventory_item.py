@@ -9,7 +9,7 @@ import json
 
 class InventoryItem:
 
-    def __init__(self, api, stock_id=None):
+    def __init__(self, api_session, stock_id=None):
         """Create class variables and set ``self.stock_id`` if not passed.
 
         Arguments:
@@ -19,7 +19,7 @@ class InventoryItem:
         stock_id -- Items ``GUID`` *Stock ID*. If None one will be generated.
                 (Defualt None)
         """
-        self.api = api
+        self.api_session = api_session
         if stock_id is not None:
             self.stock_id = stock_id
         else:
@@ -53,7 +53,7 @@ class InventoryItem:
     def load_from_json(self, json, inventory):
         self.json = json
         self.inventory = inventory
-        self.api = self.inventory.api
+        self.api_session = self.inventory.api_session
         self.sku = json['SKU']
         self.title = json['Title']
         self.stock_id = json['Id']
@@ -67,7 +67,7 @@ class InventoryItem:
 
     def create_sku(self):
         """Returns new *SKU*."""
-        self.sku = self.api.get_new_sku()
+        self.sku = self.api_session.get_new_sku()
 
     def get_create_inventoryItem_dict(self):
         """Return ``dict`` for use with ``AddInventoryItem`` API request."""
@@ -109,9 +109,9 @@ class InventoryItem:
         for prop in (self.stock_id, self.sku, self.title):
             assert(prop is not None)
         inventoryItem = self.get_create_inventoryItem_dict()
-        request_url = self.api.server + '/api/Inventory/AddInventoryItem'
+        request_url = self.api_session.server + '/api/Inventory/AddInventoryItem'
         data = {'inventoryItem': json.dumps(inventoryItem)}
-        return self.api.request(request_url, data)
+        return self.api_session.request(request_url, data)
 
     def update_item(self):
         """Make request to create update existing *inventory item* on Linnworks
@@ -120,9 +120,9 @@ class InventoryItem:
         for prop in (self.stock_id, self.sku, self.title):
             assert(prop is not None)
         inventoryItem = self.get_inventoryItem_dict()
-        request_url = self.api.server + '/api/Inventory/UpdateInventoryItem'
+        request_url = self.api_session.server + '/api/Inventory/UpdateInventoryItem'
         data = {'inventoryItem': json.dumps(inventoryItem)}
-        return self.api.request(request_url, data)
+        return self.api_session.request(request_url, data)
 
     def update_all(self):
         """Update *inventory item* and it's *extended properties* on Linnworks
@@ -185,14 +185,14 @@ class InventoryItem:
         Arguments:
             filepath -- Path to image to be uploaded.
         """
-        upload_response = self.api.upload_image(filepath)
+        upload_response = self.api_session.upload_image(filepath)
         image_guid = upload_response[0]['FileId']
-        add_url = self.api.server + ('/api/Inventory/'
+        add_url = self.api_session.server + ('/api/Inventory/'
                                      'UploadImagesToInventoryItem')
         add_data = {
             'inventoryItemId': self.stock_id,
             'imageIds': json.dumps([image_guid])}
-        add_response = self.api.request(add_url, data=add_data)
+        add_response = self.api_session.request(add_url, data=add_data)
         return add_response
 
 
@@ -223,7 +223,7 @@ class _ExtendedProperties():
         self.extended_properties.append(extended_property)
 
     def load(self):
-        response = self.item.api.get_inventory_item_extended_properties(
+        response = self.item.api_session.get_inventory_item_extended_properties(
             self.item.stock_id)
         for _property in response:
             self.add(json=_property)
@@ -255,10 +255,10 @@ class _ExtendedProperties():
                 item_arrays.append(prop.get_json())
             data = {
                 'inventoryItemExtendedProperties': json.dumps(item_arrays)}
-            api = self.item.api
-            url = api.server + ('/api/Inventory/'
+            api_session = self.item.api_session
+            url = api_session.server + ('/api/Inventory/'
                                 'CreateInventoryItemExtendedProperties')
-            response = api.request(url, data)
+            response = api_session.request(url, data)
             return response
 
     def update_existing(self):
@@ -272,14 +272,14 @@ class _ExtendedProperties():
                 item_arrays.append(prop.get_json())
             data = {
                 'inventoryItemExtendedProperties': json.dumps(item_arrays)}
-            api = self.item.api
-            url = api.server + ('/api/Inventory/'
+            api_session = self.item.api_session
+            url = api_session.server + ('/api/Inventory/'
                                 'UpdateInventoryItemExtendedProperties')
-            response = api.request(url, data)
+            response = api_session.request(url, data)
             return response
 
     def remove_deleted(self):
-        api = self.item.api
+        api_session = self.item.api_session
         items_to_delete = []
         for prop in self:
             if prop.delete is True:
@@ -289,9 +289,9 @@ class _ExtendedProperties():
                 'inventoryItemId': self.item.stock_id,
                 'inventoryItemExtendedPropertyIds': json.dumps(
                     items_to_delete)}
-            url = api.server + ('/api/Inventory/'
+            url = api_session.server + ('/api/Inventory/'
                                 'DeleteInventoryItemExtendedProperties')
-            response = api.request(url, data)
+            response = api_session.request(url, data)
             return response
 
     def update(self):
@@ -332,32 +332,32 @@ class _ExtendedProperty():
         return data
 
     def update(self):
-        api = self.item.api
-        url = api.server + ('/api/Inventory/'
+        api_session = self.item.api_session
+        url = api_session.server + ('/api/Inventory/'
                             'UpdateInventoryItemExtendedProperties')
         data = {
             'inventoryItemExtendedProperties': json.dumps([self.get_json()])}
-        response = api.request(url, data)
+        response = api_session.request(url, data)
         return response
 
     def create(self):
-        api = self.item.api
-        url = api.server + ('/api/Inventory/'
+        api_session = self.item.api_session
+        url = api_session.server + ('/api/Inventory/'
                             'CreateInventoryItemExtendedProperties')
         data = {
             'inventoryItemExtendedProperties': json.dumps([self.get_json()])}
-        response = api.request(url, data)
+        response = api_session.request(url, data)
         return response
 
     def remove(self):
         self.delete = True
 
     def delete_from_server(self):
-        api = self.item.api
+        api_session = self.item.api_session
         data = {'inventoryItemId': self.item.stock_id,
                 'inventoryItemExtendedPropertyIds': json.dumps([self.guid])}
 
-        url = api.server + ('/api/Inventory/'
+        url = api_session.server + ('/api/Inventory/'
                             'DeleteInventoryItemExtendedProperties')
-        response = api.request(url, data)
+        response = api_session.request(url, data)
         return response

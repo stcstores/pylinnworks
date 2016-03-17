@@ -11,7 +11,7 @@ class UpdateInventoryItemStockField(Request):
     inventory_item_id = ''
     location_id = ''
 
-    def __init__(self, api, field_name=None, value=None, stock_id=None,
+    def __init__(self, api_session, field_name=None, value=None, stock_id=None,
                  location_id=None):
         if field_name is not None:
             self.field_name = field_name
@@ -21,7 +21,7 @@ class UpdateInventoryItemStockField(Request):
             self.stock_id = stock_id
         if location_id is None:
             self.location_id = GetLocations.default
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

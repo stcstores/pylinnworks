@@ -9,5 +9,5 @@ class OrderItem:
         self.item_title = item_data['Title']
         self.department = item_data['CategoryName']
 
-    def getInventoryItem(self, api):
-        return InventoryItem(api, self.guid)
+    def getInventoryItem(self, api_session):
+        return InventoryItem(api_session, self.guid)

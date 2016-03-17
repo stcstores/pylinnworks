@@ -13,8 +13,8 @@ class GetOpenOrders(Request):
     count = 99999
     page_number = 1
 
-    def __init__(self, api, count=None, page_number=None, filters=None, location_id=None,
-                 additional_filter=None):
+    def __init__(self, api_session, count=None, page_number=None, filters=None,
+                 location_id=None, additional_filter=None):
         if count is not None:
             self.count = count
         if page_number is not None:
@@ -25,7 +25,7 @@ class GetOpenOrders(Request):
             self.location_id = location_id
         else:
             self.location_id = GetLocations.default
-        super().__init__(api)
+        super().__init__(api_session)
 
     def get_data(self):
         data = {

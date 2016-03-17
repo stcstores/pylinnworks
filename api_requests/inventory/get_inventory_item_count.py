@@ -15,9 +15,9 @@ class GetInventoryItemCount(Request):
     count = 1
     locations = []
 
-    def __init__(self, api):
-        self.locations = GetLocations(api).ids
-        super().__init__(api)
+    def __init__(self, api_session):
+        self.locations = GetLocations(api_session).ids
+        super().__init__(api_session)
 
     def process_response(self, response):
         self.item_count = self.response_dict['TotalItems']
