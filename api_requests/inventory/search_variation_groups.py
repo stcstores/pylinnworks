@@ -28,7 +28,6 @@ class SearchVariationGroups(Request):
             'pageNumber': self.page_number,
             'entriesPerPage': self.count
         }
-        self.data = data
         return data
 
     def process_response(self, response):
@@ -40,3 +39,8 @@ class SearchVariationGroups(Request):
             new_group['title'] = group['VariationGroupName']
             new_group['variation_group'] = True
             self.variation_groups.append(new_group)
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

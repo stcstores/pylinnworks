@@ -15,3 +15,8 @@ class GetInventoryColumnTypes(Request):
             new_column = InventoryViewColumn()
             new_column.load_from_dict(column)
             self.columns.append(new_column)
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

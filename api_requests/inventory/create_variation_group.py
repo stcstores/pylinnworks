@@ -33,5 +33,8 @@ class CreateVariationGroup(Request):
         template['ParentStockItemId'] = self.stock_id
         template['VariationItemIds'] = self.children_ids
         data = {'template': json.dumps(template)}
-        self.data = data
         return data
+
+    def test_response(self, response):
+        assert response.text == '', "Error message recieved: " + response.text
+        return super().test_response(response)

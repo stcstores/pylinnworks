@@ -15,3 +15,8 @@ class GetChannels(Request):
             self.source_types.append(channel['SourceType'])
             self.sub_sources.append(channel['SubSource'])
             self.channels.append(Channel(channel))
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list),\
+            response.text + " is not valid json"
+        return super().test_response(response)

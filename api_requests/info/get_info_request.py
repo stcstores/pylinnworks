@@ -13,6 +13,11 @@ class GetInfoRequest(Request):
     def __init__(self, api_session):
         super().__init__(api_session)
 
+    def test_response(self, response):
+        assert isinstance(response.json(), list),\
+            response.text + " is not valid json"
+        return super().test_response(response)
+
     def process_response(self, response):
         self.info = self.get_info()
         self.names = self.get_names()

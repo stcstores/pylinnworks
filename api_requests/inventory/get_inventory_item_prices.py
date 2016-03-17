@@ -14,5 +14,9 @@ class GetInventoryItemPrices(Request):
         data = {
             'inventoryItemId': self.stock_id
         }
-        self.data = data
         return data
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

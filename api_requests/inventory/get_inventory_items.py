@@ -46,7 +46,6 @@ class GetInventoryItems(Request):
             'itemsCount': self.count,
             'stockLocationIds': json.dumps(self.locations)
         }
-        self.data = data
         return data
 
     def process_response(self, response):
@@ -60,3 +59,8 @@ class GetInventoryItems(Request):
             self.item_titles.append(item['Title'])
             self.skus.append(item['SKU'])
             self.guids.append(item['Id'])
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

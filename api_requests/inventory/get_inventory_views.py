@@ -31,8 +31,7 @@ class GetInventoryViews(Request):
         )
     ]
 
-    def __init__(self, api_session, start=0, count=0, view=None):
-        super().__init__(api_session)
+    def process_response(response):
         for view in self.response_dict:
             self.view_dicts.append(view)
             new_view = InventoryView()
@@ -45,3 +44,8 @@ class GetInventoryViews(Request):
 
     def __getitem__(self, index):
         return self.views[index]
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

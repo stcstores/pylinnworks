@@ -10,3 +10,7 @@ class UpdateItemTitle(UpdateInventoryItemField):
         if stock_id is not None:
             self.stock_id = stock_id
         super().__init__(api_session)
+
+    def test_request(self):
+        assert isinstance(self.value, str), "Value must be of type str"
+        return super().test_request(self)

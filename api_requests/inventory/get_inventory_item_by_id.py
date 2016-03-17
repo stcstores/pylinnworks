@@ -17,7 +17,6 @@ class GetInventoryItemByID(Request):
 
     def get_data(self):
         data = {'id': self.stock_id}
-        self.data = data
         return data
 
     def to_basic_item(self):
@@ -50,3 +49,8 @@ class GetInventoryItemByID(Request):
             if postage_service['id'] == item.postage_service:
                 item.postage_service = postage_service['name']
         return item
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

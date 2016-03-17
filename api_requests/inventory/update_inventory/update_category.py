@@ -15,3 +15,7 @@ class UpdateCategory(UpdateInventoryItemField):
         if stock_id is not None:
             self.stock_id = stock_id
         super().__init__(api_session)
+
+    def test_request(self):
+        assert is_guid(self.value), "Value must be valid GUID."
+        return super().test_request(self)

@@ -29,5 +29,9 @@ class GetInventoryItemCount(Request):
             'itemsCount': self.count,
             'stockLocationIds': json.dumps(self.locations)
         }
-        self.data = data
         return data
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

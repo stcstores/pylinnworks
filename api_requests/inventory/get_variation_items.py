@@ -19,3 +19,8 @@ class GetVariationItems(Request):
         self.variation_children = []
         for child in self.response_dict:
             self.variation_children.append(child['pkStockItemId'])
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)

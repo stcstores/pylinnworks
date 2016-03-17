@@ -13,3 +13,7 @@ class UpdateAvailable(UpdateInventoryItemStockField):
         if location_id is not None:
             self.location_id = location_id
         super().__init__(api_session)
+
+    def test_request(self):
+        assert isinstance(self.value, int), "Value must be of type int"
+        return super().test_request(self)

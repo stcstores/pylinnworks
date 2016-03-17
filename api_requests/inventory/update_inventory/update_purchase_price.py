@@ -10,3 +10,7 @@ class UpdatePurchasePrice(UpdateInventoryItemField):
         if stock_id is not None:
             self.stock_id = stock_id
         super().__init__(api_session)
+
+    def test_request(self):
+        assert isinstance(self.value, float), "Value must be of type float"
+        return super().test_request(self)

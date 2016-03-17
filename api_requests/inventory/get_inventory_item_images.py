@@ -12,7 +12,6 @@ class GetInventoryItemImages(Request):
 
     def get_data(self):
         data = {'inventoryItemId': self.stock_id}
-        self.data = data
         return data
 
     def process_response(self, response):
@@ -25,3 +24,8 @@ class GetInventoryItemImages(Request):
             if image['IsMain'] is not True:
                 image_url = image['Source'].replace('tumbnail_', '')
                 self.images.append(image_url)
+
+    def test_response(self, response):
+        assert isinstance(response.json(), list), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)
