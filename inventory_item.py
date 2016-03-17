@@ -8,44 +8,32 @@ import json
 
 
 class InventoryItem:
+    stock_id = None
+    json = None
+    inventory = None
+    sku = ''
+    title = ''
+    purchase_price = 0
+    retail_price = 0
+    barcode = ''
+    category_id = ''
+    category = ''
+    depth = ''
+    height = ''
+    package_group_id = ''
+    package_group = ''
+    postage_service_id = ''
+    postage_service = ''
+    tax_rate = 0
+    variation_group_name = ''
+    weight = 0
+    width = 0
+    quantity = 0
+    meta_data = ''
+    extended_properties = None
 
-    def __init__(self, api_session, stock_id=None):
-        """Create class variables and set ``self.stock_id`` if not passed.
-
-        Arguments:
-            api -- ``LinnworksAPI`` object to be used for API calls.
-
-        Keyword Arguments:
-        stock_id -- Items ``GUID`` *Stock ID*. If None one will be generated.
-                (Defualt None)
-        """
+    def __init__(self, api_session):
         self.api_session = api_session
-        if stock_id is not None:
-            self.stock_id = stock_id
-        else:
-            self.get_stock_id()
-        self.json = None
-        self.inventory = None
-        self.sku = ''
-        self.title = ''
-        self.purchase_price = 0
-        self.retail_price = 0
-        self.barcode = ''
-        self.category_id = ''
-        self.category = ''
-        self.depth = ''
-        self.height = ''
-        self.package_group_id = ''
-        self.package_group = ''
-        self.postage_service_id = ''
-        self.postage_service = ''
-        self.tax_rate = 0
-        self.variation_group_name = ''
-        self.weight = 0
-        self.width = 0
-        self.quantity = 0
-        self.meta_data = ''
-        self.extended_properties = _ExtendedProperties(self)
 
     def __str__(self):
         return str(self.sku) + ': ' + str(self.title)
@@ -67,7 +55,7 @@ class InventoryItem:
 
     def create_sku(self):
         """Returns new *SKU*."""
-        self.sku = self.api_session.get_new_sku()
+        self.sku = GetNewSKU(self.api_session).sku
 
     def get_create_inventoryItem_dict(self):
         """Return ``dict`` for use with ``AddInventoryItem`` API request."""

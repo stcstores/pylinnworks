@@ -18,8 +18,11 @@ class Request():
                                                  params=self.get_params())
         self.json = self.response.text
         if self.test_response(self.response):
-            self.response_dict = self.response.json()
-            self.process_response(self.response)
+            try:
+                self.response_dict = self.response.json()
+                self.process_response(self.response)
+            except:
+                pass
 
     def process_response(self, response):
         pass
