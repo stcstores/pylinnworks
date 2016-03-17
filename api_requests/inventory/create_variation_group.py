@@ -4,6 +4,7 @@ import uuid
 
 from .. request import Request
 from .. functions import get_new_SKU
+from .. functions import is_guid
 
 
 class CreateVariationGroup(Request):
@@ -25,6 +26,19 @@ class CreateVariationGroup(Request):
         if children_ids is not None:
             self.children_ids = children_ids
         super().__init__(api_session)
+
+    def test_request(self):
+        assert self.sku is not None and self.sku != '', \
+            "SKU must be supplied."
+        assert self.title is not None and self.title != '', \
+            "Title must be supplied."
+        assert is_guid(self.stock_id), \
+            "Stock ID must be valid GUID."
+        assert isinstance(self.children_ids, (list, set, tuple)), \
+            "Children IDs must be in list or set."
+        for child in self.children_ids:
+            assert is_guid(child), "Children IDs must be valid GUID."
+        return super().test_request
 
     def get_data(self):
         template = {}

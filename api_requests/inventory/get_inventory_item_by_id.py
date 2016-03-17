@@ -6,6 +6,7 @@ Arguments:
 
 from .. request import Request
 from linnapi.basic_item import BasicItem
+from .. functions import is_guid
 
 
 class GetInventoryItemByID(Request):
@@ -15,9 +16,18 @@ class GetInventoryItemByID(Request):
         self.stock_id = stock_id
         super().__init__(api_session)
 
+    def test_request(self):
+        assert is_guid(self.stock_id), "Stock ID must be vaild GUID."
+        return super().test_request
+
     def get_data(self):
         data = {'id': self.stock_id}
         return data
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)
 
     def to_basic_item(self):
         item_data = self.response_dict
@@ -49,8 +59,3 @@ class GetInventoryItemByID(Request):
             if postage_service['id'] == item.postage_service:
                 item.postage_service = postage_service['name']
         return item
-
-    def test_response(self, response):
-        assert isinstance(response.json(), dict), \
-            "Error message recieved: " + response.text
-        return super().test_response(response)

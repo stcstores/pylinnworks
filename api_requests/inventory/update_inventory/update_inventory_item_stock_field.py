@@ -23,6 +23,10 @@ class UpdateInventoryItemStockField(Request):
             self.location_id = GetLocations.default
         super().__init__(api_session)
 
+    def test_response(self, response):
+        assert reponse.text == '', "Error message recieved: " + response.text
+        return super().test_response(response)
+
     def get_data(self):
         data = {
             'fieldName': self.field_name,
@@ -31,10 +35,6 @@ class UpdateInventoryItemStockField(Request):
             'locationId': self.location_id
         }
         return data
-
-    def test_response(self, response):
-        assert reponse.text == '', "Error message recieved: " + response.text
-        return super().test_response(response)
 
     def test_request(self):
         assert self.field_name is not None and len(self.field_name) > 0, \

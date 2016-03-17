@@ -1,6 +1,7 @@
 """Requests image urls for inventory item """
 
 from .. request import Request
+from .. functions import is_guid
 
 
 class GetInventoryItemImages(Request):
@@ -13,6 +14,10 @@ class GetInventoryItemImages(Request):
     def get_data(self):
         data = {'inventoryItemId': self.stock_id}
         return data
+
+    def test_request(self):
+        assert is_guid(self.stock_id), "Stock ID must be valid GUID."
+        return super().test_request()
 
     def process_response(self, response):
         self.images = []

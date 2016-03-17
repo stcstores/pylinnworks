@@ -13,6 +13,8 @@ from .. request import Request
 from . get_inventory_views import GetInventoryViews
 from .. info . get_locations import GetLocations
 from . get_inventory_item_count import GetInventoryItemCount
+from .. functions import is_guid
+from . inventory_view import InventoryView
 
 
 class GetInventoryItems(Request):
@@ -36,8 +38,19 @@ class GetInventoryItems(Request):
         if locations is None:
             self.locations = GetLocations(api_session).ids
         else:
-            self.location = locations
+            self.locations = locations
         super().__init__(api_session)
+
+    def test_request(self):
+        assert isinstance(self.view, InventoryView), \
+            "View must be InventoryView."
+        assert isinstance(self.start, int), \
+            "Start must be of type int."
+        assert isinstance(self.count, int), \
+            "Count must be of type int."
+        assert isinstance(self.locations, (list, set, tuple)), \
+            "Locations must be dict or set."
+        return super().test_request()
 
     def get_data(self):
         data = {
@@ -47,6 +60,11 @@ class GetInventoryItems(Request):
             'stockLocationIds': json.dumps(self.locations)
         }
         return data
+
+    def test_response(self, response):
+        assert isinstance(response.json(), dict), \
+            "Error message recieved: " + response.text
+        return super().test_response(response)
 
     def process_response(self, response):
         self.result_count = len(self.response_dict['Items'])
@@ -59,8 +77,3 @@ class GetInventoryItems(Request):
             self.item_titles.append(item['Title'])
             self.skus.append(item['SKU'])
             self.guids.append(item['Id'])
-
-    def test_response(self, response):
-        assert isinstance(response.json(), dict), \
-            "Error message recieved: " + response.text
-        return super().test_response(response)

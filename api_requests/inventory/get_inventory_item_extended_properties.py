@@ -1,6 +1,7 @@
 """Request extended properties for inventory item with stock ID stock_id """
 
 from .. request import Request
+from .. functions import is_guid
 
 
 class GetInventoryItemExtendedProperties(Request):
@@ -9,6 +10,10 @@ class GetInventoryItemExtendedProperties(Request):
     def __init__(self, api_session, stock_id):
         self.stock_id = stock_id
         super().__init__(api_session)
+
+    def test_request(self):
+        assert is_guid(self.stock_id), "Stock ID must be valid GUID."
+        return super().test_request()
 
     def get_data(self):
         data = {
