@@ -3,7 +3,7 @@
 import uuid
 
 from .. request import Request
-from .. functions import get_new_sku
+from .. functions import get_new_SKU
 
 
 class CreateVariationGroup(Request):
@@ -15,7 +15,7 @@ class CreateVariationGroup(Request):
         if sku is not None:
             self.sku = sku
         else:
-            self.sku = get_new_sku()
+            self.sku = get_new_SKU()
         if title is not None:
             self.title = title
         if stock_id is not None:

@@ -3,7 +3,7 @@ import os
 from termcolor import colored, cprint
 import colorama
 
-from . linnworks_api import LinnworksAPISession as LinnworksAPISession
+from . linnworks_api_session import LinnworksAPISession as LinnworksAPISession
 
 
 def process_orders(api_session):

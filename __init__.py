@@ -2,7 +2,7 @@
 api.linnworks.net
 """
 
-from . linnworks_api import LinnworksAPI
+from . linnworks_api_session import LinnworksAPISession
 from . inventory import Inventory
 from . inventory_item import InventoryItem
 from . process_orders import process_orders
