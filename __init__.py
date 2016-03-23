@@ -13,3 +13,4 @@ from . package_groups import PackageGroups
 from . shipping_methods import ShippingMethods
 from . locations import Locations
 from . postage_services import PostageServices
+from . channels import Channels

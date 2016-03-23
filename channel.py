@@ -2,7 +2,8 @@
 
 
 class Channel():
-    def __init__(self, channel_data):
-        self.source = channel_data['Source']
-        self.sub_source = channel_data['SubSource']
-        self.source_type = channel_data['SourceType']
+    def __init__(self, channel_id, source_type, source, sub_source):
+        self.channel_id = channel_id
+        self.source_type = source_type
+        self.source = source
+        self.sub_source = sub_source
