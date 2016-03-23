@@ -1,9 +1,11 @@
 from . api_requests . orders . get_open_orders import GetOpenOrders
 from . open_order import OpenOrder
+from . order_item import OrderItem
 from . postage_services import PostageServices
 from . channels import Channels
 from . package_groups import PackageGroups
 from . customer_info import CustomerInfo
+from . categories import Categories
 
 
 class OpenOrders:
@@ -15,15 +17,39 @@ class OpenOrders:
 
     def __init__(self, api_session):
         self.api_session = api_session
-        self.get_open_orders_request = GetOpenOrders(api_session)
+        self.request = GetOpenOrders(api_session)
+        self.categories = Categories(api_session)
         self.postage_services = PostageServices(api_session)
         self.package_groups = PackageGroups(api_session)
         self.channels = Channels(api_session)
-        for order in self.get_open_orders_request.response_dict['Data']:
+        for order in self.request.response_dict['Data']:
             self.add_order(order)
 
-    def get_items(self, item_data):
-        return []
+    def get_items(self, item_data, channel):
+        items = []
+        for item in item_data:
+            if item['SKU'] is None:
+                new_item = 'UNLINKED'
+            else:
+                category = self.categories[item['CategoryName']]
+                new_item = OrderItem(
+                    self.api_session,
+                    available=item['AvailableStock'],
+                    barcode=item['BarcodeNumber'],
+                    category=category,
+                    channel_sku=item['ChannelSKU'],
+                    channel_title=item['ChannelTitle'],
+                    in_order_book=item['InOrderBook'],
+                    stock_id=item['ItemId'],
+                    item_number=item['ItemNumber'],
+                    channel=channel,
+                    level=item['Level'],
+                    quantity=item['Quantity'],
+                    sku=item['SKU'],
+                    title=item['Title'],
+                    weight=item['Weight'])
+            items.append(new_item)
+        return items
 
     def get_customer_info(self, customer_data):
         address = [customer_data['Address']['Address1'],
@@ -56,7 +82,11 @@ class OpenOrders:
             channel = None
         date_recieved = date_time[:10]
         time_recieved = date_time[11:]
-        items = self.get_items(order_data['Items'])
+        items = self.get_items(order_data['Items'],  channel)
+        if 'UNLINKED' in items:
+            unlinked = True
+        else:
+            unlinked = False
 
         new_order = OpenOrder(
             self.api_session,
@@ -99,7 +129,7 @@ class OpenOrders:
             tax=order_data['TotalsInfo']['Tax'],
             total_charge=order_data['TotalsInfo']['TotalCharge'],
             total_discount=order_data['TotalsInfo']['TotalDiscount'],
-            items=items)
+            items=items, unlinked=unlinked)
         self.ids.append(new_order.order_id)
         self.numbers.append(new_order.order_number)
         self.orders.append(new_order)
@@ -114,3 +144,10 @@ class OpenOrders:
             return self.orders[self.number_lookup[key]]
         else:
             return self.orders[key]
+
+    def __iter_(self):
+        for order in self.orders:
+            yield order
+
+    def __len__(self):
+        return len(self.orders)

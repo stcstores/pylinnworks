@@ -1,6 +1,7 @@
 """Container object for open order information """
 
 from . order_item import OrderItem as OrderItem
+from . info_entry import InfoEntry
 from . api_requests . orders . get_open_order import GetOpenOrder
 
 
@@ -43,6 +44,7 @@ class OpenOrder:
     total_discount = None
     items = []
     department = None
+    unlinked = None
 
     def __init__(self, api_session, order_id=None, order_number=None,
                  customer_info=None, folder_name=None,
@@ -57,7 +59,8 @@ class OpenOrder:
                  tracking_number=None, country_tax_rate=None, currency=None,
                  payment_method=None, payment_method_id=None,
                  profit_margin=None, subtotal=None, tax=None,
-                 total_charge=None, total_discount=None, items=None):
+                 total_charge=None, total_discount=None, items=None,
+                 unlinked=None):
         self.api_session = api_session
         if order_id is not None:
             self.order_id = order_id
@@ -131,16 +134,20 @@ class OpenOrder:
             self.total_discount = total_discount
         if items is not None:
             self.items = items
+        if unlinked is not None:
+            self.unlinked = unlinked
 
-        self.department = self.get_order_department()
+        self.category = self.get_order_category()
 
-    def get_order_department(self):
-        if len(self.items) == 0:
-            department = "None"
+    def get_order_category(self):
+        if self.unlinked is True:
+            return InfoEntry(None, 'UNLINKED')
+        elif len(self.items) == 0:
+            category = InfoEntry(None, "None")
         else:
-            department = self.items[0].department
+            category = self.items[0].category
             for item in self.items:
-                if item.department != department:
-                    deparment = "Mixed"
+                if item.category.guid != category.guid:
+                    category = InfoEntry(None, "Mixed")
                     break
-        return department
+        return category
