@@ -22,7 +22,7 @@ class OpenOrder:
     time_recieved = None
     reference_number = None
     source = None
-    status = None
+    paid = None
     sub_source = None
     item_weight = None
     manual_adjust = None
@@ -51,7 +51,7 @@ class OpenOrder:
                  marker=None, notes=None, part_shipped=None,
                  pick_list_printed=None, date_recieved=None,
                  time_recieved=None, reference_number=None, channel=None,
-                 status=None, item_weight=None, manual_adjust=None,
+                 paid=None, item_weight=None, manual_adjust=None,
                  postage_service=None, package_group=None, postage_cost=None,
                  postage_cost_ex_tax=None, order_weight=None,
                  tracking_number=None, country_tax_rate=None, currency=None,
@@ -93,8 +93,8 @@ class OpenOrder:
             self.reference_number = reference_number
         if channel is not None:
             self.channel = channel
-        if status is not None:
-            self.status = status
+        if paid is not None:
+            self.paid = paid
         if item_weight is not None:
             self.item_weight = item_weight
         if manual_adjust is not None:
