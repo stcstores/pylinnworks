@@ -1,6 +1,8 @@
 import requests
 from .. request import Request
 
+from printer import Printer
+
 
 class CreatePDFFromJobForceTemplate(Request):
     url_extension = '/api/PrintService/CreatePDFfromJobForceTemplate'
@@ -23,7 +25,11 @@ class CreatePDFFromJobForceTemplate(Request):
         self.print_errors = self.response_dict['PrintErrors']
         self.response_url = self.response_dict['URL']
 
-    def save_pdf(self, filename):
+    def save_PDF(self, filename):
         response = requests.get(self.response_url)
         with open(filename, "w") as out_file:
             out_file.write(response.text)
+
+    def print_PDF(self, printer):
+        printer = Printer(printer)
+        printer.print_URL(self.url)
