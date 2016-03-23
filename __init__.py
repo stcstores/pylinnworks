@@ -7,3 +7,9 @@ from . inventory import Inventory
 from . inventory_item import InventoryItem
 from . process_orders import process_orders
 from . api_requests import *
+from . open_orders import OpenOrders
+from . categories import Categories
+from . package_groups import PackageGroups
+from . shipping_methods import ShippingMethods
+from . locations import Locations
+from . postage_services import PostageServices
