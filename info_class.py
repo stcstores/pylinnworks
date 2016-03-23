@@ -7,7 +7,11 @@ class InfoClass:
     entry_class = InfoEntry
     info_list = []
     name_field = ''
+    names = []
+    name_lookup = {}
     id_field = ''
+    ids = []
+    id_lookup = {}
 
     def __init__(self, api_session):
         self.request = self.request_class(api_session)
@@ -18,20 +22,19 @@ class InfoClass:
             self.add_entry(entry)
 
     def add_entry(self, entry):
-        self.info_list.append(
-            self.entry_class(entry[self.id_field], entry[self.name_field]))
+        new_entry = self.entry_class(
+            entry[self.id_field], entry[self.name_field])
+        self.info_list.append(new_entry)
+        new_entry_index = self.info_list.index(new_entry)
+        self.ids.append(entry[self.id_field])
+        self.id_lookup[entry[self.id_field]] = new_entry_index
+        self.names.append(entry[self.name_field])
+        self.name_lookup[entry[self.name_field]] = new_entry_index
 
     def __getitem__(self, key):
-        if isinstance(key, int):
+        if key in self.id_lookup:
+            return self.info_list[self.id_lookup[key]]
+        elif key in self.names:
+            return self.info_list[self.name_lookup[key]]
+        else:
             return self.info_list[key]
-        if isinstance(key, str):
-            if is_guid(key):
-                for entry in self.info_list:
-                    if entry.guid == key:
-                        return entry
-            else:
-                for entry in self.info_list:
-                    if entry.name == key:
-                        return entry
-            raise ValueError
-        raise KeyError

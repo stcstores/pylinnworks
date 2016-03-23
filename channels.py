@@ -8,16 +8,23 @@ class Channels(InfoClass):
     request_class = GetChannels
     entry_class = Channel
     info_list = []
+    sub_sources = []
+    sub_source_lookup = {}
 
     def add_entry(self, entry):
-        self.info_list.append(
-            self.entry_class(
+        new_entry = self.entry_class(
                 entry['PkChannelId'],
                 entry['SourceType'],
                 entry['Source'],
-                entry['SubSource']))
+                entry['SubSource'])
+        self.info_list.append(new_entry)
+        new_entry_index = self.info_list.index(new_entry)
+        self.sub_sources.append(entry['SubSource'])
+        self.sub_source_lookup[entry['SubSource']] = new_entry_index
 
     def __getitem__(self, key):
+        if key in self.sub_sources:
+            return self.info_list[self.sub_source_lookup[key]]
         if isinstance(key, int):
             return self.info_list[key]
         if isinstance(key, str):

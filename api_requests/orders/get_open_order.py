@@ -2,7 +2,6 @@
 
 from .. request import Request
 from .. info . get_locations import GetLocations
-from ... open_order import OpenOrder
 
 
 class GetOpenOrder(Request):

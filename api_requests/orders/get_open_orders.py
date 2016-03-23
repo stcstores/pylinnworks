@@ -2,7 +2,6 @@
 
 from .. request import Request
 from .. info . get_locations import GetLocations
-from ... open_order import OpenOrder
 
 
 class GetOpenOrders(Request):
@@ -37,9 +36,3 @@ class GetOpenOrders(Request):
         }
         self.data = data
         return data
-
-    def process_response(self, response):
-        self.orders_list = self.response_dict['Data']
-        self.orders = []
-        for order in self.orders_list:
-            self.orders.append(OpenOrder(order))
