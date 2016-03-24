@@ -77,3 +77,13 @@ class PrintList:
 
     def batch(self, orders):
         NotImplemented
+
+    def print_orders(self):
+        for print_list in self.print_lists:
+            if self.print_pick_list is True:
+                print_list.print_pick_list(printer=self.pick_list_printer)
+            if self.print_pack_list is True:
+                print_list.print_pack_list(printer=self.pack_list_printer)
+            if self.print_shipping_label is True:
+                print_list.print_shipping_label(
+                    printer=self.shipping_label_printer)
