@@ -1,6 +1,6 @@
 """Processes order with order ID order_id """
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 
 
 class ProcessOrder(Request):

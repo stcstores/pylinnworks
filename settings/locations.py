@@ -1,6 +1,6 @@
 from . info_class import InfoClass
 from . info_entry import InfoEntry
-from . api_requests . info . get_locations import GetLocations
+from linnapi.api_requests.settings.get_locations import GetLocations
 
 
 class Locations(InfoClass):

@@ -1,19 +1,18 @@
 from . info_entry import InfoEntry
-from . api_requests . functions import is_guid
 
 
 class InfoClass:
     request_class = None
     entry_class = InfoEntry
-    info_list = []
     name_field = ''
-    names = []
-    name_lookup = {}
     id_field = ''
-    ids = []
-    id_lookup = {}
 
     def __init__(self, api_session):
+        self.info_list = []
+        self.ids = []
+        self.names = []
+        self.name_lookup = {}
+        self.id_lookup = {}
         self.request = self.request_class(api_session)
         self.load_info()
 

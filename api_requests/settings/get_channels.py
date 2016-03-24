@@ -1,5 +1,4 @@
-from .. request import Request
-from ... channel import Channel
+from linnapi.api_requests.request import Request
 
 
 class GetChannels(Request):

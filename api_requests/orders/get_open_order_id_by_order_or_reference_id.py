@@ -2,7 +2,7 @@
 
 import json
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 
 
 class GetOpenOrderIDByOrderOrReferenceID(Request):

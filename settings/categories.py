@@ -1,6 +1,6 @@
 from . info_class import InfoClass
 from . info_entry import InfoEntry
-from . api_requests . info . get_categories import GetCategories
+from linnapi.api_requests.settings.get_categories import GetCategories
 
 
 class Categories(InfoClass):

@@ -1,11 +1,11 @@
-from . api_requests . orders . get_open_orders import GetOpenOrders
 from . open_order import OpenOrder
 from . order_item import OrderItem
-from . postage_services import PostageServices
-from . channels import Channels
-from . package_groups import PackageGroups
 from . customer_info import CustomerInfo
-from . categories import Categories
+from linnapi.settings.categories import Categories
+from linnapi.settings.postage_services import PostageServices
+from linnapi.settings.package_groups import PackageGroups
+from linnapi.settings.channels import Channels
+from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
 
 
 class OpenOrders:

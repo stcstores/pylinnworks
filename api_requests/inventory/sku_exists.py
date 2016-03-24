@@ -1,6 +1,6 @@
 """Requests check to see if passed string has been used as a product SKU """
 
-from . request import Request
+from linnapi.api_requests.request import Request
 
 
 class SKUExists(Request):

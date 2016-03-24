@@ -1,8 +1,8 @@
 """Container object for open order information """
 
 from . order_item import OrderItem as OrderItem
-from . info_entry import InfoEntry
-from . api_requests . orders . get_open_order import GetOpenOrder
+from linnapi.settings.info_entry import InfoEntry
+from linnapi.api_requests.orders.get_open_order import GetOpenOrder
 
 
 class OpenOrder:

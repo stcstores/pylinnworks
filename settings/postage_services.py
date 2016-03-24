@@ -1,6 +1,7 @@
 from . info_class import InfoClass
 from . info_entry import InfoEntry
-from . api_requests . info . get_postage_services import GetPostageServices
+from linnapi.api_requests.settings.get_postage_services import\
+    GetPostageServices
 
 
 class PostageServices(InfoClass):

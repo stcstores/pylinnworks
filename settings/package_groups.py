@@ -1,6 +1,6 @@
 from . info_class import InfoClass
 from . info_entry import InfoEntry
-from . api_requests . info . get_package_groups import GetPackageGroups
+from linnapi.api_requests.settings.get_package_groups import GetPackageGroups
 
 
 class PackageGroups(InfoClass):

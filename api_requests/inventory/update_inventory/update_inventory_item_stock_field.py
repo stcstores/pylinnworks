@@ -1,7 +1,7 @@
 """Updates stock fields for inventory items """
 
-from ... request import Request
-from ... info . get_locations import GetLocations
+from linnapi.api_requests.request import Request
+from linnapi.api_requests.settings.get_locations import GetLocations
 
 
 class UpdateInventoryItemStockField(Request):

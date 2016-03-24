@@ -1,7 +1,7 @@
 from . info_class import InfoClass
 from . info_entry import InfoEntry
-from . api_requests . info . get_channels import GetChannels
 from . channel import Channel
+from linnapi.api_requests.settings.get_channels import GetChannels
 
 
 class Channels(InfoClass):

@@ -11,11 +11,6 @@ import uuid
 import re
 from pprint import pprint
 
-from . inventory_item import InventoryItem as InventoryItem
-from . basic_item import BasicItem as BasicItem
-from . open_order import OpenOrder as OpenOrder
-from . inventory import Inventory as Inventory
-
 
 class LinnworksAPISession:
     """Main wrapper class for linnworks.net API. Allows authentication with

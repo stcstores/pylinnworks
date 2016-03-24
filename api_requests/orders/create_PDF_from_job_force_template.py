@@ -1,7 +1,5 @@
 import requests
-from .. request import Request
-
-from printer import Printer
+from linnapi.api_requests.request import Request
 
 
 class CreatePDFFromJobForceTemplate(Request):
@@ -29,7 +27,3 @@ class CreatePDFFromJobForceTemplate(Request):
         response = requests.get(self.response_url)
         with open(filename, "w") as out_file:
             out_file.write(response.text)
-
-    def print_PDF(self, printer):
-        printer = Printer(printer)
-        printer.print_URL(self.url)

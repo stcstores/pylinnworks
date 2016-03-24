@@ -1,7 +1,7 @@
 """Requests open order IDs """
 
-from .. request import Request
-from .. info . get_locations import GetLocations
+from linnapi.api_requests.request import Request
+from linnapi.api_requests.settings.get_locations import GetLocations
 
 
 class GetOpenOrders(Request):

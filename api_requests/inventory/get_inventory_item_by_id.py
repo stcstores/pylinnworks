@@ -5,7 +5,7 @@ Arguments:
 """
 
 from .. request import Request
-from linnapi.basic_item import BasicItem
+from linnapi.inventory import BasicItem
 from .. functions import is_guid
 
 

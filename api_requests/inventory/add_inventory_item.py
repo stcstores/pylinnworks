@@ -2,11 +2,12 @@
 
 import json
 
-from .. request import Request
-from .. functions import is_guid
-from .. info . get_categories import GetCategories
-from .. info . get_package_groups import GetPackageGroups
-from .. info . get_postage_services import GetPostageServices
+from linnapi.api_requests.request import Request
+from linnapi.api_requests.functions import is_guid
+from linnapi.api_requests.settings.get_categories import GetCategories
+from linnapi.api_requests.settings.get_package_groups import GetPackageGroups
+from linnapi.api_requests.settings.get_postage_services import \
+    GetPostageServices
 
 
 class AddInventoryItem(Request):

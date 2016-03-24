@@ -1,6 +1,6 @@
 """Requests an unused product SKU """
 
-from . request import Request
+from linnapi.api_requests.request import Request
 
 
 class GetNewSKU(Request):

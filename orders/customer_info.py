@@ -1,16 +1,16 @@
 class CustomerInfo:
-    address=None
-    company=None
-    country=None
-    country_id=None
-    email=None
-    name=None,
-    phone=None
-    post_code=None
-    region=None,
-    town=None
-    billing_address=None
-    channel_name=None
+    address = None
+    company = None
+    country = None
+    country_id = None
+    email = None
+    name = None,
+    phone = None
+    post_code = None
+    region = None,
+    town = None
+    billing_address = None
+    channel_name = None
 
     def __init__(self, address=None, company=None, country=None,
                  country_id=None, email=None, name=None, phone=None,

@@ -1,4 +1,4 @@
-from . inventory_item import InventoryItem as InventoryItem
+from linnapi.inventory.inventory_item import InventoryItem
 
 
 class OrderItem:

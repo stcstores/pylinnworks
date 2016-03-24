@@ -3,7 +3,7 @@ from . get_inventory_item_count import GetInventoryItemCount
 from . inventory_view import InventoryView
 from . get_inventory_views import GetInventoryViews
 from . inventory_view_filter import InventoryViewFilter
-from .. info . get_locations import GetLocations
+from linnapi.api_requests . settings . get_locations import GetLocations
 
 
 class SearchInventoryByTitle(GetInventoryItems):
