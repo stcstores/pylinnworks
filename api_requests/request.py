@@ -16,6 +16,7 @@ class Request():
                                                  data=self.data,
                                                  files=self.get_files(),
                                                  params=self.get_params())
+        #self.response.raise_for_status()
         self.json = self.response.text
         if self.test_response(self.response):
             try:

@@ -7,6 +7,9 @@ from linnapi.settings.postage_services import PostageServices
 from linnapi.settings.package_groups import PackageGroups
 from linnapi.settings.channels import Channels
 from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
+from linnapi.api_requests.orders.create_PDF_from_job_force_template\
+    import CreatePDFFromJobForceTemplate
+from linnapi.api_requests.orders.get_print_file import GetPrintFile
 
 
 class OpenOrders:
@@ -192,3 +195,19 @@ class OpenOrders:
 
     def __len__(self):
         return len(self.orders)
+
+    def print_pick_list(self, printer_name):
+        self.print_orders('Pick List', printer_name)
+
+    def print_orders(self, template, printer_name):
+        import printer
+        printer = printer.Printer(printer_name=printer_name)
+        order_ids = []
+        for order in self.orders:
+            order_ids.append(order.order_id)
+        request = CreatePDFFromJobForceTemplate(
+            self.api_session, ids=order_ids, printer_name='PDF',
+            template_type=template)
+        print(request.data)
+        print_file = GetPrintFile(self.api_session, request.url)
+        printer.print_content(print_file.file)

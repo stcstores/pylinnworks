@@ -18,6 +18,14 @@ class CreatePDFFromJobForceTemplate(Request):
             self.template_type = template_type
         super().__init__(api_session)
 
+    def get_data(self):
+        data = {
+            'IDs': self.ids,
+            'printerName': self.printer_name,
+            'templateType': self.template_type
+        }
+        return data
+
     def processs_response(self, response):
         self.ids_processed = self.response_dict['IdsProcessed']
         self.print_errors = self.response_dict['PrintErrors']
