@@ -2,6 +2,7 @@ from . open_order import OpenOrder
 from . order_item import OrderItem
 from . customer_info import CustomerInfo
 from linnapi.settings.categories import Categories
+from linnapi.settings.locations import Locations
 from linnapi.settings.postage_services import PostageServices
 from linnapi.settings.package_groups import PackageGroups
 from linnapi.settings.channels import Channels
@@ -9,21 +10,61 @@ from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
 
 
 class OpenOrders:
-    orders = []
-    numbers = []
-    ids = []
-    number_lookup = {}
-    id_lookup = {}
 
-    def __init__(self, api_session):
-        self.api_session = api_session
-        self.request = GetOpenOrders(api_session)
+    def __init__(self, api_session, load=False, location='Default',
+                 orders=None):
+        self.location = location
         self.categories = Categories(api_session)
         self.postage_services = PostageServices(api_session)
         self.package_groups = PackageGroups(api_session)
         self.channels = Channels(api_session)
+        self.locations = Locations(api_session)
+        self.orders = []
+        self.numbers = []
+        self.ids = []
+        self.number_lookup = {}
+        self.id_lookup = {}
+        self.api_session = api_session
+        if orders is not None:
+            self.orders = orders
+            self.update()
+        elif load is True:
+            self.load()
+
+    def append(self, order):
+        self.orders.append(order)
+        self.update()
+
+    def item_count(self):
+        count = 0
+        for order in self.orders:
+            count += len(order.items)
+        return count
+
+    def load(self):
+        location_id = self.locations[self.location].guid
+        self.request = GetOpenOrders(
+            self.api_session,
+            count=99999,
+            page_number=1,
+            filters=None,
+            location_id=location_id,
+            additional_filter=None)
         for order in self.request.response_dict['Data']:
             self.add_order(order)
+        self.update()
+
+    def update(self):
+        self.numbers = []
+        self.ids = []
+        self.number_lookup = {}
+        self.id_lookup = {}
+        for order in self.orders:
+            order_index = self.orders.index(order)
+            self.numbers.append(order.order_number)
+            self.ids.append(order.order_id)
+            self.number_lookup[order.order_number] = order_index
+            self.id_lookup[order.order_id] = order_index
 
     def get_items(self, item_data, channel):
         items = []

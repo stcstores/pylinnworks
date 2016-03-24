@@ -138,6 +138,8 @@ class OpenOrder:
             self.unlinked = unlinked
 
         self.category = self.get_order_category()
+        if len(self.items) > 1:
+            self.items.sort(key=lambda x: x.title)
 
     def get_order_category(self):
         if self.unlinked is True:
@@ -151,3 +153,6 @@ class OpenOrder:
                     category = InfoEntry(None, "Mixed")
                     break
         return category
+
+    def __str__(self):
+        return "Order Number " + self.order_number
