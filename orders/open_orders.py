@@ -58,19 +58,9 @@ class OpenOrders:
             self.number_lookup[order.order_number] = order_index
             self.id_lookup[order.order_id] = order_index
 
-
-
-
-
     def add_order(self, order_data):
         new_order = OpenOrder(self.api_session)
         new_order.load_from_request(order_data)
-        self.ids.append(new_order.order_id)
-        self.numbers.append(new_order.order_number)
-        self.orders.append(new_order)
-        new_order_index = self.orders.index(new_order)
-        self.id_lookup[new_order.order_id] = new_order_index
-        self.number_lookup[new_order.order_number] = new_order_index
 
     def __getitem__(self, key):
         if key in self.ids:

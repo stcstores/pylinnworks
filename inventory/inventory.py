@@ -1,34 +1,84 @@
+from linnapi.api_requests.inventory.get_inventory_views \
+    import GetInventoryViews
+from linnapi.api_requests.inventory.get_inventory_items \
+    import GetInventoryItems
 from . inventory_item import InventoryItem as InventoryItem
 
 
 class Inventory():
 
-    def __init__(self, item_list, api_session):
-        self.item_list = item_list
+    def __init__(
+            self, api_session, load=False, locations=None, item_list=None):
         self.api_session = api_session
-        self.get_info()
-        self.load_items()
+        if locations is None:
+            self.locations = [self.api_session.locations['Default']]
+        else:
+            locations = locations
+        self.items = []
+        self.skus = []
+        self.stock_ids = []
+        self.titles = []
+        self.sku_lookup = {}
+        self.stock_id_lookup = {}
+        self.title_lookup = {}
+        if items is not None:
+            self.items = items
+            self.update()
+        elif load is True:
+            self.load()
 
-    def __getitem__(self, item_number):
-        return self.items[item_number]
+    def __getitem__(self, key):
+        if key in self.stock_id_lookup:
+            return self.items[stock_id_lookup[key]]
+        elif key in self.sku_lookup:
+            return self.items[self.sku_lookup[key]]
+        elif key in self.title_lookup:
+            return self.items[self.title_lookup[key]]
+        else:
+            return self.items[key]
 
     def __iter__(self):
         for item in self.items:
             yield item
 
-    def get_info(self):
-        self.extended_properties = \
-            self.api_session.get_extended_property_names()
-        self.category_lookup = self.get_category_lookup()
-        self.package_group_lookup = self.get_package_group_lookup()
-        self.postal_service_lookup = self.get_postal_service_lookup()
+    def __len__(self):
+        return len(self.items)
 
-    def load_items(self):
-        self.items = []
-        for item in self.item_list:
-            new_inv_item = InventoryItem(self.api_session, item['Id'])
-            new_inv_item.load_from_json(item, self)
-            self.items.append(new_inv_item)
+    def append(self, item):
+        self.items.append(item)
+        self.update()
+
+    def update(self):
+        self.skus = []
+        self.stock_ids = []
+        self.titles = []
+        self.sku_lookup = {}
+        self.stock_id_lookup = {}
+        self.title_lookup = {}
+        for item in self.items:
+            item_index = self.items.index(item)
+            self.skus.append(item.sku)
+            self.sku_lookup[item.sku] = item_index
+            self.stock_ids.append(item.stock_id)
+            self.stock_id_lookup[item.stock_id] = item_index
+            self.titles.append(item.title)
+            self.title_lookup[item.title] = item_index
+
+    def load(self):
+        locations = []
+        for location in self.locations:
+            locations.append(location.guid)
+        view = GetInventoryViews(api_session)[0]
+        self.request = GetInventoryItems(
+            self.api_session, start=0, count=999999, view=view,
+            locations=locations)
+        for item_data in self.request.response_dict['Items']:
+            self.add_item(item_data)
+        self.update()
+
+    def add_item(self, item_data):
+        new_item = InventoryItem(self.api_session)
+        new_item.load_from_request(item_data)
 
     def get_inventory_item_details(self):
         for item in self.items:
@@ -61,27 +111,6 @@ class Inventory():
             for prop in request:
                 item.extended_properties[prop['ProperyName']] = prop[
                     'PropertyValue']
-
-    def get_category_lookup(self):
-        category_info = self.api_session.get_category_info()
-        category_lookup = {}
-        for category in category_info:
-            category_lookup[category['id']] = category['name']
-        return category_lookup
-
-    def get_package_group_lookup(self):
-        package_info = self.api_session.get_packaging_group_info()
-        package_group_lookup = {}
-        for group in package_info:
-            package_group_lookup[group['id']] = group['name']
-        return package_group_lookup
-
-    def get_postal_service_lookup(self):
-        postal_info = self.api_session.get_shipping_method_info()
-        postal_service_lookup = {}
-        for service in postal_info:
-            postal_service_lookup[service['id']] = service['name']
-        return postal_service_lookup
 
     def to_table(self):
         from lstools import Table as Table
