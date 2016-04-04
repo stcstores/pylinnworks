@@ -2,7 +2,7 @@
 
 import os
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 
 
 class UploadFile(Request):

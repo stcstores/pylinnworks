@@ -4,9 +4,9 @@ Arguments:
     stock_id -- GUID of inventory item.
 """
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 from linnapi.inventory import BasicItem
-from .. functions import is_guid
+from linnapi.functions import is_guid
 
 
 class GetInventoryItemByID(Request):

@@ -1,7 +1,6 @@
 """Requests open order IDs """
 
 from linnapi.api_requests.request import Request
-from linnapi.api_requests.settings.get_locations import GetLocations
 
 
 class GetOpenOrders(Request):
@@ -23,7 +22,7 @@ class GetOpenOrders(Request):
         if location_id is not None:
             self.location_id = location_id
         else:
-            self.location_id = GetLocations.default
+            self.location_id = self.api_session.locations['Default'].guid
         super().__init__(api_session)
 
     def get_data(self):

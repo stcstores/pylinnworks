@@ -1,7 +1,7 @@
 """Requests image urls for inventory item """
 
-from .. request import Request
-from .. functions import is_guid
+from linnapi.api_requests.request import Request
+from linnapi.functions import is_guid
 
 
 class GetInventoryItemImages(Request):

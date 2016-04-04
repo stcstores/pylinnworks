@@ -9,11 +9,10 @@ Keyword arguments:
 
 import json
 
-from .. request import Request
+from linnapi.api_requests.request import Request
+from linnapi.functions import is_guid
 from . get_inventory_views import GetInventoryViews
-from .. settings import GetLocations
 from . get_inventory_item_count import GetInventoryItemCount
-from .. functions import is_guid
 from . inventory_view import InventoryView
 
 
@@ -36,7 +35,7 @@ class GetInventoryItems(Request):
         else:
             self.view = view
         if locations is None:
-            self.locations = GetLocations(api_session).ids
+            self.locations = api_session.locations.ids
         else:
             self.locations = locations
         super().__init__(api_session)

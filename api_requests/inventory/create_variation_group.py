@@ -2,9 +2,9 @@
 
 import uuid
 
-from .. request import Request
-from .. functions import get_new_SKU
-from .. functions import is_guid
+from linnapi.api_requests.request import Request
+from linnapi.functions import get_new_SKU
+from linnapi.functions import is_guid
 
 
 class CreateVariationGroup(Request):

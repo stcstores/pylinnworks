@@ -1,9 +1,9 @@
-from . open_order import OpenOrder
-from . order_item import OrderItem
 from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
 from linnapi.api_requests.orders.create_PDF_from_job_force_template\
     import CreatePDFFromJobForceTemplate
 from linnapi.api_requests.orders.get_print_file import GetPrintFile
+from . open_order import OpenOrder
+from . order_item import OrderItem
 
 
 class OpenOrders:

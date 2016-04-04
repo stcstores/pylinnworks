@@ -1,8 +1,8 @@
+from linnapi.api_requests.settings.get_shipping_methods import \
+    GetShippingMethods
 from . info_class import InfoClass
 from . info_entry import InfoEntry
 from . shipping_method import ShippingMethod
-from linnapi.api_requests.settings.get_shipping_methods import \
-    GetShippingMethods
 
 
 class ShippingMethods(InfoClass):

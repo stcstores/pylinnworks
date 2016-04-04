@@ -1,4 +1,5 @@
 import requests
+
 from linnapi.api_requests.request import Request
 
 

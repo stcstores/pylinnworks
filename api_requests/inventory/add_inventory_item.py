@@ -3,7 +3,7 @@
 import json
 
 from linnapi.api_requests.request import Request
-from linnapi.api_requests.functions import is_guid
+from linnapi.functions import is_guid
 from linnapi.api_requests.settings.get_categories import GetCategories
 from linnapi.api_requests.settings.get_package_groups import GetPackageGroups
 from linnapi.api_requests.settings.get_postage_services import \

@@ -3,7 +3,6 @@ from . get_inventory_item_count import GetInventoryItemCount
 from . inventory_view import InventoryView
 from . get_inventory_views import GetInventoryViews
 from . inventory_view_filter import InventoryViewFilter
-from linnapi.api_requests . settings . get_locations import GetLocations
 
 
 class SearchInventoryByTitle(GetInventoryItems):
@@ -24,7 +23,7 @@ class SearchInventoryByTitle(GetInventoryItems):
         )]
         self.start = 0
         if locations is None:
-            self.locations = [GetLocations.default]
+            self.locations = [self.api_session.locations['Default'].guid]
         else:
             self.locations = locations
         super().__init__(api_session, start=0, count=self.count, view=self.view,

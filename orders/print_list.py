@@ -1,4 +1,4 @@
-from .open_orders import OpenOrders
+from . open_orders import OpenOrders
 
 
 class PrintList:

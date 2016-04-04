@@ -1,6 +1,6 @@
 """Request inventory views. """
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 from . inventory_view import InventoryView
 from . inventory_view_column import InventoryViewColumn
 

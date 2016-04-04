@@ -2,9 +2,8 @@
 
 import json
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 from . get_inventory_views import GetInventoryViews
-from .. settings import GetLocations
 from . inventory_view import InventoryView
 
 
@@ -16,7 +15,7 @@ class GetInventoryItemCount(Request):
     locations = []
 
     def __init__(self, api_session):
-        self.locations = GetLocations(api_session).ids
+        self.locations = api_session.locations.ids
         super().__init__(api_session)
 
     def process_response(self, response):

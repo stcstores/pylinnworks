@@ -1,6 +1,6 @@
 """Requests list of column types """
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 from . inventory_view_column import InventoryViewColumn
 
 

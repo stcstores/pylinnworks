@@ -1,7 +1,5 @@
 from . inventory_item import InventoryItem as InventoryItem
 
-from lstools import Table as Table
-
 
 class Inventory():
 
@@ -19,7 +17,8 @@ class Inventory():
             yield item
 
     def get_info(self):
-        self.extended_properties = self.api_session.get_extended_property_names()
+        self.extended_properties = \
+            self.api_session.get_extended_property_names()
         self.category_lookup = self.get_category_lookup()
         self.package_group_lookup = self.get_package_group_lookup()
         self.postal_service_lookup = self.get_postal_service_lookup()
@@ -85,6 +84,7 @@ class Inventory():
         return postal_service_lookup
 
     def to_table(self):
+        from lstools import Table as Table
         header = ['SKU', 'Title', 'Purchase Price', 'Retail Price', 'Barcode']
         table_array = []
         for item in self.items:

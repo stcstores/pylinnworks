@@ -1,7 +1,7 @@
 """Updates fields for inventory items """
 
-from ... request import Request
-from ... functions import is_guid
+from linnapi.api_requests.request import Request
+from linnapi.functions import is_guid
 
 
 class UpdateInventoryItemField(Request):

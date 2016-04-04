@@ -1,6 +1,6 @@
 """Requests search of variation groups """
 
-from .. request import Request
+from linnapi.api_requests.request import Request
 
 
 class SearchVariationGroups(Request):

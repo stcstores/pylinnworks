@@ -1,7 +1,7 @@
 """Request extended properties for inventory item with stock ID stock_id """
 
-from .. request import Request
-from .. functions import is_guid
+from linnapi.api_requests.request import Request
+from linnapi.functions import is_guid
 
 
 class GetInventoryItemExtendedProperties(Request):

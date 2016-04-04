@@ -3,7 +3,6 @@
 import json
 
 from linnapi.api_requests.request import Request
-from linnapi.api_requests.settings.get_locations import GetLocations
 
 
 class GetOrders(Request):
@@ -20,7 +19,7 @@ class GetOrders(Request):
         if location_id is not None:
             self.location_id = location_id
         else:
-            self.location_id = GetLocations.default
+            self.location_id = self.api_session.locations['Default'].guid
         if load_items is not None:
             self.load_items = load_items
         if load_additional_info is not None:
