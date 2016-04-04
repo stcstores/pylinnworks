@@ -2,7 +2,9 @@
 
 from . order_item import OrderItem as OrderItem
 from linnapi.settings.info_entry import InfoEntry
+from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
 from linnapi.api_requests.orders.get_open_order import GetOpenOrder
+from linnapi.api_requests.orders.process_order import ProcessOrder
 
 
 class OpenOrder:
@@ -60,8 +62,10 @@ class OpenOrder:
                  payment_method=None, payment_method_id=None,
                  profit_margin=None, subtotal=None, tax=None,
                  total_charge=None, total_discount=None, items=None,
-                 unlinked=None):
+                 unlinked=None, load_order_id=None):
         self.api_session = api_session
+        if load_order_id is not None:
+            self.load_from_order_id(load_order_id)
         if order_id is not None:
             self.order_id = order_id
         if order_number is not None:
@@ -153,6 +157,140 @@ class OpenOrder:
                     category = InfoEntry(None, "Mixed")
                     break
         return category
+
+    def load_from_order_id(self, order_id, location=None):
+        if location is None:
+            location_id = self.api_session.locations['Default'].guid
+        else:
+            location_id = self.api_session.locations[location].guid
+        self.request = GetOpenOrders(
+            self.api_session,
+            count=99999,
+            page_number=1,
+            filters=None,
+            location_id=location_id,
+            additional_filter=None)
+        order_data = None
+        for order in self.request.response_dict['Data']:
+            if order['OrderId'] == order_id:
+                order_data = order
+                break
+        if order_data is None:
+            raise ValueError('Order not in open orders.')
+        else:
+            self.load_from_request(order_data)
+
+    def load_from_request(self, order_data):
+        self.get_customer_info(order_data['CustomerInfo'])
+        date_time = order_data['GeneralInfo']['ReceivedDate'].strip()
+        self.date_recieved = date_time[:10]
+        self.time_recieved = date_time[11:]
+        channel_sub_source = order_data['GeneralInfo']['SubSource']
+        if channel_sub_source in self.api_session.channels.sub_sources:
+            self.channel = self.api_session.channels[channel_sub_source]
+        else:
+            self.channel = None
+        self.items = self.get_items(order_data['Items'],  self.channel)
+        if 'UNLINKED' in self.items:
+            self.unlinked = True
+        else:
+            self.unlinked = False
+
+        self.order_id = order_data['OrderId']
+        self.order_number = str(order_data['NumOrderId'])
+        self.folder_name = order_data['FolderName']
+        self.external_reference_number = order_data[
+            'GeneralInfo']['ExternalReferenceNum']
+        self.hold_or_cancel = order_data['GeneralInfo']['HoldOrCancel']
+        self.invoice_printed = order_data['GeneralInfo']['InvoicePrinted']
+        self.label_error = order_data['GeneralInfo']['LabelError']
+        self.label_printed = order_data['GeneralInfo']['LabelPrinted']
+        self.marker = order_data['GeneralInfo']['Marker']
+        self.notes = order_data['GeneralInfo']['Notes']
+        self.part_shipped = order_data['GeneralInfo']['PartShipped']
+        self.pick_list_printed = order_data['GeneralInfo']['PickListPrinted']
+        self.reference_number = order_data['GeneralInfo']['ReferenceNum']
+        self.paid = order_data['GeneralInfo']['Status']
+        self.item_weight = order_data['ShippingInfo']['ItemWeight']
+        self.manual_adjust = order_data['ShippingInfo']['ManualAdjust']
+        self.postage_service = self.api_session.postage_services[
+            order_data['ShippingInfo']['PostalServiceId']]
+        self.package_group = self.api_session.package_groups[
+            order_data['ShippingInfo']['PackageCategoryId']]
+        self.postage_cost = order_data['ShippingInfo']['PostageCost']
+        self.postage_cost_ex_tax = order_data[
+            'ShippingInfo']['PostageCostExTax']
+        self.order_weight = order_data['ShippingInfo']['TotalWeight']
+        self.tracking_number = order_data['ShippingInfo']['TrackingNumber']
+        self.country_tax_rate = order_data['TotalsInfo']['CountryTaxRate']
+        self.currency = order_data['TotalsInfo']['Currency']
+        self.payment_method = order_data['TotalsInfo']['PaymentMethod']
+        self.payment_method_id = order_data['TotalsInfo']['PaymentMethodId']
+        self.profit_margin = order_data['TotalsInfo']['ProfitMargin']
+        self.subtotal = order_data['TotalsInfo']['Subtotal']
+        self.tax = order_data['TotalsInfo']['Tax']
+        self.total_charge = order_data['TotalsInfo']['TotalCharge']
+        self.total_discount = order_data['TotalsInfo']['TotalDiscount']
+
+    def get_customer_info(self, customer_data):
+        self.address = [customer_data['Address']['Address1'],
+                        customer_data['Address']['Address2'],
+                        customer_data['Address']['Address3']]
+        self.company = customer_data['Address']['Company']
+        self.country = customer_data['Address']['Country']
+        self.country_id = customer_data['Address']['CountryId']
+        self.customer_email = customer_data['Address']['EmailAddress']
+        self.customer_name = customer_data['Address']['FullName']
+        self.customer_phone = customer_data['Address']['PhoneNumber']
+        self.post_code = customer_data['Address']['PostCode']
+        self.region = customer_data['Address']['Region']
+        self.town = customer_data['Address']['Town']
+        self.billing_address = customer_data['BillingAddress']
+        self.customer_channel_name = customer_data['ChannelBuyerName']
+
+    def get_items(self, item_data, channel):
+        items = []
+        for item in item_data:
+            if item['SKU'] is None:
+                new_item = 'UNLINKED'
+            else:
+                category = self.api_session.categories[item['CategoryName']]
+                if category is None:
+                    category = self.get_item_category(item)
+                new_item = OrderItem(
+                    self.api_session,
+                    available=item['AvailableStock'],
+                    barcode=item['BarcodeNumber'],
+                    category=category,
+                    channel_sku=item['ChannelSKU'],
+                    channel_title=item['ChannelTitle'],
+                    in_order_book=item['InOrderBook'],
+                    stock_id=item['ItemId'],
+                    item_number=item['ItemNumber'],
+                    channel=channel,
+                    level=item['Level'],
+                    quantity=item['Quantity'],
+                    sku=item['SKU'],
+                    title=item['Title'],
+                    weight=item['Weight'])
+            items.append(new_item)
+        return items
+
+    def get_item_category(self, item):
+        stock_id = item['ItemId']
+        request = GetInventoryItemByID(self.api_session, stock_id)
+
+    def process(self):
+        process_request = ProcessOrder(self.api_session, self.order_id)
+        return not self.is_open_order()
+
+    def is_open_order(self):
+        request = GetOpenOrder(self.api_session, self.order_id)
+        if 'GeneralInfo' in request.response_dict:
+            return True
+        else:
+            return False
+        return request
 
     def __str__(self):
         return "Order Number " + self.order_number

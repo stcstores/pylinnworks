@@ -3,7 +3,7 @@ import os
 from termcolor import colored, cprint
 import colorama
 
-from . linnworks_api_session import LinnworksAPISession
+import linnapi
 
 
 def process_orders(api_session):
@@ -17,19 +17,21 @@ def process_orders(api_session):
             continue
         if order_number.lower() == 'exit':
             exit()
-        guid = api_session.get_open_order_GUID_by_number(order_number)
+        guid_request = linnapi.api_requests.GetOpenOrderIDByOrderOrReferenceID(
+            api_session, order_number)
+        guid = guid_request.response_dict
         if guid is None:
             cprint('Error: GUID for ' + order_number + ' not found', 'red')
             continue
-        order = api_session.get_open_order(guid)
+        order = linnapi.orders.OpenOrder(api_session, load_order_id=guid)
         cprint(order.customer_name, 'yellow')
-        if order.printed is not True:
+        if order.invoice_printed is not True:
             cprint('Order Not Printed!', 'red')
         if input('Process?') != '':
             cprint('Order Not Processed', 'red')
             continue
-        api_session.process_order_by_GUID(guid)
-        if api_session.get_open_order_GUID_by_number(order_number) is not None:
+        process_success = order.process()
+        if process_success is False:
             cprint(
                 'Error: ' + order_number + ' may not be processed.', 'red')
         else:

@@ -37,3 +37,19 @@ def get_stock_id_by_SKU(api_session, sku):
     ))
     response = GetInventoryItems(api_session, view=view)
     return response.response_dict['Items'][0]['Id']
+
+
+def get_order_number(api_session, order_number):
+    from . orders . get_open_order_id_by_order_or_reference_id import \
+        GetOpenOrderIDByOrderOrReferenceID
+    from linnapi.orders import OpenOrder
+    request = GetOpenOrderIDByOrderOrReferenceID(api_session, order_number)
+    if is_guid(request.response_dict):
+        order_id = request.response_dict
+        try:
+            order = OpenOrder(api_session, load_order_id=order_id)
+        except:
+            order = None
+        return order
+    else:
+        return None

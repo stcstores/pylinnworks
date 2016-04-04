@@ -11,6 +11,13 @@ import uuid
 import re
 from pprint import pprint
 
+from linnapi.settings import Categories
+from linnapi.settings import PackageGroups
+from linnapi.settings import ShippingMethods
+from linnapi.settings import Locations
+from linnapi.settings import PostageServices
+from linnapi.settings import Channels
+
 
 class LinnworksAPISession:
     """Main wrapper class for linnworks.net API. Allows authentication with
@@ -36,6 +43,7 @@ class LinnworksAPISession:
         else:
             self.password = password
         self.get_token()
+        self.get_settings()
 
     def make_request(self, url, data=None, params=None, files=None):
         """Request resource URL
@@ -83,3 +91,11 @@ class LinnworksAPISession:
         authorize = self.make_request(auth_url, auth_data).json()
         self.token = authorize['Token']
         self.server = authorize['Server']
+
+    def get_settings(self):
+        self.categories = Categories(self)
+        self.package_groups = PackageGroups(self)
+        self.shipping_methods = ShippingMethods(self)
+        self.locations = Locations(self)
+        self.postage_services = PostageServices(self)
+        self.channels = Channels(self)
