@@ -31,7 +31,7 @@ class GetInventoryViews(Request):
         )
     ]
 
-    def process_response(response):
+    def process_response(self, response):
         for view in self.response_dict:
             self.view_dicts.append(view)
             new_view = InventoryView()

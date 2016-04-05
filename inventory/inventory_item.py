@@ -6,52 +6,136 @@ for Linnworks Inventory Items."""
 import uuid
 import json
 
+from linnapi.api_requests.inventory.get_inventory_column_types \
+    import GetInventoryColumnTypes
+from linnapi.api_requests.inventory.inventory_view_filter\
+    import InventoryViewFilter
+from linnapi.api_requests.inventory.get_inventory_items \
+    import GetInventoryItems
+
 
 class InventoryItem:
     stock_id = None
-    json = None
-    inventory = None
     sku = ''
     title = ''
     purchase_price = 0
     retail_price = 0
     barcode = ''
-    category_id = ''
     category = ''
     depth = ''
     height = ''
-    package_group_id = ''
     package_group = ''
-    postage_service_id = ''
     postage_service = ''
     tax_rate = 0
     variation_group_name = ''
     weight = 0
     width = 0
-    quantity = 0
+    available = 0
     meta_data = ''
+    bin_rack = None
     extended_properties = None
 
-    def __init__(self, api_session):
+    def __init__(self, api_session, stock_id=None, sku=None, title=None,
+                 purchase_price=None, retail_price=None, barcode=None,
+                 category=None, depth=None, height=None, package_group=None,
+                 postage_service=None, tax_rate=None,
+                 variation_group_name=None, weight=None, width=None,
+                 available=None, meta_data=None, bin_rack=None,
+                 extended_properties=None, load_stock_id=None):
         self.api_session = api_session
+        if load_stock_id is not None:
+            self.load_from_stock_id(load_stock_id)
+        if stock_id is not None:
+            self.stock_id = stock_id
+        if sku is not None:
+            self.sku = sku
+        if title is not None:
+            self.title = title
+        if purchase_price is not None:
+            self.purchase_price = purchase_price
+        if retail_price is not None:
+            self.retail_price = retail_price
+        if barcode is not None:
+            self.barcode = barcode
+        if category is not None:
+            self.category = category
+        if depth is not None:
+            self.depth = depth
+        if height is not None:
+            self.height = height
+        if package_group is not None:
+            self.package_group = package_group
+        if postage_service is not None:
+            self.postage_service = postage_service
+        if tax_rate is not None:
+            self.tax_rate = tax_rate
+        if variation_group_name is not None:
+            self.variation_group = variation_group
+        if weight is not None:
+            self.weight = weight
+        if width is not None:
+            self.width = width
+        if available is not None:
+            self.available = available
+        if meta_data is not None:
+            self.meta_data = meta_data
+        if extended_properties is not None:
+            self.extended_properties = extended_properties
 
     def __str__(self):
         return str(self.sku) + ': ' + str(self.title)
 
-    def load_from_json(self, json, inventory):
-        self.json = json
-        self.inventory = inventory
-        self.api_session = self.inventory.api_session
-        self.sku = json['SKU']
-        self.title = json['Title']
-        self.stock_id = json['Id']
-        self.purchase_price = json['PurchasePrice']
-        self.retail_price = json['RetailPrice']
-        self.barcode = json['Barcode']
+    def load_from_stock_id(self, stock_id):
+        self.stock_id = stock_id
+        self.load_all()
 
-    def get_stock_id(self):
-        """Returns new GUID."""
-        self.stock_id = str(uuid.uuid4())
+    def load_from_request(self, item_data):
+        self.stock_id = item_data['Id']
+        self.sku = item_data['SKU']
+        self.barcode = item_data['Barcode']
+        self.quantity = item_data['StockLevel']
+        self.title = item_data['Title']
+        self.category = self.api_session.categories[item_data['Category']]
+        self.purchase_price = item_data['PurchasePrice']
+        self.retail_price = item_data['RetailPrice']
+        self.available = item_data['Available']
+        self.bin_rack = item_data['BinRack']
+
+    def load_all(self):
+        from linnapi.api_requests.inventory.get_inventory_item_by_id \
+            import GetInventoryItemByID
+        get_item_request = GetInventoryItemByID(
+            self.api_session, self.stock_id)
+        item_data = get_item_request.response_dict
+        from pprint import pprint
+        pprint(item_data)
+        self.sku = item_data['ItemNumber']
+        self.barcode = item_data['BarcodeNumber']
+        self.depth = item_data['Depth']
+        self.height = item_data['Height']
+        self.meta_data = item_data['MetaData']
+        self.package_group = self.api_session.package_groups[
+            item_data['PackageGroupId']]
+        self.purchase_price = item_data['PurchasePrice']
+        self.tax_rate = item_data['TaxRate']
+        self.variation_group_name = item_data['VariationGroupName']
+        self.weight = item_data['Weight']
+        self.width = item_data['Width']
+
+        from linnapi.api_requests.inventory.inventory_view import InventoryView
+        locations = self.api_session.locations.ids
+        view = InventoryView()
+        columns_request = GetInventoryColumnTypes(self.api_session)
+        view.columns = columns_request.columns
+        view_filter = InventoryViewFilter(
+            field='SKU', value=self.sku, condition='equals')
+        view.filters = [view_filter]
+        inventory_request = GetInventoryItems(
+            self.api_session, start=0, count=1, view=view,
+            locations=locations)
+        self.load_from_request(inventory_request.response_dict['Items'][0])
+
+#       self.load_extended_properties()
 
     def create_sku(self):
         """Returns new *SKU*."""

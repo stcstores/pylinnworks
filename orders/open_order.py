@@ -255,8 +255,6 @@ class OpenOrder:
                 new_item = 'UNLINKED'
             else:
                 category = self.api_session.categories[item['CategoryName']]
-                if category is None:
-                    category = self.get_item_category(item)
                 new_item = OrderItem(
                     self.api_session,
                     available=item['AvailableStock'],
@@ -275,10 +273,6 @@ class OpenOrder:
                     weight=item['Weight'])
             items.append(new_item)
         return items
-
-    def get_item_category(self, item):
-        stock_id = item['ItemId']
-        request = GetInventoryItemByID(self.api_session, stock_id)
 
     def process(self):
         process_request = ProcessOrder(self.api_session, self.order_id)

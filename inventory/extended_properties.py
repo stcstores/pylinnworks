@@ -30,7 +30,7 @@ class ExtendedProperties():
         for _property in response:
             self.add(json=_property)
 
-    def add(self, json):
+    def append(self, json):
         self.extended_properties.append(
             _ExtendedProperty(self.item, json=json))
 

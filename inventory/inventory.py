@@ -2,13 +2,15 @@ from linnapi.api_requests.inventory.get_inventory_views \
     import GetInventoryViews
 from linnapi.api_requests.inventory.get_inventory_items \
     import GetInventoryItems
+from linnapi.api_requests.inventory.get_inventory_column_types \
+    import GetInventoryColumnTypes
 from . inventory_item import InventoryItem as InventoryItem
 
 
 class Inventory():
 
     def __init__(
-            self, api_session, load=False, locations=None, item_list=None):
+            self, api_session, load=False, locations=None, items=None):
         self.api_session = api_session
         if locations is None:
             self.locations = [self.api_session.locations['Default']]
@@ -65,13 +67,17 @@ class Inventory():
             self.title_lookup[item.title] = item_index
 
     def load(self):
+        from linnapi.api_requests.inventory.inventory_view import InventoryView
         locations = []
         for location in self.locations:
             locations.append(location.guid)
-        view = GetInventoryViews(api_session)[0]
+        view = InventoryView()
+        columns_request = GetInventoryColumnTypes(self.api_session)
+        view.columns = columns_request.columns
         self.request = GetInventoryItems(
-            self.api_session, start=0, count=999999, view=view,
+            self.api_session, start=0, count=9999999, view=view,
             locations=locations)
+        print(len(self.request.response_dict['Items']))
         for item_data in self.request.response_dict['Items']:
             self.add_item(item_data)
         self.update()
@@ -79,6 +85,7 @@ class Inventory():
     def add_item(self, item_data):
         new_item = InventoryItem(self.api_session)
         new_item.load_from_request(item_data)
+        self.items.append(new_item)
 
     def get_inventory_item_details(self):
         for item in self.items:
