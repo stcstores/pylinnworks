@@ -1,54 +1,44 @@
+from linnapi.api_requests import UpdateInventoryItemExtendedProperties
+
+
 class ExtendedProperty():
 
-    def __init__(self, item, json=None):
-        self.item = item
-        self.type = ''
-        self.value = ''
-        self.name = ''
-        self.on_server = False
-        self.delete = False
-        if json is not None:
-            self.load_from_json(json)
-            self.on_server = True
-        else:
-            self.guid = str(uuid.uuid4())
-            self.on_server = False
+    def __init__(
+            self, property_type=None, value=None, name=None, property_id=None,
+            item_stock_id=None):
+        self.property_type = None
+        self.value = None
+        self.name = None
+        self.property_id = None
+        if property_type is not None:
+            self.property_type = property_type
+        if value is not None:
+            self.value = value
+        if name is not None:
+            self.name = name
+        if property_id  is not None:
+            self.property_id = property_id
+        if item_stock_id is not None:
+            self.item_stock_id = item_stock_id
 
-    def load_from_json(self, json):
-        self.type = json['PropertyType']
-        self.value = json['PropertyValue']
-        self.name = json['ProperyName']
-        self.guid = json['pkRowId']
-
-    def get_json(self):
-        data = {}
-        data['pkRowId'] = self.guid
-        data['fkStockItemId'] = self.item.stock_id
-        data['ProperyName'] = self.name
-        data['PropertyValue'] = self.value
-        data['PropertyType'] = self.type
-        return data
+    def get_extended_properties_dict(self):
+        ex_prop = {
+            'pkRowId': self.property_id,
+            'ProperyName': self.name,
+            'PropertyValue': self.value,
+            'PropertyType': self.property_type
+        }
+        return ex_prop
 
     def update(self):
-        api_session = self.item.api_session
-        url = api_session.server + ('/api/Inventory/'
-                            'UpdateInventoryItemExtendedProperties')
-        data = {
-            'inventoryItemExtendedProperties': json.dumps([self.get_json()])}
-        response = api_session.request(url, data)
-        return response
+        extended_properties = [self.get_extended_properties_dict()]
+        request = UpdateInventoryItemExtendedProperties(
+            self.api_session, extended_properties)
 
     def create(self):
-        api_session = self.item.api_session
-        url = api_session.server + ('/api/Inventory/'
-                            'CreateInventoryItemExtendedProperties')
-        data = {
-            'inventoryItemExtendedProperties': json.dumps([self.get_json()])}
-        response = api_session.request(url, data)
-        return response
-
-    def remove(self):
-        self.delete = True
+        extended_properties = [self.get_extended_properties_dict()]
+        request = CreateInventoryItemExtendedProperties(
+            self.api_session, extended_properties)
 
     def delete_from_server(self):
         api_session = self.item.api_session

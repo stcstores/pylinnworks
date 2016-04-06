@@ -24,12 +24,6 @@ class ExtendedProperties():
     def append(self, extended_property):
         self.extended_properties.append(extended_property)
 
-    def load(self):
-        response = self.api_session.get_inventory_item_extended_properties(
-            self.item.stock_id)
-        for _property in response:
-            self.add(json=_property)
-
     def append(self, json):
         self.extended_properties.append(
             _ExtendedProperty(self.item, json=json))

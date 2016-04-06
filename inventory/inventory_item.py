@@ -242,15 +242,21 @@ class InventoryItem:
             depth=item_data['Depth'], height=item_data['Height'])
 
     def update_all(self):
-        """Update *inventory item* and it's *extended properties* on Linnworks
-        server.
-        """
         self.update_item()
         self.extended_properties.update()
 
     def load_extended_properties(self):
-        """Get *extended properties* for item from Linnworks server."""
-        self.extended_properties.load()
+        request = GetInventoryItemExtendedProperties(
+            self.api_session, self.stock_id)
+        response = request.response_dict
+        for extended_property in response:
+            new_property = ExtendedProperty(
+                property_type=extended_property['PropertyType'],
+                value=extended_property['PropertyValue'],
+                name=extended_property['ProperyName'],
+                property_id=extended_property['pkRowId'],
+                item_stock_id=self.stock_id)
+            self.extended_properties.append(new_property)
 
     def get_extended_properties_dict(self):
         """Return ``dict`` containing *extended_properties* names and
