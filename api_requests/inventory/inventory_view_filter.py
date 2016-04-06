@@ -2,14 +2,14 @@ import json
 
 
 class InventoryViewFilter():
-    field = ''
-    value = ''
-    filter_name = ''
-    filter_name_exact = ''
-    condition = ''
 
     def __init__(self, field=None, value=None, condition=None,
                  filter_name=None, filter_name_exact=None):
+        self.field = ''
+        self.value = ''
+        self.filter_name = ''
+        self.filter_name_exact = ''
+        self.condition = ''
         if field is not None:
             self.field = field
         if value is not None:

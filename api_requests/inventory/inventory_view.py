@@ -6,20 +6,20 @@ from . inventory_view_filter import InventoryViewFilter
 
 
 class InventoryView():
-    channels = []
-    columns = []
-    country_code = None
-    filters = []
-    _id = None
-    include_products = 'ALL'
-    listing = 'ALL'
-    mode = 'ALL'
-    name = None
-    show_only_changed = False
-    source = None
-    sub_source = None
 
     def __init__(self, name=None, _id=None):
+        self.channels = []
+        self.columns = []
+        self.country_code = None
+        self.filters = []
+        self._id = None
+        self.include_products = 'ALL'
+        self.listing = 'ALL'
+        self.mode = 'ALL'
+        self.name = None
+        self.show_only_changed = False
+        self.source = None
+        self.sub_source = None
         if _id is None:
             self._id = str(uuid.uuid4())
         else:

@@ -18,13 +18,12 @@ from . inventory_view import InventoryView
 
 class GetInventoryItems(Request):
     url_extension = '/api/Inventory/GetInventoryItems'
-    start = 0
-    count = 0
-    view = None
-    locations = []
 
     def __init__(self, api_session, start=0, count=0, view=None,
                  locations=None):
+        self.count = 0
+        self.view = None
+        self.locations = []
         self.start = 0
         if count == 0:
             self.count = GetInventoryItemCount(api_session).item_count
