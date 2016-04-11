@@ -4,6 +4,7 @@ from . info_entry import InfoEntry
 
 
 class PackageGroups(InfoClass):
+    name = 'Package Groups'
     request_class = GetPackageGroups
     name_field = 'Key'
     id_field = 'Value'

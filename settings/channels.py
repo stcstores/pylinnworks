@@ -5,6 +5,7 @@ from . channel import Channel
 
 
 class Channels(InfoClass):
+    name = 'Channels'
     request_class = GetChannels
     entry_class = Channel
     info_list = []
@@ -31,5 +32,5 @@ class Channels(InfoClass):
             for entry in self.info_list:
                 if entry.sub_source == key:
                     return entry
-            raise ValueError
-        raise KeyError
+            raise KeyError(key + " not in " + self.name)
+        raise KeyError(self.name + " " + str(key) + " not found")

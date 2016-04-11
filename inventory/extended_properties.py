@@ -24,10 +24,6 @@ class ExtendedProperties():
     def append(self, extended_property):
         self.extended_properties.append(extended_property)
 
-    def append(self, json):
-        self.extended_properties.append(
-            _ExtendedProperty(self.item, json=json))
-
     def create(self, name='', value='', property_type='Attribute'):
         prop = ExtendedProperty(self.item)
         prop.name = name

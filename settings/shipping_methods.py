@@ -6,6 +6,7 @@ from . shipping_method import ShippingMethod
 
 
 class ShippingMethods(InfoClass):
+    name = 'Shipping Methods'
     request_class = GetShippingMethods
     entry_class = ShippingMethod
     info_list = []

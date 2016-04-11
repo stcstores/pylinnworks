@@ -17,6 +17,8 @@ from linnapi.api_requests.inventory.update_inventory_item \
 from linnapi.api_requests.inventory.get_inventory_item_by_id \
     import GetInventoryItemByID
 from linnapi.api_requests.inventory.inventory_view import InventoryView
+from .extended_properties import ExtendedProperties
+from .extended_property import ExtendedProperty
 
 
 class InventoryItem:
@@ -38,7 +40,6 @@ class InventoryItem:
     available = None
     meta_data = None
     bin_rack = None
-    extended_properties = None
 
     def __init__(self, api_session, stock_id=None, sku=None, title=None,
                  purchase_price=None, retail_price=None, barcode=None,
@@ -48,6 +49,7 @@ class InventoryItem:
                  available=None, meta_data=None, bin_rack=None,
                  extended_properties=None, load_stock_id=None):
         self.api_session = api_session
+        self.extended_properties = ExtendedProperties(self, False)
         if load_stock_id is not None:
             self.load_from_stock_id(load_stock_id)
         if stock_id is not None:

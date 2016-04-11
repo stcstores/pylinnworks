@@ -77,7 +77,6 @@ class Inventory():
         self.request = GetInventoryItems(
             self.api_session, start=0, count=9999999, view=view,
             locations=locations)
-        print(len(self.request.response_dict['Items']))
         for item_data in self.request.response_dict['Items']:
             self.add_item(item_data)
         self.update()

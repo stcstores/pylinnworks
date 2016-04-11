@@ -4,6 +4,7 @@ from . info_entry import InfoEntry
 
 
 class Categories(InfoClass):
+    name = 'Categories'
     request_class = GetCategories
     name_field = 'CategoryName'
     id_field = 'CategoryId'

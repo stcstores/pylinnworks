@@ -2,6 +2,7 @@ from . info_entry import InfoEntry
 
 
 class InfoClass:
+    name = ''
     request_class = None
     entry_class = InfoEntry
     name_field = ''
@@ -35,5 +36,7 @@ class InfoClass:
             return self.info_list[self.id_lookup[key]]
         elif key in self.names:
             return self.info_list[self.name_lookup[key]]
-        else:
+        elif isinstance(key, int) and key >= 0 and key < len(self.info_list):
             return self.info_list[key]
+        else:
+            raise KeyError(str(key) + " not in " + str(self.name))
