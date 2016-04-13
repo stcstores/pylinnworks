@@ -81,15 +81,6 @@ class AddInventoryItem(Request):
         assert isinstance(self.sku, str), "SKU must be string."
         assert len(self.sku) > 0, "SKU must not be empty string."
         assert is_guid(self.stock_id), "Stock ID must be valid GUID"
-        assert isinstance(self.title, str), "Title must be string."
-        assert len(self.title) > 0, "Title must not be empty string."
-        assert isinstance(self.barcode, str), "Barcode must be string."
-        assert isinstance(self.purchase_price, float), \
-            "Purchase Price must be float."
-        assert isinstance(self.retail_price, float), \
-            "Retail Price must be float."
-        assert isinstance(self.quantity, int), "Quantity must be int."
-        assert isinstance(self.tax_rate, int), "Tax Rate must be int."
         return super().test_request()
 
     def get_data(self):

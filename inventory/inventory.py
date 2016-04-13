@@ -2,32 +2,29 @@ from linnapi.api_requests.inventory.get_inventory_views \
     import GetInventoryViews
 from linnapi.api_requests.inventory.get_inventory_items \
     import GetInventoryItems
+from linnapi.api_requests.inventory.search_variation_groups \
+    import SearchVariationGroups
 from linnapi.api_requests.inventory.get_inventory_column_types \
     import GetInventoryColumnTypes
-from . inventory_item import InventoryItem as InventoryItem
+from linnapi.api_requests.inventory.inventory_view_filter \
+    import InventoryViewFilter
+from linnapi.api_requests.inventory.inventory_view \
+    import InventoryView
+from . single_inventory_item import SingleInventoryItem
+from . variation_group import VariationGroup
+from . variation_inventory_item import VariationInventoryItem
+from . inventory_items import InventoryItems
 
 
 class Inventory():
 
-    def __init__(
-            self, api_session, load=False, locations=None, items=None):
+    def __init__(self, api_session, locations=None):
         self.api_session = api_session
         if locations is None:
             self.locations = [self.api_session.locations['Default']]
         else:
             locations = locations
-        self.items = []
-        self.skus = []
-        self.stock_ids = []
-        self.titles = []
-        self.sku_lookup = {}
-        self.stock_id_lookup = {}
-        self.title_lookup = {}
-        if items is not None:
-            self.items = items
-            self.update()
-        elif load is True:
-            self.load()
+        self.clear()
 
     def __getitem__(self, key):
         if key in self.stock_id_lookup:
@@ -40,23 +37,113 @@ class Inventory():
             return self.items[key]
 
     def __iter__(self):
-        for item in self.items:
+        for item in self.single_items:
             yield item
 
     def __len__(self):
-        return len(self.items)
+        return len(self.single_items)
+
+    def clear(self):
+        self.single_items = InventoryItems()
+        self.variation_groups = InventoryItems()
+        self.variation_children = InventoryItems()
+        self.skus = []
+        self.stock_ids = []
+        self.titles = []
+
+        self.skus_lookup = {}
+        self.stock_ids_lookup = {}
+        self.titles_lookup = {}
+
+    def search_inventory(self, filters):
+        view = InventoryView()
+        view.columns = []
+        view.filters = filters
+        locations = []
+        for location in self.locations:
+            locations.append(location.guid)
+        request = GetInventoryItems(
+            self.api_session, start=0, count=9999999, view=view,
+            locations=locations)
+        self.load_from_get_inventory_items_request(request)
+
+    def search_single_item_title(self, sku, condition='contains'):
+        filters = [InventoryViewFilter(
+            field='Title', value=sku, condition=condition)]
+        self.search_inventory(filters)
+
+    def search_single_item_sku(self, sku, condition='equals'):
+        filters = [InventoryViewFilter(
+            field='SKU', value=sku, condition=condition)]
+        self.search_inventory(filters)
+
+    def search_variation_title(self, title):
+        request = SearchVariationGroups(
+            self.api_session, search_type='VariationName', search_text=title,
+            page_number=1, count=999999)
+        self.load_from_search_variation_groups_request(request)
+
+    def search_variation_sku(self, sku):
+        request = SearchVariationGroups(
+            self.api_session, search_type='ParentSKU', search_text=sku,
+            page_number=1, count=999999)
+        self.load_from_search_variation_groups_request(request)
+
+    def search_title(self, title):
+        self.clear()
+        self.search_single_item_title(title)
+        self.search_variation_title(title)
+
+    def search_sku(self, sku):
+        self.clear()
+        self.search_single_item_sku(sku)
+        self.search_variation_sku(sku)
+
+    def load_from_get_inventory_items_request(self, request):
+        for item_data in request.response_dict['Items']:
+            self.add_single_item(item_data)
+
+    def load_from_search_variation_groups_request(self, request):
+        for item_data in request.response_dict['Data']:
+            self.add_variation_group(item_data)
+
+    def add_single_item(self, item_data):
+        stock_id = item_data['Id']
+        sku = item_data['SKU']
+        title = item_data['Title']
+        new_item = SingleInventoryItem(
+            self.api_session, stock_id=stock_id,
+            sku=sku, title=title)
+        self.single_items.append(new_item)
+        self.stock_ids.append(new_item.stock_id)
+        self.skus.append(new_item.sku)
+        self.titles.append(new_item.title)
+
+    def add_variation_group(self, item_data):
+        new_group = VariationGroup(
+            self.api_session,
+            item_data['pkVariationItemId'],
+            item_data['VariationSKU'],
+            item_data['VariationGroupName'])
+        children_data = new_group.get_children()
+        for child in children_data:
+            new_group.children.append(self.single_items[child['ItemNumber']])
+        self.variation_groups.append(new_group)
+        self.stock_ids.append(new_group.stock_id)
+        self.skus.append(new_group.sku)
+        self.titles.append(new_group.title)
+        self.variation_children.extend(new_group.children)
+        for child in new_group.children:
+            self.stock_ids.append(child.stock_id)
+            self.skus.append(child.sku)
+            self.titles.append(child.title)
 
     def append(self, item):
         self.items.append(item)
         self.update()
 
     def update(self):
-        self.skus = []
-        self.stock_ids = []
-        self.titles = []
-        self.sku_lookup = {}
-        self.stock_id_lookup = {}
-        self.title_lookup = {}
+        self.clear()
         for item in self.items:
             item_index = self.items.index(item)
             self.skus.append(item.sku)
@@ -80,11 +167,6 @@ class Inventory():
         for item_data in self.request.response_dict['Items']:
             self.add_item(item_data)
         self.update()
-
-    def add_item(self, item_data):
-        new_item = InventoryItem(self.api_session)
-        new_item.load_from_request(item_data)
-        self.items.append(new_item)
 
     def get_inventory_item_details(self):
         for item in self.items:
@@ -133,3 +215,10 @@ class Inventory():
         table = Table()
         table.load_from_array(table_array, header)
         return table
+
+    def quantify(self):
+        return {
+            'Single Items': len(self.single_items),
+            'Variation Groups': len(self.variation_groups),
+            'Variation Children': len(self.variation_children)
+        }

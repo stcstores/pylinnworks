@@ -22,75 +22,153 @@ from .extended_property import ExtendedProperty
 
 
 class InventoryItem:
-    stock_id = None
-    sku = None
-    title = None
-    purchase_price = None
-    retail_price = None
-    barcode = None
-    category = None
-    depth = None
-    height = None
-    package_group = None
-    postage_service = None
-    tax_rate = None
-    variation_group_name = None
-    weight = None
-    width = None
-    available = None
-    meta_data = None
-    bin_rack = None
 
-    def __init__(self, api_session, stock_id=None, sku=None, title=None,
-                 purchase_price=None, retail_price=None, barcode=None,
-                 category=None, depth=None, height=None, package_group=None,
-                 postage_service=None, tax_rate=None,
-                 variation_group_name=None, weight=None, width=None,
-                 available=None, meta_data=None, bin_rack=None,
-                 extended_properties=None, load_stock_id=None):
+    def __init__(self, api_session, stock_id=None, sku=None, title=None):
         self.api_session = api_session
         self.extended_properties = ExtendedProperties(self, False)
-        if load_stock_id is not None:
-            self.load_from_stock_id(load_stock_id)
         if stock_id is not None:
             self.stock_id = stock_id
         if sku is not None:
             self.sku = sku
         if title is not None:
             self.title = title
-        if purchase_price is not None:
-            self.purchase_price = purchase_price
-        if retail_price is not None:
-            self.retail_price = retail_price
-        if barcode is not None:
-            self.barcode = barcode
-        if category is not None:
-            self.category = category
-        if depth is not None:
-            self.depth = depth
-        if height is not None:
-            self.height = height
-        if package_group is not None:
-            self.package_group = package_group
-        if postage_service is not None:
-            self.postage_service = postage_service
-        if tax_rate is not None:
-            self.tax_rate = tax_rate
-        if variation_group_name is not None:
-            self.variation_group = variation_group
-        if weight is not None:
-            self.weight = weight
-        if width is not None:
-            self.width = width
-        if available is not None:
-            self.available = available
-        if meta_data is not None:
-            self.meta_data = meta_data
-        if extended_properties is not None:
-            self.extended_properties = extended_properties
 
     def __str__(self):
         return str(self.sku) + ': ' + str(self.title)
+
+    def get_prop(self, prop):
+        get_item_request = GetInventoryItemByID(
+            self.api_session, self.stock_id)
+        item_data = get_item_request.response_dict
+        return item_data[prop]
+
+    def set_prop(self, prop, value):
+        get_item_request = GetInventoryItemByID(
+            self.api_session, self.stock_id)
+        item_data = get_item_request.response_dict
+        item_data[prop] = value
+        self.update_item(item_data)
+
+    def get_sku(self):
+        return self.get_prop('ItemNumber')
+
+    def get_title(self):
+        return self.get_prop('ItemTitle')
+
+    def get_barcode(self):
+        return self.get_prop('BarcodeNumber')
+
+    def get_category(self):
+        return self.api_session.categories[
+            self.get_prop('CategoryId')]
+
+    def get_package_group(self):
+        return self.api_session.package_groups[
+            self.get_prop('PackageGroupId')]
+
+    def get_postage_service(self):
+        return self.api_session.postage_services[
+            self.get_prop('PostalServiceId')]
+
+    def get_category_id(self):
+        return self.get_prop('CategoryId')
+
+    def get_package_group_id(self):
+        return self.get_prop('PackageGroupId')
+
+    def get_postage_service_id(self):
+        return self.get_prop('PostalServiceId')
+
+    def get_meta_data(self):
+        return self.get_prop('MetaData')
+
+    def get_depth(self):
+        return self.get_prop('Depth')
+
+    def get_width(self):
+        return self.get_prop('Width')
+
+    def get_height(self):
+        return self.get_prop('Height')
+
+    def get_purchase_price(self):
+        return self.get_prop('PurchasePrice')
+
+    def get_retail_price(self):
+        return self.get_prop('RetailPrice')
+
+    def get_tax_rate(self):
+        return self.get_prop('TaxRate')
+
+    def get_quantity(self):
+        return self.get_prop('Quantity')
+
+    def set_sku(self, sku):
+        return self.set_prop('ItemNumber', str(sku))
+
+    def set_title(self, title):
+        return self.set_prop('ItemTitle', str(title))
+
+    def set_barcode(self, barcode):
+        return self.set_prop('BarcodeNumber', str(barcode))
+
+    def set_category_id(self, cateogry_id):
+        return self.set_prop('CategoryId', str(cateogry_id))
+
+    def set_package_group_id(self, package_group_id):
+        return self.set_prop('PackageGroupId', str(package_group_id))
+
+    def set_postage_service_id(self, postage_service_id):
+        return self.set_prop('PostalServiceId', str(postage_service_id))
+
+    def set_category(self, cateogry):
+        return self.set_prop('CategoryId', str(cateogry_id.guid))
+
+    def set_package_group(self, package_group):
+        return self.set_prop('PackageGroupId', str(package_group_id.guid))
+
+    def set_postage_service(self, postage_service):
+        return self.set_prop('PostalServiceId', str(postage_service_id.guid))
+
+    def set_meta_data(self, meta_data):
+        return self.set_prop('MetaData', str(meta_data))
+
+    def set_depth(self, depth):
+        return self.set_prop('Depth', str(float(depth)))
+
+    def set_width(self, width):
+        return self.set_prop('Width', str(float(width)))
+
+    def set_height(self, height):
+        return self.set_prop('Height', str(float(height)))
+
+    def set_purchase_price(self, purchase_price):
+        return self.set_prop('PurchasePrice', str(float(purchase_price)))
+
+    def set_retail_price(self, retail_price):
+        return self.set_prop('RetailPrice', str(float(retail_price)))
+
+    def set_tax_rate(self, tax_rate):
+        return self.set_prop('TaxRate', int(tax_rate))
+
+    def set_quantity(self, quantity):
+        return self.set_prop('Quantity', int(quantity))
+
+    def update_item(self, item_data):
+        self.last_update_item_request = UpdateInventoryItem(
+            self.api_session, item_data['StockItemId'],
+            item_data['ItemNumber'], item_data['ItemTitle'],
+            barcode=item_data['BarcodeNumber'],
+            purchase_price=item_data['PurchasePrice'],
+            retail_price=item_data['RetailPrice'],
+            quantity=item_data['Quantity'], tax_rate=item_data['TaxRate'],
+            variation_group_name=item_data['VariationGroupName'],
+            meta_data=item_data['MetaData'],
+            category_id=item_data['CategoryId'],
+            package_group_id=item_data['PackageGroupId'],
+            postage_service_id=item_data['PostalServiceId'],
+            weight=item_data['Weight'], width=item_data['Width'],
+            depth=item_data['Depth'], height=item_data['Height'])
 
     def load_from_stock_id(self, stock_id):
         self.stock_id = stock_id
@@ -224,24 +302,6 @@ class InventoryItem:
             weight=item_data['Weight'], width=item_data['Width'],
             depth=item_data['Depth'], height=item_data['Height'])
         self.update_item()
-
-    def update_item(self):
-        self.set_empty_fields_to_default()
-        item_data = self.get_inventory_item_dict()
-        self.add_item_request = UpdateInventoryItem(
-            self.api_session, item_data['StockItemId'],
-            item_data['ItemNumber'], item_data['ItemTitle'],
-            barcode=item_data['BarcodeNumber'],
-            purchase_price=item_data['PurchasePrice'],
-            retail_price=item_data['RetailPrice'],
-            quantity=item_data['Quantity'], tax_rate=item_data['TaxRate'],
-            variation_group_name=item_data['VariationGroupName'],
-            meta_data=item_data['MetaData'],
-            category_id=item_data['CategoryId'],
-            package_group_id=item_data['PackageGroupId'],
-            postage_service_id=item_data['PostalServiceId'],
-            weight=item_data['Weight'], width=item_data['Width'],
-            depth=item_data['Depth'], height=item_data['Height'])
 
     def update_all(self):
         self.update_item()

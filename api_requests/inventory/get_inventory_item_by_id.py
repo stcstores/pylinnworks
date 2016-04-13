@@ -11,13 +11,13 @@ from linnapi.functions import is_guid
 class GetInventoryItemByID(Request):
     url_extension = '/api/Inventory/GetInventoryItemById'
 
-    def __init__(self, api_session, stock_id):
+    def __init__(self, api_session, stock_id, test=True):
         self.stock_id = stock_id
-        super().__init__(api_session)
+        super().__init__(api_session, test=test)
 
     def test_request(self):
         assert is_guid(self.stock_id), "Stock ID must be vaild GUID."
-        return super().test_request
+        return super().test_request()
 
     def get_data(self):
         data = {'id': self.stock_id}
