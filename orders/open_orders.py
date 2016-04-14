@@ -1,7 +1,4 @@
-from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
-from linnapi.api_requests.orders.create_PDF_from_job_force_template\
-    import CreatePDFFromJobForceTemplate
-from linnapi.api_requests.orders.get_print_file import GetPrintFile
+import linnapi.api_requests as api_requests
 from . open_order import OpenOrder
 from . order_item import OrderItem
 
@@ -35,7 +32,7 @@ class OpenOrders:
 
     def load(self):
         location_id = self.api_session.locations[self.location].guid
-        self.request = GetOpenOrders(
+        self.request = api_requests.GetOpenOrders(
             self.api_session,
             count=99999,
             page_number=1,
@@ -86,9 +83,9 @@ class OpenOrders:
         order_ids = []
         for order in self.orders:
             order_ids.append(order.order_id)
-        request = CreatePDFFromJobForceTemplate(
+        request = api_requests.CreatePDFFromJobForceTemplate(
             self.api_session, ids=order_ids, printer_name='PDF',
             template_type=template)
         print(request.data)
-        print_file = GetPrintFile(self.api_session, request.url)
+        print_file = api_requests.GetPrintFile(self.api_session, request.url)
         printer.print_content(print_file.file)

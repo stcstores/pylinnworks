@@ -1,9 +1,7 @@
 """Container object for open order information """
 
 from linnapi.settings.info_entry import InfoEntry
-from linnapi.api_requests.orders.get_open_orders import GetOpenOrders
-from linnapi.api_requests.orders.get_open_order import GetOpenOrder
-from linnapi.api_requests.orders.process_order import ProcessOrder
+import linnapi.api_requests as api_requests
 from . order_item import OrderItem as OrderItem
 
 
@@ -163,7 +161,7 @@ class OpenOrder:
             location_id = self.api_session.locations['Default'].guid
         else:
             location_id = self.api_session.locations[location].guid
-        self.request = GetOpenOrders(
+        self.request = api_requests.GetOpenOrders(
             self.api_session,
             count=99999,
             page_number=1,
@@ -275,11 +273,12 @@ class OpenOrder:
         return items
 
     def process(self):
-        process_request = ProcessOrder(self.api_session, self.order_id)
+        process_request = api_requests.ProcessOrder(
+            self.api_session, self.order_id)
         return not self.is_open_order()
 
     def is_open_order(self):
-        request = GetOpenOrder(self.api_session, self.order_id)
+        request = api_requests.GetOpenOrder(self.api_session, self.order_id)
         if 'GeneralInfo' in request.response_dict:
             return True
         else:
