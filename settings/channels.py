@@ -1,4 +1,4 @@
-from linnapi.api_requests.settings.get_channels import GetChannels
+import linnapi.api_requests as api_requests
 from . info_class import InfoClass
 from . info_entry import InfoEntry
 from . channel import Channel
@@ -6,7 +6,7 @@ from . channel import Channel
 
 class Channels(InfoClass):
     name = 'Channels'
-    request_class = GetChannels
+    request_class = api_requests.GetChannels
     entry_class = Channel
     info_list = []
     sub_sources = []
