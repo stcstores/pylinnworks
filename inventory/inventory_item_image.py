@@ -4,8 +4,7 @@ import webbrowser
 from mimetypes import guess_extension
 import requests
 
-from linnapi.api_requests.inventory.images.delete_image_from_inventory_item \
-    import DeleteImageFromInventoryItem
+import linnapi.api_requests as api_requests
 
 
 class InventoryItemImage:
@@ -56,6 +55,6 @@ class InventoryItemImage:
         webbrowser.open(self.thumb_url)
 
     def remove(self):
-        request = DeleteImageFromInventoryItem(
+        request = api_requests.DeleteImageFromInventoryItem(
             self.api_session, self.thumb_url, self.stock_id)
         return request

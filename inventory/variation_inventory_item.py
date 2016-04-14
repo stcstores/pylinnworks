@@ -1,4 +1,4 @@
-from .inventory_item import InventoryItem
+from . inventory_item import InventoryItem
 
 
 class VariationInventoryItem(InventoryItem):

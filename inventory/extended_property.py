@@ -1,4 +1,4 @@
-import linnapi.api_requests
+import linnapi.api_requests as api_requests
 
 
 class ExtendedProperty():
@@ -32,12 +32,12 @@ class ExtendedProperty():
 
     def update(self):
         extended_properties = [self.get_extended_properties_dict()]
-        request = linnapi.api_requests.UpdateInventoryItemExtendedProperties(
+        request = api_requests.UpdateInventoryItemExtendedProperties(
             self.api_session, extended_properties)
 
     def create(self):
         extended_properties = [self.get_extended_properties_dict()]
-        request = CreateInventoryItemExtendedProperties(
+        request = api_requests.CreateInventoryItemExtendedProperties(
             self.api_session, extended_properties)
 
     def delete_from_server(self):

@@ -6,22 +6,7 @@ Linnworks Inventory Items."""
 import uuid
 import json
 
-from linnapi.api_requests.inventory.get_inventory_column_types \
-    import GetInventoryColumnTypes
-from linnapi.api_requests.inventory.inventory_view_filter\
-    import InventoryViewFilter
-from linnapi.api_requests.inventory.get_inventory_items \
-    import GetInventoryItems
-from linnapi.api_requests.inventory.update_inventory_item \
-    import UpdateInventoryItem
-from linnapi.api_requests.inventory.get_inventory_item_by_id \
-    import GetInventoryItemByID
-from linnapi.api_requests.inventory.images.upload_images_to_inventory_item \
-    import UploadImagesToInventoryItem
-from linnapi.api_requests.inventory.images.get_inventory_item_images \
-    import GetInventoryItemImages
-from linnapi.api_requests.inventory.images.upload_file import UploadFile
-from linnapi.api_requests.inventory.inventory_view import InventoryView
+import linnapi.api_requests as api_requests
 from . extended_properties import ExtendedProperties
 from . extended_property import ExtendedProperty
 from . inventory_item_image import InventoryItemImage
@@ -44,7 +29,7 @@ class InventoryItem:
         return str(self.sku) + ': ' + str(self.title)
 
     def update_item(self, item_data):
-        self.last_update_item_request = UpdateInventoryItem(
+        self.last_update_item_request = api_requests.UpdateInventoryItem(
             self.api_session, item_data['StockItemId'],
             item_data['ItemNumber'], item_data['ItemTitle'],
             barcode=item_data['BarcodeNumber'],
@@ -60,7 +45,7 @@ class InventoryItem:
             depth=item_data['Depth'], height=item_data['Height'])
 
     def load_extended_properties(self):
-        request = GetInventoryItemExtendedProperties(
+        request = api_requests.GetInventoryItemExtendedProperties(
             self.api_session, self.stock_id)
         response = request.response_dict
         for extended_property in response:
@@ -117,7 +102,8 @@ class InventoryItem:
         self.extended_properties.append(prop)
 
     def get_images_data(self):
-        request = GetInventoryItemImages(self.api_session, self.stock_id)
+        request = api_requests.GetInventoryItemImages(
+            self.api_session, self.stock_id)
         return request.response_dict
 
     def get_images(self):
@@ -136,15 +122,15 @@ class InventoryItem:
         Arguments:
             filepath -- Path to image to be uploaded.
         """
-        upload_request = UploadFile(
+        upload_request = api_requests.UploadFile(
             self.api_session, filepath, file_type='Image', expire_in=24)
         upload_response = upload_request.response_dict
         image_guid = upload_response[0]['FileId']
-        UploadImagesToInventoryItem(
+        return api_requests.UploadImagesToInventoryItem(
             self.api_session, self.stock_id, [image_guid])
 
     def get_item_data(self):
-        get_item_request = GetInventoryItemByID(
+        get_item_request = api_requests.GetInventoryItemByID(
             self.api_session, self.stock_id)
         item_data = get_item_request.response_dict
         return item_data

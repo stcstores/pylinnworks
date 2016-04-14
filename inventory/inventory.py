@@ -1,15 +1,4 @@
-from linnapi.api_requests.inventory.get_inventory_views \
-    import GetInventoryViews
-from linnapi.api_requests.inventory.get_inventory_items \
-    import GetInventoryItems
-from linnapi.api_requests.inventory.search_variation_groups \
-    import SearchVariationGroups
-from linnapi.api_requests.inventory.get_inventory_column_types \
-    import GetInventoryColumnTypes
-from linnapi.api_requests.inventory.inventory_view_filter \
-    import InventoryViewFilter
-from linnapi.api_requests.inventory.inventory_view \
-    import InventoryView
+import linnapi.api_requests as api_requests
 from . single_inventory_item import SingleInventoryItem
 from . variation_group import VariationGroup
 from . variation_inventory_item import VariationInventoryItem
@@ -56,35 +45,35 @@ class Inventory():
         self.titles_lookup = {}
 
     def search_inventory(self, filters):
-        view = InventoryView()
+        view = api_requests.InventoryView()
         view.columns = []
         view.filters = filters
         locations = []
         for location in self.locations:
             locations.append(location.guid)
-        request = GetInventoryItems(
+        request = api_requests.GetInventoryItems(
             self.api_session, start=0, count=9999999, view=view,
             locations=locations)
         self.load_from_get_inventory_items_request(request)
 
     def search_single_item_title(self, sku, condition='contains'):
-        filters = [InventoryViewFilter(
+        filters = [api_requests.InventoryViewFilter(
             field='Title', value=sku, condition=condition)]
         self.search_inventory(filters)
 
     def search_single_item_sku(self, sku, condition='equals'):
-        filters = [InventoryViewFilter(
+        filters = [api_requests.InventoryViewFilter(
             field='SKU', value=sku, condition=condition)]
         self.search_inventory(filters)
 
     def search_variation_title(self, title):
-        request = SearchVariationGroups(
+        request = api_requests.SearchVariationGroups(
             self.api_session, search_type='VariationName', search_text=title,
             page_number=1, count=999999)
         self.load_from_search_variation_groups_request(request)
 
     def search_variation_sku(self, sku):
-        request = SearchVariationGroups(
+        request = api_requests.SearchVariationGroups(
             self.api_session, search_type='ParentSKU', search_text=sku,
             page_number=1, count=999999)
         self.load_from_search_variation_groups_request(request)
@@ -154,14 +143,13 @@ class Inventory():
             self.title_lookup[item.title] = item_index
 
     def load(self):
-        from linnapi.api_requests.inventory.inventory_view import InventoryView
         locations = []
         for location in self.locations:
             locations.append(location.guid)
-        view = InventoryView()
+        view = api_requests.InventoryView()
         columns_request = GetInventoryColumnTypes(self.api_session)
         view.columns = columns_request.columns
-        self.request = GetInventoryItems(
+        self.request = api_requests.GetInventoryItems(
             self.api_session, start=0, count=9999999, view=view,
             locations=locations)
         for item_data in self.request.response_dict['Items']:
