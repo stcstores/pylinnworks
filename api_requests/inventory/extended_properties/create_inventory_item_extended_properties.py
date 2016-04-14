@@ -1,4 +1,5 @@
-from . import UpdateInventoryItemExtendedProperties
+from . update_inventory_item_extended_properties \
+    import UpdateInventoryItemExtendedProperties
 
 
 class CreateInventoryItemExtendedProperties(

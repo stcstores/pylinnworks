@@ -10,14 +10,14 @@ class UpdateInventoryItemExtendedProperties(Request):
 
     def test_request(self):
         for ex_prop in self.extended_properties:
-            assert 'pkRowId' in ex_prop \
+            assert 'pkRowId' in ex_prop, \
                 'Extended Property must contain pkRowId'
-            assert is_guid(ex_prop['pkRowId']) 'pkRowId must be valid GUID'
-            assert 'ProperyName' in ex_prop \
+            assert is_guid(ex_prop['pkRowId']), 'pkRowId must be valid GUID'
+            assert 'ProperyName' in ex_prop, \
                 'Extended Property must contain ProperyName'
-            assert 'PropertyValue' in ex_prop \
+            assert 'PropertyValue' in ex_prop, \
                 'Extended Property must contain PropertyValue'
-            assert 'PropertyType' in ex_prop \
+            assert 'PropertyType' in ex_prop, \
                 'Extended Property must contain PropertyType'
 
     def get_data(self):

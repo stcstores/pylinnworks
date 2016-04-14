@@ -12,9 +12,6 @@ from . get_inventory_item_titles import GetInventoryItemTitles
 from . get_inventory_item_prices import GetInventoryItemPrices
 from . get_inventory_item_descriptions import GetInventoryItemDescriptions
 from . get_inventory_column_types import GetInventoryColumnTypes
-from . get_extended_property_names import GetExtendedPropertyNames
-from . get_inventory_item_extended_properties \
-    import GetInventoryItemExtendedProperties
 from . get_stock_level import GetStockLevel
 from . get_variation_items import GetVariationItems
 from . search_variation_groups import SearchVariationGroups
