@@ -4,10 +4,6 @@ import json
 
 from linnapi.api_requests.request import Request
 from linnapi.functions import is_guid
-from linnapi.api_requests.settings.get_categories import GetCategories
-from linnapi.api_requests.settings.get_package_groups import GetPackageGroups
-from linnapi.api_requests.settings.get_postage_services import \
-    GetPostageServices
 
 
 class AddInventoryItem(Request):
@@ -37,45 +33,25 @@ class AddInventoryItem(Request):
                  tax_rate=None, variation_group_name=None, meta_data=None,
                  category_id=None, package_group_id=None,
                  postage_service_id=None, weight=None, width=None, depth=None,
-                 height=None):
-        self.sku = sku
-        self.stock_id = stock_id
-        self.title = title
-        if barcode is not None:
-            self.barcode = barcode
-        if purchase_price is not None:
-            self.purchase_price = float(purchase_price)
-        if retail_price is not None:
-            self.retail_price = float(retail_price)
-        if quantity is not None:
-            self.quantity = quantity
-        if tax_rate is not None:
-            self.tax_rate = tax_rate
-        if variation_group_name is not None:
-            self.variation_group_name = variation_group_name
-        if meta_data is not None:
-            self.meta_data = meta_data
-        if category_id is not None:
-            self.category_id = category_id
-        elif self.category_id is None:
-            self.category_id = GetCategories.default
-        if package_group_id is not None:
-            self.package_group_id = package_group_id
-        elif self.package_group_id is None:
-            self.package_group_id = GetPackageGroups.default
-        if postage_service_id is not None:
-            self.postage_service_id = postage_service_id
-        elif self.postage_service_id is None:
-            self.postage_service_id = GetPostageServices.default
-        if weight is not None:
-            self.weight = weight
-        if width is not None:
-            self.width = width
-        if depth is not None:
-            self.depth = depth
-        if height is not None:
-            self.height = height
-        super().__init__(api_session)
+                 height=None, test=True):
+        self.sku = str(sku)
+        self.stock_id = str(stock_id)
+        self.title = str(title)
+        self.barcode = str(barcode)
+        self.purchase_price = float(purchase_price)
+        self.retail_price = float(retail_price)
+        self.quantity = int(quantity)
+        self.tax_rate = float(tax_rate)
+        self.variation_group_name = str(variation_group_name)
+        self.meta_data = str(meta_data)
+        self.category_id = str(category_id)
+        self.package_group_id = str(package_group_id)
+        self.postage_service_id = str(postage_service_id)
+        self.weight = float(weight)
+        self.width = float(width)
+        self.depth = float(depth)
+        self.height = float(height)
+        super().__init__(api_session, test)
 
     def test_request(self):
         assert isinstance(self.sku, str), "SKU must be string."
