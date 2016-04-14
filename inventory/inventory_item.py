@@ -140,7 +140,7 @@ class InventoryItem:
         return item_data[prop]
 
     def set_prop(self, prop, value):
-        item_data = get_item_data()
+        item_data = self.get_item_data()
         item_data[prop] = value
         self.update_item(item_data)
 
