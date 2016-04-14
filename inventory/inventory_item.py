@@ -16,9 +16,16 @@ from linnapi.api_requests.inventory.update_inventory_item \
     import UpdateInventoryItem
 from linnapi.api_requests.inventory.get_inventory_item_by_id \
     import GetInventoryItemByID
+from linnapi.api_requests.inventory.images.upload_images_to_inventory_item \
+    import UploadImagesToInventoryItem
+from linnapi.api_requests.inventory.images.get_inventory_item_images \
+    import GetInventoryItemImages
+from linnapi.api_requests.inventory.images.upload_file import UploadFile
 from linnapi.api_requests.inventory.inventory_view import InventoryView
-from .extended_properties import ExtendedProperties
-from .extended_property import ExtendedProperty
+from . extended_properties import ExtendedProperties
+from . extended_property import ExtendedProperty
+from . inventory_item_image import InventoryItemImage
+from . inventory_item_images import InventoryItemImages
 
 
 class InventoryItem:
@@ -109,32 +116,45 @@ class InventoryItem:
         prop.type = property_type
         self.extended_properties.append(prop)
 
+    def get_images_data(self):
+        request = GetInventoryItemImages(self.api_session, self.stock_id)
+        return request.response_dict
+
+    def get_images(self):
+        images = []
+        image_data = self.get_images_data()
+        for image in image_data:
+            images.append(InventoryItemImage(
+                self.api_session, image['pkRowId'], self.stock_id,
+                image['Source'], image['IsMain']))
+        return InventoryItemImages(
+            self.api_session, self, images=images)
+
     def add_image(self, filepath):
         """Add image to item.
 
         Arguments:
             filepath -- Path to image to be uploaded.
         """
-        upload_response = self.api_session.upload_image(filepath)
+        upload_request = UploadFile(
+            self.api_session, filepath, file_type='Image', expire_in=24)
+        upload_response = upload_request.response_dict
         image_guid = upload_response[0]['FileId']
-        add_url = self.api_session.server + (
-            '/api/Inventory/UploadImagesToInventoryItem')
-        add_data = {
-            'inventoryItemId': self.stock_id,
-            'imageIds': json.dumps([image_guid])}
-        add_response = self.api_session.request(add_url, data=add_data)
-        return add_response
+        UploadImagesToInventoryItem(
+            self.api_session, self.stock_id, [image_guid])
 
-    def get_prop(self, prop):
+    def get_item_data(self):
         get_item_request = GetInventoryItemByID(
             self.api_session, self.stock_id)
         item_data = get_item_request.response_dict
+        return item_data
+
+    def get_prop(self, prop):
+        item_data = self.get_item_data()
         return item_data[prop]
 
     def set_prop(self, prop, value):
-        get_item_request = GetInventoryItemByID(
-            self.api_session, self.stock_id)
-        item_data = get_item_request.response_dict
+        item_data = get_item_data()
         item_data[prop] = value
         self.update_item(item_data)
 

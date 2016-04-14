@@ -1,4 +1,5 @@
 from . update_inventory import *
+from . images import *
 from . get_inventory_views import GetInventoryViews
 from . inventory_view import InventoryView
 from . inventory_view_column import InventoryViewColumn
@@ -12,10 +13,9 @@ from . get_inventory_item_prices import GetInventoryItemPrices
 from . get_inventory_item_descriptions import GetInventoryItemDescriptions
 from . get_inventory_column_types import GetInventoryColumnTypes
 from . get_extended_property_names import GetExtendedPropertyNames
-from . get_inventory_item_extended_properties import GetInventoryItemExtendedProperties
+from . get_inventory_item_extended_properties \
+    import GetInventoryItemExtendedProperties
 from . get_stock_level import GetStockLevel
-from . upload_file import UploadFile
-from . get_inventory_item_images import GetInventoryItemImages
 from . get_variation_items import GetVariationItems
 from . search_variation_groups import SearchVariationGroups
 from . create_variation_group import CreateVariationGroup
