@@ -1,3 +1,5 @@
+"""This module contains Request classes for inventory related requests """
+
 from . update_inventory import *
 from . images import *
 from . add_inventory_item import AddInventoryItem
