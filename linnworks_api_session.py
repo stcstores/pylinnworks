@@ -89,8 +89,14 @@ class LinnworksAPISession:
         auth_data = login_data
         auth_data['userId'] = self.user_id
         authorize = self.make_request(auth_url, auth_data).json()
-        self.token = authorize['Token']
-        self.server = authorize['Server']
+        if 'Message' in authorize:
+            raise Exception(authorize['Message'])
+        try:
+            self.token = authorize['Token']
+            self.server = authorize['Server']
+        except:
+            print('Error getting Token')
+            raise
 
     def get_settings(self):
         self.categories = Categories(self)
