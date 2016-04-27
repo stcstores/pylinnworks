@@ -71,7 +71,7 @@ def get_export(api_session, script_id, parameters=[]):
     import lstools
     request = linnapi.api_requests.ExecuteCustomScriptCSV(
         api_session, script_id, parameters)
-    table = lstools.Table(url=request.export_url)
+    table = lstools.Table(filename=request.export_url)
     return table
 
 
