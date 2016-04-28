@@ -80,6 +80,30 @@ def get_linking_table(api_session):
     return table
 
 
+def make_linnworks_date_time(year, month, day, hour=0, minute=0, second=0):
+    """Creates a date time string recognised by Linnworks API.
+
+    Args:
+        year (int)(str): Four digit year.
+        month (int)(str): Month Number. Example - January would be 1.
+        day (int)(str): Number of day in month.
+
+    Returns:
+        str: Date time string formatted for Linnworks.
+
+    """
+    year = str(year)
+    month = str(month).zfill(2)
+    day = str(day).zfill(2)
+    hour = str(hour).zfill(2)
+    minute = str(minute).zfill(2)
+    second = "%0.3f" % float(second)
+    second = second.zfill(6)
+    linnworks_date = ''.join([
+        year, '-', month, '-', day, 'T', hour, ':', minute, ':', second, 'Z'])
+    return linnworks_date
+
+
 def get_inventory(api_session, location='Default'):
     from linnapi.inventory.inventory import Inventory
     from linnapi.inventory.extended_property import ExtendedProperty
