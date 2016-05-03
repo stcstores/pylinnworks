@@ -23,7 +23,7 @@ class Inventory():
         elif key in self.title_lookup:
             return self.items[self.title_lookup[key]]
         else:
-            return self.items[key]
+            return self.single_items[key]
 
     def __iter__(self):
         for item in self.single_items:
@@ -40,9 +40,9 @@ class Inventory():
         self.stock_ids = []
         self.titles = []
 
-        self.skus_lookup = {}
-        self.stock_ids_lookup = {}
-        self.titles_lookup = {}
+        self.sku_lookup = {}
+        self.stock_id_lookup = {}
+        self.title_lookup = {}
 
     def search_inventory(self, filters):
         view = api_requests.InventoryView()
@@ -57,11 +57,13 @@ class Inventory():
         self.load_from_get_inventory_items_request(request)
 
     def search_single_item_title(self, sku, condition='contains'):
+        self.clear()
         filters = [api_requests.InventoryViewFilter(
             field='Title', value=sku, condition=condition)]
         self.search_inventory(filters)
 
     def search_single_item_sku(self, sku, condition='equals'):
+        self.clear()
         filters = [api_requests.InventoryViewFilter(
             field='SKU', value=sku, condition=condition)]
         self.search_inventory(filters)

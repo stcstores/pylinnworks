@@ -195,8 +195,19 @@ class InventoryItem:
     def get_tax_rate(self):
         return self.get_prop('TaxRate')
 
-    def get_quantity(self):
-        return self.get_prop('Quantity')
+    def get_stock_levels(self):
+        request = api_requests.GetStockLevel(self.api_session, self.stock_id)
+        stock_levels = {}
+        for location in request.response_dict:
+            stock_levels[location['Location']['StockLocationId']] = location
+        return stock_levels
+
+    def get_available(
+            self, location_id=None):
+        if location_id is None:
+            location_id = self.api_session.locations['Default'].guid
+        stock_levels = self.get_stock_levels()
+        return stock_levels[location_id]["Available"]
 
     def set_sku(self, sku):
         return self.set_prop('ItemNumber', str(sku))
