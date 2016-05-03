@@ -13,7 +13,7 @@ class GetStockLevel(Request):
 
     def test_request(self):
         assert is_guid(self.stock_id), "Stock ID must be valid GUID."
-        return super().test_response()
+        return super().test_request()
 
     def get_data(self):
         data = {
@@ -22,6 +22,4 @@ class GetStockLevel(Request):
         return data
 
     def test_response(self, response):
-        assert isinstance(response.json(), int), \
-            "Error message recieved: " + response.text
         return super().test_response(response)
