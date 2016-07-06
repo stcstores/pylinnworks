@@ -58,6 +58,7 @@ class OpenOrders:
     def add_order(self, order_data):
         new_order = OpenOrder(self.api_session)
         new_order.load_from_request(order_data)
+        self.orders.append(new_order)
 
     def __getitem__(self, key):
         if key in self.ids:
