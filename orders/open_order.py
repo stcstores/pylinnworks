@@ -1,5 +1,7 @@
 """Container object for open order information """
 
+from requests import HTTPError
+
 from linnapi.settings.info_entry import InfoEntry
 import linnapi.api_requests as api_requests
 from . order_item import OrderItem as OrderItem
@@ -278,12 +280,15 @@ class OpenOrder:
         return not self.is_open_order()
 
     def is_open_order(self):
-        request = api_requests.GetOpenOrder(self.api_session, self.order_id)
-        if 'GeneralInfo' in request.response_dict:
-            return True
-        else:
+        try:
+            request = api_requests.GetOpenOrder(
+                self.api_session, self.order_id)
+            if 'GeneralInfo' in request.response_dict:
+                return True
+        except HTTPError:
+            request = api_requests.GetOrderInfo(
+                self.api_session, self.order_id)
             return False
-        return request
 
     def __str__(self):
         return "Order Number " + self.order_number

@@ -14,7 +14,7 @@ class GetOpenOrder(Request):
         if location_id is not None:
             self.location_id = location_id
         else:
-            location_id = self.api_session.locations['Default'].guid
+            location_id = api_session.locations['Default'].guid
         if location_id is not None:
             self.location_id = location_id
         if load_items is not None:
