@@ -199,7 +199,12 @@ class InventoryItem:
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)
         stock_levels = {}
         for location in request.response_dict:
-            stock_levels[location['Location']['StockLocationId']] = location
+            stock_levels[location['Location']['StockLocationId']] = {
+                'available': location['Available'],
+                'stock_level': location['StockLevel'],
+                'in_orders': location['InOrders'],
+                'due': location['Due'],
+            }
         return stock_levels
 
     def get_available(

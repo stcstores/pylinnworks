@@ -135,7 +135,7 @@ class Inventory():
 
     def update(self):
         self.clear()
-        for item in self.items:
+        for item in self.single_items:
             item_index = self.items.index(item)
             self.skus.append(item.sku)
             self.sku_lookup[item.sku] = item_index
@@ -149,13 +149,14 @@ class Inventory():
         for location in self.locations:
             locations.append(location.guid)
         view = api_requests.InventoryView()
-        columns_request = GetInventoryColumnTypes(self.api_session)
+        columns_request = api_requests.GetInventoryColumnTypes(
+            self.api_session)
         view.columns = columns_request.columns
         self.request = api_requests.GetInventoryItems(
             self.api_session, start=0, count=9999999, view=view,
             locations=locations)
         for item_data in self.request.response_dict['Items']:
-            self.add_item(item_data)
+            self.add_single_item(item_data)
         self.update()
 
     def get_inventory_item_details(self):
