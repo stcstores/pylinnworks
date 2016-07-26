@@ -7,3 +7,4 @@ from . import orders
 from . import inventory
 from . functions import *
 from . linnworks_api_session import LinnworksAPISession
+from . exceptions import *
