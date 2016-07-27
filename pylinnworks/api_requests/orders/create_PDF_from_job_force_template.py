@@ -1,6 +1,6 @@
 import requests
 
-from linnapi.api_requests.request import Request
+from pylinnworks.api_requests.request import Request
 
 
 class CreatePDFFromJobForceTemplate(Request):
