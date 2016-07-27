@@ -1,4 +1,4 @@
-from linnapi.api_requests.request import Request
+from pylinnworks.api_requests.request import Request
 
 
 class GetChannels(Request):
