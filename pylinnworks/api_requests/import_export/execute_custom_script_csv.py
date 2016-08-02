@@ -4,6 +4,7 @@ from pylinnworks.api_requests.request import Request
 
 
 class ExecuteCustomScriptCSV(Request):
+    url_server = 'https://eu.linnworks.net'
     url_extension = '/api/Dashboards/ExecuteCustomScriptCSV'
 
     def __init__(self, api_session, script_id, parameters=[]):

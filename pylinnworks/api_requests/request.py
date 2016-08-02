@@ -1,4 +1,5 @@
 class Request():
+    url_server = None
     url_extension = ''
     data = {}
     response = None
@@ -6,7 +7,10 @@ class Request():
     def __init__(self, api_session, test=True):
         self.test = test
         self.api_session = api_session
-        self.url = self.api_session.server + self.url_extension
+        if self.url_server is not None:
+            self.url = self.url_server + self.url_extension
+        else:
+            self.url = self.api_session.server + self.url_extension
         self.data = self.get_data()
         if self.test is True:
             if self.test_request() is True:

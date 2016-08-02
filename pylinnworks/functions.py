@@ -71,7 +71,8 @@ def get_export(api_session, script_id, parameters=[]):
     from tabler import Tabler
     request = pylinnworks.api_requests.ExecuteCustomScriptCSV(
         api_session, script_id, parameters)
-    table = Tabler(filename=request.export_url)
+    table = Tabler()
+    table.open_url(request.export_url)
     return table
 
 
