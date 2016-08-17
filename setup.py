@@ -23,4 +23,7 @@ setup(
         'pylinnworks.inventory',
         'pylinnworks.orders',
         'pylinnworks.settings'],
+    install_requires=[
+        'requests',
+        'simplejson'],
     package_data={'': ['config.json']})
