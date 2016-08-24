@@ -8,3 +8,7 @@ from . import inventory
 from . functions import *
 from . linnworks_api_session import LinnworksAPISession
 from . exceptions import *
+
+
+def get_api_session():
+    return LinnworksAPISession()
