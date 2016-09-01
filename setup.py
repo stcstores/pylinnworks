@@ -12,5 +12,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         'requests',
-        'simplejson'],
+        'simplejson',
+        'tabler'],
     package_data={'': ['config.json']})
