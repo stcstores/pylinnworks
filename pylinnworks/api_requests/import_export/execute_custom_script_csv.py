@@ -4,7 +4,7 @@ from pylinnworks.api_requests.request import Request
 
 
 class ExecuteCustomScriptCSV(Request):
-    url_server = 'https://eu.linnworks.net'
+    url_server = 'https://eu1.linnworks.net'
     url_extension = '/api/Dashboards/ExecuteCustomScriptCSV'
 
     def __init__(self, api_session, script_id, parameters=[]):
@@ -23,6 +23,13 @@ class ExecuteCustomScriptCSV(Request):
             'scriptId': self.script_id
         }
         return data
+
+    def get_params(self):
+        params = {
+            'applicationName': 'Linnworks.net',
+            'modleName': 'QueryData',
+            'push': 'a4faccbe-7213-4340-a995-7bb9795fad43'}
+        return params
 
     def test_response(self, response):
         return super().test_response(response)
