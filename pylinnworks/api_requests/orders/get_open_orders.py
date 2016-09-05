@@ -1,10 +1,13 @@
 """Requests open order IDs """
 
+import json
+
 from pylinnworks.api_requests.request import Request
 
 
 class GetOpenOrders(Request):
     url_extension = '/api/Orders/GetOpenOrders'
+    url_server = 'https://eu1.linnworks.net'
     filters = {}
     location_id = ''
     additional_filter = ''
@@ -27,10 +30,11 @@ class GetOpenOrders(Request):
 
     def get_data(self):
         data = {
-            'filters': self.filters,
+            'filters': '',
             'fulfilmentCenter': self.location_id,
-            'additionalFilter': self.additional_filter,
+            'additionalFilter': '',
             'entriesPerPage': self.count,
+            'sorting': [],
             'pageNumber': self.page_number
         }
         self.data = data
