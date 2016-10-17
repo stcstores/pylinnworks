@@ -17,7 +17,7 @@ class Inventory():
 
     def __getitem__(self, key):
         if key in self.stock_id_lookup:
-            return self.items[stock_id_lookup[key]]
+            return self.items[self.stock_id_lookup[key]]
         elif key in self.sku_lookup:
             return self.items[self.sku_lookup[key]]
         elif key in self.title_lookup:
@@ -52,7 +52,7 @@ class Inventory():
         for location in self.locations:
             locations.append(location.guid)
         request = api_requests.GetInventoryItems(
-            self.api_session, start=0, count=9999999, view=view,
+            self.api_session, start=0, count=100, view=view,
             locations=locations)
         self.load_from_get_inventory_items_request(request)
 
@@ -71,13 +71,13 @@ class Inventory():
     def search_variation_title(self, title):
         request = api_requests.SearchVariationGroups(
             self.api_session, search_type='VariationName', search_text=title,
-            page_number=1, count=999999)
+            page_number=1, count=100)
         self.load_from_search_variation_groups_request(request)
 
     def search_variation_sku(self, sku):
         request = api_requests.SearchVariationGroups(
             self.api_session, search_type='ParentSKU', search_text=sku,
-            page_number=1, count=999999)
+            page_number=1, count=100)
         self.load_from_search_variation_groups_request(request)
 
     def search_title(self, title):
@@ -153,7 +153,7 @@ class Inventory():
             self.api_session)
         view.columns = columns_request.columns
         self.request = api_requests.GetInventoryItems(
-            self.api_session, start=0, count=9999999, view=view,
+            self.api_session, start=1, count=100, view=view,
             locations=locations)
         for item_data in self.request.response_dict['Items']:
             self.add_single_item(item_data)

@@ -31,6 +31,13 @@ class InfoClass:
         self.names.append(entry[self.name_field])
         self.name_lookup[entry[self.name_field]] = new_entry_index
 
+    def __iter__(self):
+        for item in self.info_list:
+            yield item
+
+    def __len__(self):
+        return len(self.info_list)
+
     def __getitem__(self, key):
         if key in self.id_lookup:
             return self.info_list[self.id_lookup[key]]

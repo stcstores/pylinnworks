@@ -11,15 +11,19 @@ class InventoryView():
         self.channels = []
         self.columns = []
         self.country_code = None
-        self.filters = []
+        self.filters = [InventoryViewFilter(
+            filter_name='General', display_name='None', filter_name_exact=None,
+            field='String', condition='Contains',
+            condition_display_name='Contains', filter_logic='AND', value=None)]
         self._id = None
         self.include_products = 'ALL'
         self.listing = 'ALL'
         self.mode = 'ALL'
-        self.name = None
+        self.name = 'Default'
         self.show_only_changed = False
         self.source = None
         self.sub_source = None
+        self.include_archived = False
         if _id is None:
             self._id = str(uuid.uuid4())
         else:
@@ -60,19 +64,22 @@ class InventoryView():
         return filter_list
 
     def to_dict(self):
-        view_dict = {}
-        view_dict['Channels'] = self.channels
-        view_dict['Columns'] = self.get_columns_list()
-        view_dict['CountryCode'] = str(self.country_code)
-        view_dict['Filters'] = self.get_filters_list()
-        view_dict['Id'] = self._id
-        view_dict['IncludeProducts'] = str(self.include_products)
-        view_dict['Listing'] = str(self.listing)
-        view_dict['Mode'] = str(self.mode)
-        view_dict['Name'] = str(self.name)
-        view_dict['ShowOnlyChanged'] = self.show_only_changed
-        view_dict['Source'] = str(self.source)
-        view_dict['SubSource'] = str(self.sub_source)
+        view_dict = {
+            'Channels': self.channels,
+            'Columns': [],  # self.get_columns_list(),
+            'CountryCode': self.country_code,
+            'CountryName': None,
+            'Filters': self.get_filters_list(),
+            'Id': self._id,
+            'IncludeProducts': 'ALL',
+            'Listing': self.listing,
+            'Mode': self.mode,
+            'Name': self.name,
+            'ShowOnlyChanged': self.show_only_changed,
+            'Source': self.source,
+            'SubSource': self.sub_source,
+            "IsPredefined": True,
+            "IsSearchRequired": True}
         return view_dict
 
     def to_json(self):

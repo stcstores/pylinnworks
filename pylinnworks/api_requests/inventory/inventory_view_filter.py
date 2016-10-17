@@ -3,33 +3,30 @@ import json
 
 class InventoryViewFilter():
 
-    def __init__(self, field=None, value=None, condition=None,
-                 filter_name=None, filter_name_exact=None):
-        self.field = ''
-        self.value = ''
-        self.filter_name = ''
-        self.filter_name_exact = ''
-        self.condition = ''
-        if field is not None:
-            self.field = field
-        if value is not None:
-            self.value = value
-        if condition is not None:
-            self.condition = condition
-        if filter_name is not None:
-            self.filter_name = filter_name
-        else:
-            self.filter_name = self.field
-        if filter_name_exact is not None:
-            self.filter_name_exact = filter_name_exact
+    def __init__(
+            self, filter_name='General', field='String', value=None,
+            condition='contains', filter_logic='AND', filter_name_exact=None,
+            condition_display_name='Contains', display_name='Anything'):
+        self.filter_name = filter_name
+        self.field = field
+        self.value = value
+        self.condition = condition
+        self.filter_logic = filter_logic
+        self.filter_name_exact = filter_name_exact
+        self.condition_display_name = condition_display_name
+        self.display_name = display_name
 
     def to_dict(self):
-        filter_dict = {}
-        filter_dict['Value'] = self.value
-        filter_dict['Field'] = self.field
-        filter_dict['FilterName'] = self.filter_name
-        filter_dict['FilterNameExact'] = self.filter_name_exact
-        filter_dict['Condition'] = self.condition
+        filter_dict = {
+            "FilterName": self.filter_name,
+            "DisplayName": self.display_name,
+            "FilterNameExact": None,
+            "Field": self.field,
+            "Condition": self.condition,
+            "ConditionDisplayName": self.condition_display_name,
+            "FilterLogic": self.filter_logic,
+            "Value": self.value,
+            }
         return filter_dict
 
     def load_from_dict(self, filter_dict):

@@ -17,18 +17,16 @@ from . inventory_view import InventoryView
 
 
 class GetInventoryItems(Request):
+    url_server = 'https://eu3.linnworks.net'
     url_extension = '/api/Inventory/GetInventoryItems'
 
-    def __init__(self, api_session, start=0, count=0, view=None,
+    def __init__(self, api_session, start=1, count=100, view=None,
                  locations=None):
-        self.count = 0
+        self.count = count
+        self.start = start
         self.view = None
         self.locations = []
         self.start = 0
-        if count == 0:
-            self.count = GetInventoryItemCount(api_session).item_count
-        else:
-            self.count = count
         if view is None:
             self.view = GetInventoryViews(api_session)[0]
         else:
@@ -55,7 +53,8 @@ class GetInventoryItems(Request):
             'view': self.view.to_json(),
             'startIndex': self.start,
             'itemsCount': self.count,
-            'stockLocationIds': json.dumps(self.locations)
+            'stockLocationIds': json.dumps(self.locations),
+            'preloadChilds': json.dumps(False)
         }
         return data
 
