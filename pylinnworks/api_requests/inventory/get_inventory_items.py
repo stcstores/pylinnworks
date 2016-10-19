@@ -26,7 +26,6 @@ class GetInventoryItems(Request):
         self.start = start
         self.view = None
         self.locations = []
-        self.start = 0
         if view is None:
             self.view = GetInventoryViews(api_session)[0]
         else:

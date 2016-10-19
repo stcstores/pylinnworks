@@ -3,6 +3,7 @@ from . single_inventory_item import SingleInventoryItem
 from . variation_group import VariationGroup
 from . variation_inventory_item import VariationInventoryItem
 from . inventory_items import InventoryItems
+from pylinnworks.functions import get_inventory_item_count
 
 
 class Inventory():
@@ -134,9 +135,8 @@ class Inventory():
         self.update()
 
     def update(self):
-        self.clear()
         for item in self.single_items:
-            item_index = self.items.index(item)
+            item_index = self.single_items.index(item)
             self.skus.append(item.sku)
             self.sku_lookup[item.sku] = item_index
             self.stock_ids.append(item.stock_id)
@@ -144,7 +144,8 @@ class Inventory():
             self.titles.append(item.title)
             self.title_lookup[item.title] = item_index
 
-    def load(self):
+    def load(self, verbose=False):
+        self.clear()
         locations = []
         for location in self.locations:
             locations.append(location.guid)
@@ -152,11 +153,25 @@ class Inventory():
         columns_request = api_requests.GetInventoryColumnTypes(
             self.api_session)
         view.columns = columns_request.columns
-        self.request = api_requests.GetInventoryItems(
-            self.api_session, start=1, count=100, view=view,
-            locations=locations)
-        for item_data in self.request.response_dict['Items']:
-            self.add_single_item(item_data)
+        total_items = get_inventory_item_count(self.api_session)
+        start = 1
+        item_count = 0
+        count = 100
+        while item_count < total_items:
+            request = api_requests.GetInventoryItems(
+                self.api_session, start=start, count=count, view=view,
+                locations=locations)
+            for item_data in request.response_dict['Items']:
+                self.add_single_item(item_data)
+                item_count += 1
+            if verbose is True:
+                print(
+                    "start:{} count:{} response:{} stored:{} total:{}".format(
+                        start, count, len(request.response_dict['Items']),
+                        len(self.single_items), total_items))
+            start += count
+            if item_count + count >= total_items:
+                count = total_items - item_count
         self.update()
 
     def get_inventory_item_details(self):
