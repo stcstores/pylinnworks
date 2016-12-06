@@ -5,6 +5,7 @@ api.linnworks.net
 from . import settings
 from . import orders
 from . import inventory
+from . shipping import *
 from . functions import *
 from . linnworks_api_session import LinnworksAPISession
 from . exceptions import *
