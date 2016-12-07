@@ -1,5 +1,6 @@
 """Searches processed orders """
 
+from datetime import datetime
 from pylinnworks.api_requests.request import Request
 
 
