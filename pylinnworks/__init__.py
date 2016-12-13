@@ -3,6 +3,7 @@ api.linnworks.net
 """
 
 from . import settings
+from . settings import Settings
 from . import orders
 from . import inventory
 from . shipping import *

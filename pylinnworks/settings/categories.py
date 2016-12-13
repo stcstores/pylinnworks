@@ -1,6 +1,5 @@
 import pylinnworks.api_requests as api_requests
 from . info_class import InfoClass
-from . info_entry import InfoEntry
 
 
 class Categories(InfoClass):

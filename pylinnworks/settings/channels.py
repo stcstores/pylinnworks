@@ -1,6 +1,5 @@
 import pylinnworks.api_requests as api_requests
 from . info_class import InfoClass
-from . info_entry import InfoEntry
 from . channel import Channel
 
 
@@ -19,6 +18,7 @@ class Channels(InfoClass):
                 entry['Source'],
                 entry['SubSource'])
         self.info_list.append(new_entry)
+        self.info_list = sorted(self.info_list)
         new_entry_index = self.info_list.index(new_entry)
         self.sub_sources.append(entry['SubSource'])
         self.sub_source_lookup[entry['SubSource']] = new_entry_index

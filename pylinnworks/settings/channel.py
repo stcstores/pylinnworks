@@ -7,3 +7,9 @@ class Channel():
         self.source_type = source_type
         self.source = source
         self.sub_source = sub_source
+
+    def __lt__(self, other):
+        return self.channel_id < other.channel_id
+
+    def __str__(self):
+        return '{} {}'.format(self.source, self.sub_source)
