@@ -56,3 +56,6 @@ class ProcessedOrder:
         self.profit_margin = order_data['ProfitMargin']
         self.order_id = order_data['pkOrderID']
         self.item_weight = order_data['ItemWeight']
+
+    def __repr__(self):
+        return 'ProcessedOrder OrderID: {}'.format(self.order_id)

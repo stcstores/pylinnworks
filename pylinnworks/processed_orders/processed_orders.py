@@ -21,6 +21,9 @@ class ProcessedOrders:
         self.search_fields = SearchFields(self.api_session)
         self.default_search_field = self.search_fields.get('Order ID')
 
+    def __repr__(self):
+        return 'ProcessedOrders Object'
+
     def request_orders(
             self, search_term, from_date, to_date, exact_match, date_type,
             page_num):
