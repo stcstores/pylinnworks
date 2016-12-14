@@ -15,10 +15,26 @@ class ManifestShippingService:
         self.service_name = data['ServiceName']
         self.consignments = self.get_consignments()
 
+    def __repr__(self):
+        return 'ManifestShippingService: {}'.format(self.service_name)
+
+    def __getitem__(self, index):
+        return self.consignments[index]
+
+    def __len__(self):
+        return len(self.consignments)
+
     def get_consignments(self):
         request = GetConsigments(
             self.api_session, self.manifest.vendor, self.service_id,
             self.manifest.account_id)
-        consignments = [Consignment(self.manifest, self, data) for data in
-                        request.response_dict['Data']]
+        consignments = [
+            Consignment(self.api_session, self.manifest, self, data) for data
+            in request.response_dict['Data']]
         return consignments
+
+    def get_consignment_by_id(self, order_id):
+        for consignment in self.consignments:
+            if consignment.order_id == order_id:
+                return consignment
+        raise ValueError

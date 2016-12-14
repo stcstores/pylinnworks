@@ -12,7 +12,7 @@ from . functions import *
 from . linnworks_api_session import LinnworksAPISession
 from . exceptions import *
 from . processed_orders import ProcessedOrders
-
+from . linking import Linking
 
 
 def get_api_session():

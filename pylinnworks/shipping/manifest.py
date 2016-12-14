@@ -21,3 +21,20 @@ class Manifest:
         if data['PreviousManifest'] is not None:
             self.previous_manifest = PreviousManifest(
                 self.api_session, self, data['PreviousManifest'])
+
+    def __repr__(self):
+        return 'Manifest: {} {}'.format(self.manifest_id, self.vendor)
+
+    def __len__(self):
+        return len(self.services)
+
+    def __getitem__(self, index):
+        return self.services[index]
+
+    def get_consignment_by_id(self, order_id):
+        for service in self.services:
+            try:
+                consignment = service.get_consignment_by_id(order_id)
+            except ValueError:
+                continue
+        raise ValueError

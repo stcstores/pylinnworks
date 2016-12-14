@@ -12,3 +12,6 @@ class PreviousManifest:
         self.reference = data['Reference']
         self.vendor = data['Vendor']
         self.shipping_api_config_id = data['fkShippingAPIConfigId']
+
+    def __repr__(self):
+        return 'PreviousManifest: {} {}'.format(self.manifest_id, self.vendor)
