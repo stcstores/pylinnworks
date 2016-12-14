@@ -38,7 +38,3 @@ class GetChannelItems(Request):
         }
         self.data = data
         return data
-
-    def process_response(self, response):
-        self.order_json = self.json
-        self.order_dict = self.response_dict
