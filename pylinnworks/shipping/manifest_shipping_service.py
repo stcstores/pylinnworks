@@ -24,6 +24,9 @@ class ManifestShippingService:
     def __len__(self):
         return len(self.consignments)
 
+    def __lt__(self, other):
+        return self.order_id < other.order_id
+
     def get_consignments(self):
         request = GetConsigments(
             self.api_session, self.manifest.vendor, self.service_id,
@@ -35,6 +38,6 @@ class ManifestShippingService:
 
     def get_consignment_by_id(self, order_id):
         for consignment in self.consignments:
-            if consignment.order_id == order_id:
+            if consignment.order_id == int(order_id):
                 return consignment
         raise ValueError

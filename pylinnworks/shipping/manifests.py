@@ -30,7 +30,7 @@ class Manifests:
     def get_consignment_by_id(self, order_id):
         for manifest in self.manifests:
             try:
-                return manifest.get_consignment_by_id(order_id)
+                return manifest.get_consignment_by_id(int(order_id))
             except ValueError:
                 continue
         raise ValueError
