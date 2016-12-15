@@ -11,5 +11,5 @@ class Channel():
     def __lt__(self, other):
         return self.channel_id < other.channel_id
 
-    def __str__(self):
-        return '{} {}'.format(self.source, self.sub_source)
+    def __repr__(self):
+        return 'Channel: {} {}'.format(self.source, self.sub_source)
