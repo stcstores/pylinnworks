@@ -25,21 +25,69 @@ class LinnworksAPISession:
     API and provides methods for many common API requests.
     """
 
-    def __init__(self, *kwargs):
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+
+    def __init__(
+            self, application_id=None, application_secret=None, server=None,
+            application_token=None):
         """
         Create session with linnworks.net API
         """
         self.session = requests.Session()
-        self.config_path = os.path.join(
-            os.path.dirname(__file__), 'config.json')
-        self.load_config()
-        if self.application_token == '':
-            self.set_application_token()
+        self.config = self.get_config()
+        self.application_id = self.get_application_id(application_id)
+        self.application_secret = self.get_application_secret(
+            application_secret)
+        self.server = self.get_server(server)
+        self.application_token = self.get_application_token(application_token)
         self.token = self.get_token()
-        self.get_settings()
+        # self.get_settings()
+
+    def get_application_id(self, application_id):
+        if application_id is not None:
+            return application_id
+        else:
+            if self.config is not None:
+                if 'application_id' in self.config:
+                    application_id = self.config['application_id']
+        if application_id is None:
+            raise NoApplicationID
+        return application_id
+
+    def get_application_secret(self, application_secret):
+        if application_secret is not None:
+            return application_secret
+        else:
+            if self.config is not None:
+                if 'application_secret' in self.config:
+                    application_secret = self.config['application_secret']
+        if application_secret is None:
+            raise NoApplicationSecretFound
+        return application_secret
+
+    def get_application_token(self, application_token):
+        if application_token is not None:
+            return application_token
+        else:
+            if self.config is not None:
+                if 'application_token' in self.config:
+                    application_token = self.config['application_token']
+        if application_token is None:
+            raise NoApplicationTokenFound
+        return application_token
+
+    def get_server(self, server):
+        if server is not None:
+            return server
+        else:
+            if self.config is not None:
+                if 'server' in self.config:
+                    server = self.config['server']
+        if server is None:
+            raise NoServerFound
+        return server
 
     def set_application_token(self):
-        print('Application Token Required')
         try:
             app = GetApplicationTokenApp()
             app.root.mainloop()
@@ -51,7 +99,10 @@ class LinnworksAPISession:
             token, self.server, self.application_id, self.application_secret)
 
     def get_config(self):
-        config = json.load(open(self.config_path, 'r'))
+        try:
+            config = json.load(open(self.config_path, 'r'))
+        except:
+            return None
         return config
 
     def load_config(self):
@@ -83,10 +134,7 @@ class LinnworksAPISession:
             'applicationId': self.application_id,
             'applicationSecret': self.application_secret,
             'token': self.application_token}
-        try:
-            request = self.session.post(url, data=data)
-        except:
-            raise
+        request = self.session.post(url, data=data)
         request.raise_for_status()
         try:
             token = request.json()['Token']

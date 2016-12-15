@@ -23,3 +23,34 @@ class InvalidResponse(HTTPRequestError):
     def get_message(self):
         message = "Request to " + self.url + "returned invalid response:\n"
         message += self.response_text
+
+
+class NoApplicationIDFound(Exception):
+    def __init__(self, request):
+        super().__init__(
+            'No Application ID was provided. Loading from config.json failed')
+
+
+class NoApplicationSecretFound(Exception):
+    def __init__(self, request):
+        super().__init__(
+            """No Application Secret was provided. Loading from config.json
+            failed""")
+
+
+class NoApplicationTokenFound(Exception):
+    def __init__(self, request):
+        super().__init__(
+            """No Application Token was provided. Loading from config.json
+            failed""")
+
+
+class NoServerFound(Exception):
+    def __init__(self, request):
+        super().__init__(
+            'No Server was provided. Loading from config.json failed')
+
+
+class NoTokenFound(Exception):
+    def __init__(self, request):
+        super().__init__('No Token Found')
