@@ -17,16 +17,6 @@ from . shipping import *  # DEPRICATED
 from . functions import *  # DEPRICATED
 
 
-def get_config():
-    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-    config = json.load(open(config_path, 'r'))
-    try:
-        config = json.load(open(config_path, 'r'))
-    except:
-        return None
-    return config
-
-
 def get_api_session():
     config = get_config()
     if config is not None:
@@ -35,6 +25,16 @@ def get_api_session():
             application_secret=config['application_secret'],
             server=config['server'],
             application_token=config['application_token'])
+
+
+def get_config():
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+    config = json.load(open(config_path, 'r'))
+    try:
+        config = json.load(open(config_path, 'r'))
+    except:
+        return None
+    return config
 
 
 class PyLinnworks:
@@ -48,18 +48,18 @@ class PyLinnworks:
             application_secret=application_secret, server=server,
             application_token=application_token)
 
-    @classmethod
-    def Settings(self):
+    @staticmethod
+    def Settings():
         return Settings(PyLinnworks.api_session)
 
-    @classmethod
-    def Manifests(self):
+    @staticmethod
+    def Manifests():
         return Manifests(PyLinnworks.api_session)
 
-    @classmethod
-    def Linking(self):
+    @staticmethod
+    def Linking():
         return Linking(PyLinnworks.api_session)
 
-    @classmethod
-    def ProcessedOrders(self):
+    @staticmethod
+    def ProcessedOrders():
         return ProcessedOrders(PyLinnworks.api_session)
