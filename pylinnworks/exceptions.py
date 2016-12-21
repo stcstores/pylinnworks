@@ -26,31 +26,31 @@ class InvalidResponse(HTTPRequestError):
 
 
 class NoApplicationIDFound(Exception):
-    def __init__(self, request):
+    def __init__(self):
         super().__init__(
             'No Application ID was provided. Loading from config.json failed')
 
 
 class NoApplicationSecretFound(Exception):
-    def __init__(self, request):
+    def __init__(self):
         super().__init__(
             """No Application Secret was provided. Loading from config.json
             failed""")
 
 
 class NoApplicationTokenFound(Exception):
-    def __init__(self, request):
+    def __init__(self):
         super().__init__(
             """No Application Token was provided. Loading from config.json
             failed""")
 
 
 class NoServerFound(Exception):
-    def __init__(self, request):
+    def __init__(self):
         super().__init__(
             'No Server was provided. Loading from config.json failed')
 
 
 class NoTokenFound(Exception):
-    def __init__(self, request):
+    def __init__(self):
         super().__init__('No Token Found')

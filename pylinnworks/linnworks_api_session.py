@@ -29,107 +29,22 @@ class LinnworksAPISession:
 
     def __init__(
             self, application_id=None, application_secret=None, server=None,
-            application_token=None):
+            application_token=None, token=None):
         """
         Create session with linnworks.net API
         """
         self.session = requests.Session()
-        self.config = self.get_config()
-        self.application_id = self.get_application_id(application_id)
-        self.application_secret = self.get_application_secret(
-            application_secret)
-        self.server = self.get_server(server)
-        self.application_token = self.get_application_token(application_token)
-        self.token = self.get_token()
-        # self.get_settings()
-
-    def get_application_id(self, application_id):
-        if application_id is not None:
-            return application_id
+        self.application_id = application_id
+        self.application_secret = application_secret
+        self.server = server
+        self.application_token = application_token
+        if token is None:
+            self.token = self.get_token()
         else:
-            if self.config is not None:
-                if 'application_id' in self.config:
-                    application_id = self.config['application_id']
-        if application_id is None:
-            raise NoApplicationID
-        return application_id
-
-    def get_application_secret(self, application_secret):
-        if application_secret is not None:
-            return application_secret
-        else:
-            if self.config is not None:
-                if 'application_secret' in self.config:
-                    application_secret = self.config['application_secret']
-        if application_secret is None:
-            raise NoApplicationSecretFound
-        return application_secret
-
-    def get_application_token(self, application_token):
-        if application_token is not None:
-            return application_token
-        else:
-            if self.config is not None:
-                if 'application_token' in self.config:
-                    application_token = self.config['application_token']
-        if application_token is None:
-            raise NoApplicationTokenFound
-        return application_token
-
-    def get_server(self, server):
-        if server is not None:
-            return server
-        else:
-            if self.config is not None:
-                if 'server' in self.config:
-                    server = self.config['server']
-        if server is None:
-            raise NoServerFound
-        return server
-
-    def set_application_token(self):
-        try:
-            app = GetApplicationTokenApp()
-            app.root.mainloop()
-            token = app.token
-        except:
-            token = input('Application Token: ')
-        self.application_token = token
-        self.update_config_file(
-            token, self.server, self.application_id, self.application_secret)
-
-    def get_config(self):
-        try:
-            config = json.load(open(self.config_path, 'r'))
-        except:
-            return None
-        return config
-
-    def load_config(self):
-        self.config = self.get_config()
-        self.server = self.config['server']
-        self.application_id = self.config['application_id']
-        self.application_secret = self.config['application_secret']
-        self.application_token = self.config['application_token']
-
-    def update_config(self):
-        self.update_config_file(
-            self.server, self.application_id, self.application_secret,
-            self.application_token)
-
-    def update_config_file(
-            self, application_token, server, application_id,
-            application_secret):
-        config = {
-            'server': server,
-            'application_id': application_id,
-            'application_secret': application_secret,
-            'application_token': application_token}
-        json.dump(
-            config, open(self.config_path, 'w'), indent=4, sort_keys=True)
+            self.token = token
 
     def get_token(self):
-        url = 'https://api.linnworks.net//api/Auth/AuthorizeByApplication'
+        url = ''.join([self.server, '/api/Auth/AuthorizeByApplication'])
         data = {
             'applicationId': self.application_id,
             'applicationSecret': self.application_secret,
@@ -186,30 +101,3 @@ class LinnworksAPISession:
         params['token'] = self.token
         request = self.make_request(url, data=data, params=params, files=files)
         return request
-
-    def get_settings(self):
-        self.categories = Categories(self)
-        self.package_groups = PackageGroups(self)
-        self.shipping_methods = ShippingMethods(self)
-        self.locations = Locations(self)
-        self.postage_services = PostageServices(self)
-        self.channels = Channels(self)
-
-
-class GetApplicationTokenApp:
-    def __init__(self):
-        import tkinter
-        self.root = tkinter.Tk()
-        self.token_var = tkinter.StringVar()
-        self.input_label = tkinter.Label(
-            self.root, text='Application Token: ')
-        self.entry = tkinter.Entry(self.root, textvariable=self.token_var)
-        self.button = tkinter.Button(
-            self.root, text='Confirm', command=self.set_token)
-        self.input_label.grid(row=0, column=0)
-        self.entry.grid(row=0, column=1)
-        self.button.grid(row=0, column=2)
-
-    def set_token(self):
-        self.token = self.token_var.get()
-        self.root.destroy()
