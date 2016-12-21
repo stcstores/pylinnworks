@@ -1,4 +1,3 @@
-from pylinnworks import LinnworksAPISession
 from pylinnworks import api_requests
 from . processed_order import ProcessedOrder
 from datetime import timedelta
@@ -13,10 +12,7 @@ class ProcessedOrders:
     default_to_date = datetime.today() + timedelta(days=1)
 
     def __init__(self, api_session=None):
-        if api_session is None:
-            self.api_session = LinnworksAPISession()
-        else:
-            self.api_session = api_session
+        self.api_session = api_session
         self.set_search_columns()
         self.search_fields = SearchFields(self.api_session)
         self.default_search_field = self.search_fields.get('Order ID')
