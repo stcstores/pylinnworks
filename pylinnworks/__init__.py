@@ -3,6 +3,7 @@ api.linnworks.net
 """
 import os
 import json
+import requests
 
 from . linnworks_api_session import LinnworksAPISession
 from . settings import Settings
@@ -26,7 +27,7 @@ class PyLinnworks:
         'application_secret': None,
         'application_token': None,
         'server': None}
-    api_session = None
+    session = requests.Session()
     try:
         config.update(json.loads(config_path))
     except:
@@ -49,11 +50,7 @@ class PyLinnworks:
             cls.application_token = application_token
         if server is not None:
             cls.server = server
-        cls.api_session = LinnworksAPISession(
-            application_id=cls.application_id,
-            application_secret=cls.application_secret,
-            application_token=cls.application_token,
-            server=cls.server, token=token)
+        cls.token = cls.get_token()
 
     @classmethod
     def load_config(cls, config):
@@ -114,25 +111,79 @@ class PyLinnworks:
 
     @classmethod
     def Settings(cls):
-        return Settings(cls.api_session)
+        return Settings(cls)
 
     @classmethod
     def Manifests(cls):
-        return Manifests(cls.api_session)
+        return Manifests(cls)
 
     @classmethod
     def Linking(cls):
-        return Linking(cls.api_session)
+        return Linking(cls)
 
     @classmethod
     def ProcessedOrders(cls):
-        return ProcessedOrders(cls.api_session)
+        return ProcessedOrders(cls)
 
+    @classmethod
+    def get_token(cls):
+        url = ''.join([cls.server, '/api/Auth/AuthorizeByApplication'])
+        data = {
+            'applicationId': cls.application_id,
+            'applicationSecret': cls.application_secret,
+            'token': cls.application_token}
+        request = cls.session.post(url, data=data)
+        request.raise_for_status()
+        try:
+            token = request.json()['Token']
+        except:
+            raise InvalidResponse(request)
+        return token
 
-def load_config_from_file():
-    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-    try:
-        config = json.load(open(config_path, 'r'))
-    except:
-        return None
-    PyLinnworks.config.update(config)
+    @classmethod
+    def test_login(cls):
+        url = cls.server + '/api/Stock/SKUExists'
+        data = {'SKU': 'None'}
+        params = {'token': cls.token}
+        try:
+            response = cls.make_request(url, data=data, params=params)
+        except:
+            raise
+        if response.text in ('true', 'false'):
+            return True
+        return False
+
+    @classmethod
+    def make_request(cls, url, data=None, params=None, files=None):
+        """Request resource URL
+
+        Arguments:
+            url -- URL of resource to be requested.
+
+        Keyword arguments:
+            data --  dict containing POST request variables. (Default None)
+            params --  dict containing GET request variables. (Default None)
+
+        Returns:
+            ``requests.Request`` object.
+        """
+        request = cls.session.post(
+            url, data=data, params=params, files=files)
+        return request
+
+    @classmethod
+    def request(cls, url, data=None, params={}, files=None):
+        """Add authentication variables and make API request.
+
+        Arguments:
+            url -- URL to request.
+
+        Keyword Arguments:
+            data -- ``dict`` of GET variables (Default None)
+
+        Returns:
+            ``requests.Request`` object.
+        """
+        params['token'] = cls.token
+        request = cls.make_request(url, data=data, params=params, files=files)
+        return request
