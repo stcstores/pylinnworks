@@ -25,11 +25,11 @@ class PyLinnworks:
 
     @classmethod
     def connect(
-            cls, config_file=None, config_path=None, application_id=None,
+            cls, config=None, config_path=None, application_id=None,
             application_secret=None, application_token=None, server=None,
             token=None):
-        if config_file is not None:
-            cls.load_config(config_file)
+        if config is not None:
+            cls.load_config(config)
         if config_path is not None:
             cls.load_config_from_file(config_path)
         if application_id is not None:
