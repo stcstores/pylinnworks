@@ -6,6 +6,7 @@ from . settings import Settings
 from . shipping import Manifests
 from . processed_orders import ProcessedOrders
 from . linking import Linking
+from . import_export import Export
 from . import exceptions
 
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
@@ -112,6 +113,10 @@ class PyLinnworks:
         return ProcessedOrders(cls)
 
     @classmethod
+    def Export(cls):
+        return Export(cls)
+
+    @classmethod
     def get_token(cls):
         url = ''.join([cls.server, '/api/Auth/AuthorizeByApplication'])
         data = {
@@ -123,7 +128,7 @@ class PyLinnworks:
         try:
             token = request.json()['Token']
         except:
-            raise InvalidResponse(request)
+            raise exceptions.InvalidResponse(request)
         return token
 
     @classmethod

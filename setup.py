@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pylinnworks',
-    version='1.1',
+    version='1.2',
     description='Wrapper for linnworks.net API',
     author='Luke Shiner',
     author_email='luke@lukeshiner.com',

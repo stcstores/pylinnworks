@@ -66,21 +66,6 @@ def get_inventory_item(api_session, stock_id=None, sku=None):
     return InventoryItem(api_session, load_stock_id=stock_id)
 
 
-def get_export(api_session, script_id, parameters=[]):
-    import pylinnworks.api_requests
-    from tabler import Tabler
-    request = pylinnworks.api_requests.ExecuteCustomScriptCSV(
-        api_session, script_id, parameters)
-    table = Tabler()
-    table.open_url(request.export_url)
-    return table
-
-
-def get_linking_table(api_session):
-    table = get_export(api_session, 14)
-    return table
-
-
 def make_linnworks_date_time(year, month, day, hour=0, minute=0, second=0):
     """Creates a date time string recognised by Linnworks API.
 
