@@ -1,8 +1,10 @@
-from pylinnworks import api_requests
-from . processed_order import ProcessedOrder
 from datetime import timedelta
 from datetime import datetime
+
+from pylinnworks import api_requests
 from . exceptions import SearchFieldNotFound
+from . processed_order_list import ProcessedOrderList
+from . processed_order import ProcessedOrder
 
 
 class ProcessedOrders:
