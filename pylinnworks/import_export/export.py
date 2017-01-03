@@ -1,5 +1,6 @@
 from tabler import Tabler as Table
 from .. api_requests import ExecuteCustomScriptCSV
+from .. functions import linnworks_datetime
 
 
 class Export:
@@ -16,3 +17,12 @@ class Export:
     def get_linking_table(self):
         table = self.get_export(14)
         return table
+
+    def get_orders_between_dates(self, start_date, end_date):
+        script_id = 9
+        start = linnworks_datetime(start_date)
+        end = linnworks_datetime(end_date)
+        parameters = [
+            {'Type': 'Date', 'Name': 'startDate', 'Value': start},
+            {'Type': 'Date', 'Name': 'endDate', 'Value': end}]
+        return self.get_export(script_id, parameters=parameters)

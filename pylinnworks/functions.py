@@ -90,6 +90,12 @@ def make_linnworks_date_time(year, month, day, hour=0, minute=0, second=0):
     return linnworks_date
 
 
+def linnworks_datetime(date_time):
+    return make_linnworks_date_time(
+        date_time.year, date_time.month, date_time.day, date_time.hour,
+        date_time.minute, date_time.second)
+
+
 def get_inventory(api_session, location='Default'):
     from pylinnworks.inventory.inventory import Inventory
     from pylinnworks.inventory.extended_property import ExtendedProperty
