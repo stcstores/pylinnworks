@@ -3,7 +3,7 @@ from . open_order import OpenOrder
 from . order_item import OrderItem
 
 
-class OpenOrders:
+class OpenOrderList:
 
     def __init__(self, api_session, load=False, location='Default',
                  orders=None):
