@@ -6,7 +6,7 @@ from . inventory_items import InventoryItems
 from pylinnworks.functions import get_inventory_item_count
 
 
-class Inventory():
+class InventoryList:
 
     def __init__(self, api_session, locations=None):
         self.api_session = api_session
