@@ -29,3 +29,16 @@ class Export(PyLinnworks):
             {'Type': 'Date', 'Name': 'startDate', 'Value': start},
             {'Type': 'Date', 'Name': 'endDate', 'Value': end}]
         return cls.get_export(script_id, parameters=parameters)
+
+    @classmethod
+    def get_inventory(cls, location='Default'):
+        parameters = [
+            {"Type": "Select", "Name": "locationName", "Value": location}]
+        cls.get_export(script_id=8, parameters=parameters)
+
+    @classmethod
+    def get_extended_properties(cls, sku='', property=''):
+        parameters = [
+            {"Type": "String", "Name": "SKU", "Value": ""},
+            {"Type": "String", "Name": "Property", "Value": ""}]
+        cls.get_export(script_id=57, parameters=parameters)
