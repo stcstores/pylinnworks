@@ -66,36 +66,6 @@ def get_inventory_item(api_session, stock_id=None, sku=None):
     return InventoryItem(api_session, load_stock_id=stock_id)
 
 
-def make_linnworks_date_time(year, month, day, hour=0, minute=0, second=0):
-    """Creates a date time string recognised by Linnworks API.
-
-    Args:
-        year (int)(str): Four digit year.
-        month (int)(str): Month Number. Example - January would be 1.
-        day (int)(str): Number of day in month.
-
-    Returns:
-        str: Date time string formatted for Linnworks.
-
-    """
-    year = str(year)
-    month = str(month).zfill(2)
-    day = str(day).zfill(2)
-    hour = str(hour).zfill(2)
-    minute = str(minute).zfill(2)
-    second = "%0.3f" % float(second)
-    second = second.zfill(6)
-    linnworks_date = ''.join([
-        year, '-', month, '-', day, 'T', hour, ':', minute, ':', second, 'Z'])
-    return linnworks_date
-
-
-def linnworks_datetime(date_time):
-    return make_linnworks_date_time(
-        date_time.year, date_time.month, date_time.day, date_time.hour,
-        date_time.minute, date_time.second)
-
-
 def get_inventory(api_session, location='Default'):
     from pylinnworks.inventory.inventory import Inventory
     from pylinnworks.inventory.extended_property import ExtendedProperty

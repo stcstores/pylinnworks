@@ -1,8 +1,9 @@
 from .. api_requests import GetManifests
 from . manifest import Manifest
+from .. pylinnworks import PyLinnworks
 
 
-class Manifests:
+class Manifests(PyLinnworks):
     def __init__(self, api_session=None):
         self.api_session = api_session
         self.manifests = self.get_manifests()
@@ -16,10 +17,11 @@ class Manifests:
     def __repr__(self):
         return 'Manifests Object'
 
-    def get_manifests(self):
-        request = GetManifests(self.api_session)
+    @classmethod
+    def get_manifests(cls):
+        request = GetManifests(cls)
         manifests = [
-            Manifest(self.api_session, data) for data
+            Manifest(cls, data) for data
             in request.response_dict['Data']]
         return manifests
 

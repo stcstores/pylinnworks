@@ -2,11 +2,6 @@ import os
 import json
 import requests
 
-from . settings import Settings
-from . shipping import Manifests
-from . processed_orders import ProcessedOrders
-from . linking import Linking
-from . import_export import Export
 from . import exceptions
 
 config_path = os.path.join(os.path.dirname(__file__), 'config.json')
@@ -97,26 +92,6 @@ class PyLinnworks:
         cls.api_session.token = token
 
     @classmethod
-    def Settings(cls):
-        return Settings(cls)
-
-    @classmethod
-    def Manifests(cls):
-        return Manifests(cls)
-
-    @classmethod
-    def Linking(cls):
-        return Linking(cls)
-
-    @classmethod
-    def ProcessedOrders(cls):
-        return ProcessedOrders(cls)
-
-    @classmethod
-    def Export(cls):
-        return Export(cls)
-
-    @classmethod
     def get_token(cls):
         url = ''.join([cls.server, '/api/Auth/AuthorizeByApplication'])
         data = {
@@ -155,3 +130,13 @@ class PyLinnworks:
         params['token'] = cls.token
         request = cls.make_request(url, data=data, params=params, files=files)
         return request
+
+    @staticmethod
+    def linnworks_time(
+            time=None, year=None, month=None, day=None, hour=0, minute=0,
+            second=0):
+        if time is None:
+            time = datetime.datetime(
+                year=year, month=month, day=day, hour=hour, minute=minute,
+                second=second)
+        return time.strftime('%Y-%m-%dT%H:%M:%S.%f')

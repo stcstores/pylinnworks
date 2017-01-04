@@ -3,9 +3,10 @@ from . shipping_methods import ShippingMethods
 from . postage_services import PostageServices
 from . package_groups import PackageGroups
 from . categories import Categories
+from .. pylinnworks import PyLinnworks
 
 
-class Settings:
+class Settings(PyLinnworks):
     def __init__(self, api_session):
         self.api_session = api_session
         self.channels = Channels(self.api_session)
