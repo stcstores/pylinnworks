@@ -34,7 +34,14 @@ class Manifest:
     def get_consignment_by_id(self, order_id):
         for service in self.services:
             try:
-                consignment = service.get_consignment_by_id(order_id)
+                return service.get_consignment_by_id(order_id)
             except ValueError:
                 continue
         raise ValueError
+
+    def get_consignments(self):
+        consignments = []
+        for service in self.services:
+            for consignment in service.consignments:
+                consignments.append(consignment)
+        return consignments

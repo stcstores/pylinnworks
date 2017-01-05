@@ -32,3 +32,10 @@ class Manifests(PyLinnworks):
             except ValueError:
                 continue
         raise ValueError
+
+    def get_consignments(self):
+        consignments = []
+        for manifest in self.manifests:
+            for consignment in manifest.get_consignments():
+                consignments.append(consignment)
+        return consignments
