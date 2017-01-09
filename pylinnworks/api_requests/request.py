@@ -56,7 +56,7 @@ class Request():
             print('Sent to: {}'.format(self.request.url))
             print('Params: {}'.format(self.request.params))
             print('Data: {}'.format(self.request.data))
-            raise
+            raise e
         return True
 
     def get_data(self):
