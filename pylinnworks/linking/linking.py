@@ -7,10 +7,15 @@ class Linking(PyLinnworks):
     def __init__(self, api_session=None):
         self.api_session = api_session
         self.channels = Channels(self)
-        self.linking = {
-            channel.channel_id: ChannelLinking(
-                self, channel) for channel
-            in self.channels}
+        self.linking = sorted([
+            ChannelLinking(self, channel) for channel in self.channels])
+
+    def __iter__(self):
+        for channel in self.linking:
+            yield channel
+
+    def __getitem__(self, index):
+        return self.linking[index]
 
     def __repr__(self):
-        return 'Linking Object'
+        return 'Linnworks Linking'

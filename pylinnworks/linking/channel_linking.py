@@ -17,7 +17,7 @@ class ChannelLinking:
         self.channel = channel
         self.channel_id = channel.channel_id
         self.source = channel.source
-        self.sub_source = channel.sub_source
+        self.subsource = channel.sub_source
         if self.source in self.channel_item_lookup:
             self.channel_item_type = self.channel_item_lookup[self.source]
         else:
@@ -26,6 +26,9 @@ class ChannelLinking:
 
     def __repr__(self):
         return 'ChannelLinking: {}'.format(self.channel)
+
+    def __lt__(self, other):
+        return self.channel_id < other.channel_id
 
     def get_totals(self):
         try:
