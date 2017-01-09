@@ -1,4 +1,6 @@
 import requests
+from . exceptions import StatusError
+
 
 class Request():
     url_server = None
@@ -51,9 +53,9 @@ class Request():
             if not response.status_code // 100 == 2:
                 raise StatusError(self, response, response.text)
         except requests.exceptions.RequestException as e:
-            print('Sent to: {}'.format(request.url))
-            print('Params: {}'.format(request.params))
-            print('Data: {}'.format(request.data))
+            print('Sent to: {}'.format(self.request.url))
+            print('Params: {}'.format(self.request.params))
+            print('Data: {}'.format(self.request.data))
             raise
         return True
 
@@ -67,12 +69,3 @@ class Request():
     def get_params(self):
         self.params = {}
         return self.params
-
-
-class StatusError(Exception):
-    def __init__(self, request, response, message):
-        print('Status: {}: {}'.format(response.status_code, response.reason))
-        print(message)
-        print('Sent to: {}'.format(response.url))
-        print('Params: {}'.format(request.params))
-        print('Data: {}'.format(request.data))
