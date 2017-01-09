@@ -1,5 +1,6 @@
 import requests
 from . exceptions import StatusError
+from . exceptions import RequestException
 
 
 class Request():
@@ -53,10 +54,7 @@ class Request():
             if not response.status_code // 100 == 2:
                 raise StatusError(self, response, response.text)
         except requests.exceptions.RequestException as e:
-            print('Sent to: {}'.format(self.request.url))
-            print('Params: {}'.format(self.request.params))
-            print('Data: {}'.format(self.request.data))
-            raise e
+            raise RequestException(self, e)
         return True
 
     def get_data(self):
