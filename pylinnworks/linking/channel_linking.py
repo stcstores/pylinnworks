@@ -1,8 +1,7 @@
-from requests import HTTPError
-
 from . channel_item import ChannelItem, AmazonChannelItem, EbayChannelItem
 from ..api_requests import GetChannelItems
 from ..api_requests import GetChannelTotals
+from ..api_requests import StatusError
 from . linking_list import LinkingList
 
 
@@ -33,7 +32,7 @@ class ChannelLinking:
             request = GetChannelTotals(
                 self.api_session, self.channel_id, self.source,
                 self.sub_source)
-        except HTTPError:
+        except StatusError:
             return {}
         else:
             data = request.response_dict
