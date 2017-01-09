@@ -17,7 +17,7 @@ class ChannelLinking:
         self.channel = channel
         self.channel_id = channel.channel_id
         self.source = channel.source
-        self.subsource = channel.sub_source
+        self.sub_source = channel.sub_source
         if self.source in self.channel_item_lookup:
             self.channel_item_type = self.channel_item_lookup[self.source]
         else:
