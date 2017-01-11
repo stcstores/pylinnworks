@@ -1,25 +1,46 @@
 from .. pylinnworks import PyLinnworks
 from pylinnworks.api_requests import GetInventoryItemCount
 
+from pylinnworks.api_requests import InventoryView
+from pylinnworks.api_requests import InventoryViewFilter
+from pylinnworks.api_requests import GetInventoryItems
+from . inventory_list import InventoryList
+from . extended_property import ExtendedProperty
+from .. settings import Settings
+
 
 class Inventory(PyLinnworks):
-    def get_inventory_item(api_session, stock_id=None, sku=None):
+    @classmethod
+    def get_inventory_item(cls, stock_id=None, sku=None):
         from pylinnworks.inventory import InventoryItem
         if stock_id is None and sku is None or stock_id is not None and \
                 sku is not None:
             raise ValueError("Either stock_id or sku should be supplied")
         if sku is not None:
-            stock_id = get_stock_id_by_SKU(api_session, sku)
-        return InventoryItem(api_session, load_stock_id=stock_id)
+            stock_id = cls.get_stock_id_by_SKU(cls, sku)
+        return InventoryItem(cls, load_stock_id=stock_id)
+
+    @classmethod
+    def get_stock_id_by_SKU(cls, sku):
+        locations = [location.guid for location in Settings().locations]
+        view = InventoryView()
+        view.filters.append(InventoryViewFilter(
+            field='String',
+            value=sku,
+            condition='Equals',
+            filter_name='SKU',
+            filter_name_exact=''
+        ))
+        response = GetInventoryItems(cls, view=view, locations=locations)
+        return response.response_dict['Items'][0]['Id']
 
     @classmethod
     def get_inventory_item_count(cls):
         request = GetInventoryItemCount(cls)
         return request.item_count
 
+    @classmethod
     def get_inventory(api_session, location='Default'):
-        from pylinnworks.inventory.inventory import InventoryList
-        from pylinnworks.inventory.extended_property import ExtendedProperty
         inventory = Inventory(api_session, load=True)
         inventory_export = get_export(
             api_session, script_id=8, parameters=[

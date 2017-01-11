@@ -31,7 +31,7 @@ class GetInventoryItems(Request):
         else:
             self.view = view
         if locations is None:
-            self.locations = api_session.locations.ids
+            self.locations = locations
         else:
             self.locations = locations
         super().__init__(api_session)

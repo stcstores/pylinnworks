@@ -20,25 +20,6 @@ def is_guid(guid):
     return bool(match)
 
 
-def get_stock_id_by_SKU(api_session, sku):
-    from pylinnworks.api_requests.inventory.inventory_view import InventoryView
-    from pylinnworks.api_requests.inventory.inventory_view_filter \
-        import InventoryViewFilter
-    from pylinnworks.api_requests.inventory.get_inventory_items \
-        import GetInventoryItems
-
-    view = InventoryView()
-    view.filters.append(InventoryViewFilter(
-        field='String',
-        value=sku,
-        condition='Equals',
-        filter_name='SKU',
-        filter_name_exact=''
-    ))
-    response = GetInventoryItems(api_session, view=view)
-    return response.response_dict['Items'][0]['Id']
-
-
 def get_order_number(api_session, order_number):
     from pylinnworks.api_requests.orders.\
         get_open_order_id_by_order_or_reference_id import \
