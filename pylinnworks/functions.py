@@ -1,10 +1,3 @@
-def SKU_exists(api_session, sku):
-    """Checks if sku has been used as a product SKU """
-    from pylinnworks.api_requests.sku_exists import SKUExists
-    request = SKUExists(api_session, sku)
-    return request.response_dict
-
-
 def get_new_SKU(api_session):
     """Return unsed product SKU."""
     from pylinnworks.api_requests.inventory.get_new_sku import GetNewSKU

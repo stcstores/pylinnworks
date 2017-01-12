@@ -1,4 +1,5 @@
 from .. pylinnworks import PyLinnworks
+from pylinnworks.api_requests import SKUExists
 from pylinnworks.api_requests import GetInventoryItemCount
 
 from . inventory_view import InventoryView
@@ -38,6 +39,12 @@ class Inventory(PyLinnworks):
     def get_inventory_item_count(cls):
         request = GetInventoryItemCount(cls)
         return request.item_count
+
+    @classmethod
+    def SKU_exists(cls, sku):
+        """Checks if sku has been used as a product SKU """
+        request = SKUExists(cls, sku)
+        return request.response_dict
 
     @classmethod
     def get_inventory(api_session, location='Default'):
