@@ -56,9 +56,3 @@ def get_order_id(api_session, order_number):
             return None
     else:
         return open_order_request.response_dict
-
-
-def get_inventory_item_count(api_session):
-    from pylinnworks.api_requests import GetInventoryItemCount
-    request = GetInventoryItemCount(api_session)
-    return request.item_count
