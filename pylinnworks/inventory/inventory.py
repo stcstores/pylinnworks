@@ -13,6 +13,7 @@ from .. settings import Settings
 class Inventory(PyLinnworks):
     @classmethod
     def get_inventory_item(cls, stock_id=None, sku=None):
+        """Get inventory item by stock ID (GUID) or SKU"""
         from pylinnworks.inventory import InventoryItem
         if stock_id is None and sku is None or stock_id is not None and \
                 sku is not None:
@@ -23,6 +24,7 @@ class Inventory(PyLinnworks):
 
     @classmethod
     def get_stock_id_by_SKU(cls, sku):
+        """Returns stock ID (GUID) of item with SKU sku"""
         locations = [location.guid for location in Settings().locations]
         view = InventoryView()
         view.filters.append(InventoryViewFilter(
@@ -37,6 +39,7 @@ class Inventory(PyLinnworks):
 
     @classmethod
     def get_inventory_item_count(cls):
+        """Get number of items in inventory"""
         request = GetInventoryItemCount(cls)
         return request.item_count
 
