@@ -2,6 +2,7 @@ from . channel_item import ChannelItem, AmazonChannelItem, EbayChannelItem
 from ..api_requests import GetChannelItems
 from ..api_requests import GetChannelTotals
 from ..api_requests import StatusError
+from ..api_requests import ExecConfigMethod
 from . linking_list import LinkingList
 
 
@@ -43,6 +44,11 @@ class ChannelLinking:
             self.unlinked = data['Unlinked']
             self.linked = data['Linked']
             return data
+
+    def download_listings(self):
+        ExecConfigMethod(
+            self.api_session, channel_id=self.channel_id, source=self.source,
+            property_name='ViewReportStatus', function_name='ViewReportStatus')
 
     def request_channel_items(
             self, page, show_linked=True, show_unlinked=True):
