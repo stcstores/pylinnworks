@@ -1,9 +1,9 @@
 from .. pylinnworks import PyLinnworks
 from pylinnworks.api_requests import GetInventoryItemCount
 
-from pylinnworks.api_requests import InventoryView
-from pylinnworks.api_requests import InventoryViewFilter
-from pylinnworks.api_requests import GetInventoryItems
+from . inventory_view import InventoryView
+from . inventory_view_filter import InventoryViewFilter
+from . inventory_view_column import GetInventoryItems
 from . inventory_list import InventoryList
 from . extended_property import ExtendedProperty
 from .. settings import Settings
