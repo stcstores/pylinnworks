@@ -48,7 +48,7 @@ class ChannelLinking:
     def download_listings(self):
         ExecConfigMethod(
             self.api_session, channel_id=self.channel_id, source=self.source,
-            property_name='ViewReportStatus', function_name='ViewReportStatus')
+            property_name='DownloadListings', function_name='DownloadListings')
 
     def request_channel_items(
             self, page, show_linked=True, show_unlinked=True):
