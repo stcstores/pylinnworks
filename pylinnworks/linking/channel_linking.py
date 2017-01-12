@@ -32,6 +32,7 @@ class ChannelLinking:
         return self.channel_id < other.channel_id
 
     def get_totals(self):
+        """Get current count of total items, linked items and unlinked items"""
         try:
             request = GetChannelTotals(
                 self.api_session, self.channel_id, self.source,
@@ -46,6 +47,7 @@ class ChannelLinking:
             return data
 
     def download_listings(self):
+        """Update Linnworks list of items for this channel"""
         ExecConfigMethod(
             self.api_session, channel_id=self.channel_id, source=self.source,
             property_name='DownloadListings', function_name='DownloadListings')

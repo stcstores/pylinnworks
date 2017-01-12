@@ -33,14 +33,16 @@ class ChannelItem:
         return string
 
     def link(self, inventory_item_id):
-        request = LinkItem(
+        """Link this item to the inventory item with given stock ID (GUID)"""
+        LinkItem(
             self.api_session, self.channel.channel_id, self.channel.source,
             self.channel.sub_source, show_linked=False,
             inventory_item_id=inventory_item_id, channel_item_sku=self.sku,
             channel_reference_id=self.channel_reference_id)
 
     def unlink(self):
-        request = UnLinkItem(
+        """Remove link between this item and any inventory item"""
+        UnLinkItem(
             self.api_session, self.linked_item_id, self.sku,
             self.channel_reference_id, self.channel.channel_id,
             self.channel.source, self.channel.sub_source)
