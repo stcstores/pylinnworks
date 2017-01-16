@@ -6,23 +6,27 @@ Provides methods for finding and manipulating inventory items.
 
 from .. pylinnworks import PyLinnworks
 from pylinnworks.api_requests import SKUExists
-from pylinnworks.api_requests import GetInventoryItemCount
-
-from . inventory_view import InventoryView
-from . inventory_view_filter import InventoryViewFilter
-from . inventory_view_column import GetInventoryItems
-from . inventory_list import InventoryList
+from . inventory_item import InventoryItem
 from . extended_property import ExtendedProperty
-from .. settings import Settings
 
 
 class Inventory(PyLinnworks):
     """Provide methods for finding and interacting with inventory items."""
 
     @classmethod
+    def search_inventory(cls, view=None, filters=[], locations=None):
+        """Create API request to search for inventory items."""
+        if view is None:
+            view = InventoryView()
+        view.filters = filters
+        if locations is None:
+            locations = [location.guid for location in Settings().locations]
+        view.locations = locations
+        response = GetInventoryItems(cls, view=view, locations=locations)
+
+    @classmethod
     def get_inventory_item(cls, stock_id=None, sku=None):
         """Get inventory item by stock ID (GUID) or SKU."""
-        from pylinnworks.inventory import InventoryItem
         if stock_id is None and sku is None or stock_id is not None and \
                 sku is not None:
             raise ValueError("Either stock_id or sku should be supplied")

@@ -3,7 +3,7 @@
 from requests import HTTPError
 
 from pylinnworks.settings.info_entry import InfoEntry
-import pylinnworks.api_requests as api_requests
+from .. import api_requests
 from . order_item import OrderItem as OrderItem
 
 

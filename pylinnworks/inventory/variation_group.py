@@ -1,4 +1,4 @@
-import pylinnworks.api_requests as api_requests
+from .. api_requests import GetVariationItems
 from . variation_inventory_item import VariationInventoryItem
 
 

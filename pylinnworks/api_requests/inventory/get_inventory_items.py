@@ -12,8 +12,6 @@ import json
 from pylinnworks.api_requests.request import Request
 from pylinnworks.functions import is_guid
 from . get_inventory_views import GetInventoryViews
-from . get_inventory_item_count import GetInventoryItemCount
-from . inventory_view import InventoryView
 
 
 class GetInventoryItems(Request):
@@ -26,26 +24,12 @@ class GetInventoryItems(Request):
         self.start = start
         self.view = None
         self.locations = []
-        if view is None:
-            self.view = GetInventoryViews(api_session)[0]
-        else:
-            self.view = view
+        self.view = view
         if locations is None:
             self.locations = locations
         else:
             self.locations = locations
         super().__init__(api_session)
-
-    def test_request(self):
-        assert isinstance(self.view, InventoryView), \
-            "View must be InventoryView."
-        assert isinstance(self.start, int), \
-            "Start must be of type int."
-        assert isinstance(self.count, int), \
-            "Count must be of type int."
-        assert isinstance(self.locations, (list, set, tuple)), \
-            "Locations must be dict or set."
-        return super().test_request()
 
     def get_data(self):
         data = {
@@ -56,11 +40,6 @@ class GetInventoryItems(Request):
             'preloadChilds': json.dumps(False)
         }
         return data
-
-    def test_response(self, response):
-        assert isinstance(response.json(), dict), \
-            "Error message recieved: " + response.text
-        return super().test_response(response)
 
     def process_response(self, response):
         self.result_count = len(self.response_dict['Items'])
