@@ -1,9 +1,20 @@
+"""Includes ChannelItem class for encapsulating Linnworks Channel items.
+
+Provides methods for manipulating Linnworks channel items.
+"""
+
 from .. api_requests import LinkItem
 from .. api_requests import UnLinkItem
 
 
 class ChannelItem:
+    """Encapsulates items from selling channels.
+
+    Provides methods for interacting with items from selling channels.
+    """
+
     def __init__(self, api_session, channel, data):
+        """Set object attributes from API response."""
         self.api_session = api_session
         self.channel = channel
         self.channel_reference_id = data['ChannelReferenceId']
@@ -22,7 +33,8 @@ class ChannelItem:
         self.title = data['Title']
         self.load_additional(data)
 
-    def load_additional(self):
+    def load_additional(self, data):
+        """Add additional object attributes from API response."""
         pass
 
     def __repr__(self):
@@ -33,7 +45,7 @@ class ChannelItem:
         return string
 
     def link(self, inventory_item_id):
-        """Link this item to the inventory item with given stock ID (GUID)"""
+        """Link this item to the inventory item with given stock ID (GUID)."""
         LinkItem(
             self.api_session, self.channel.channel_id, self.channel.source,
             self.channel.sub_source, show_linked=False,
@@ -41,7 +53,7 @@ class ChannelItem:
             channel_reference_id=self.channel_reference_id)
 
     def unlink(self):
-        """Remove link between this item and any inventory item"""
+        """Remove link between this item and any inventory item."""
         UnLinkItem(
             self.api_session, self.linked_item_id, self.sku,
             self.channel_reference_id, self.channel.channel_id,
@@ -49,12 +61,18 @@ class ChannelItem:
 
 
 class AmazonChannelItem(ChannelItem):
+    """Encapsulates channel items from Amazon."""
+
     def load_additional(self, data):
+        """Add additional object attributes from API response."""
         self.fba = data['FBA']
 
 
 class EbayChannelItem(ChannelItem):
+    """Encapsulates channel items from eBay."""
+
     def load_additional(self, data):
+        """Add additional object attributes from API response."""
         self.item_number = data['ItemNumber']
         self.mapped_by = data['MappedBy']
         self.relist_pending = data['RelistPending']
