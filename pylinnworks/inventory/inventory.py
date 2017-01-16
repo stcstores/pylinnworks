@@ -1,3 +1,9 @@
+"""
+Inventory Class used for managing Linnworks stock inventory.
+
+Provides methods for finding and manipulating inventory items.
+"""
+
 from .. pylinnworks import PyLinnworks
 from pylinnworks.api_requests import SKUExists
 from pylinnworks.api_requests import GetInventoryItemCount
@@ -11,9 +17,11 @@ from .. settings import Settings
 
 
 class Inventory(PyLinnworks):
+    """Provide methods for finding and interacting with inventory items."""
+
     @classmethod
     def get_inventory_item(cls, stock_id=None, sku=None):
-        """Get inventory item by stock ID (GUID) or SKU"""
+        """Get inventory item by stock ID (GUID) or SKU."""
         from pylinnworks.inventory import InventoryItem
         if stock_id is None and sku is None or stock_id is not None and \
                 sku is not None:
@@ -24,7 +32,7 @@ class Inventory(PyLinnworks):
 
     @classmethod
     def get_stock_id_by_SKU(cls, sku):
-        """Returns stock ID (GUID) of item with SKU sku"""
+        """Return stock ID (GUID) of item with SKU sku."""
         locations = [location.guid for location in Settings().locations]
         view = InventoryView()
         view.filters.append(InventoryViewFilter(
@@ -39,13 +47,13 @@ class Inventory(PyLinnworks):
 
     @classmethod
     def get_inventory_item_count(cls):
-        """Get number of items in inventory"""
+        """Get number of items in inventory."""
         request = GetInventoryItemCount(cls)
         return request.item_count
 
     @classmethod
     def SKU_exists(cls, sku):
-        """Checks if sku has been used as a product SKU """
+        """Check if sku has been used as a product SKU."""
         request = SKUExists(cls, sku)
         return request.response_dict
 
