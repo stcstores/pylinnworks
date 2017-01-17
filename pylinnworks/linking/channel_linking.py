@@ -96,7 +96,7 @@ class ChannelLinking:
         else:
             return LinkingList([])
 
-    def get_all(self, show_linked=True, show_unlinked=True):
+    def get_all(self, linked=True, unlinked=True):
         """Get all channel items for this channel.
 
         Kwargs:
@@ -113,11 +113,11 @@ class ChannelLinking:
         """
         page = 1
         request_items = self.request_channel_items(
-            page, show_linked, show_unlinked)
+            page, show_linked=linked, show_unlinked=unlinked)
         items = request_items
         while len(request_items) > 0:
             page += 1
             request_items = self.request_channel_items(
-                page, show_linked, show_unlinked)
+                page, show_linked=linked, show_unlinked=unlinked)
             items = items + request_items
         return items
