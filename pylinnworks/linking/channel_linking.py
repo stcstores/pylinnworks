@@ -37,6 +37,9 @@ class ChannelLinking:
     def __repr__(self):
         return 'ChannelLinking: {}'.format(self.channel)
 
+    def __str__(self):
+        return '{} {}'.format(self.source, self.sub_source)
+
     def __lt__(self, other):
         return self.channel_id < other.channel_id
 
