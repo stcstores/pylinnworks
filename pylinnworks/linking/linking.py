@@ -28,11 +28,13 @@ class Linking(PyLinnworks):
             self.linking.append(ChannelLinking(self, channel))
         self.linking = sorted(self.linking)
 
-    def get_channel_by_ID(self, channel_id):
+    @classmethod
+    def get_channel_by_ID(cls, channel_id):
         """Get channel by channel ID."""
-        for channel in self.channels:
+        channels = Channels(cls)
+        for channel in channels:
             if channel.channel_id == channel_id:
-                return channel
+                return ChannelLinking(cls, channel)
         raise IndexError('Channel ID non existant')
 
     def __iter__(self):
