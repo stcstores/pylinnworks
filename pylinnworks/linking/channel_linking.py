@@ -65,7 +65,8 @@ class ChannelLinking:
             property_name='DownloadListings', function_name='DownloadListings')
 
     def request_channel_items(
-            self, page, keyword='', show_linked=True, show_unlinked=True):
+            self, page, keyword='', show_linked=True, show_unlinked=True,
+            show_on_page=50):
         """Make API request for one page of channel items.
 
         Makes a single request to linnworks.net API for a single page of
@@ -91,7 +92,7 @@ class ChannelLinking:
         request = GetChannelItems(
             self.api_session, self.channel_id, self.source, self.sub_source,
             show_linked=show_linked, show_unlinked=show_unlinked, page=page,
-            keyword=keyword)
+            keyword=keyword, show_on_page=50)
         linking_list = LinkingList([self.channel_item_type(
             self.api_session, self.channel, item) for item in
             request.response_dict])
@@ -116,10 +117,12 @@ class ChannelLinking:
         Returns LinkingList
         """
         page = 1
+        show_on_page = 50
         request_items = self.request_channel_items(
-            page, show_linked=linked, show_unlinked=unlinked)
+            page, show_linked=linked, show_unlinked=unlinked,
+            show_on_page=show_on_page, keyword=keyword)
         items = request_items
-        while len(request_items) > 0:
+        while len(request_items) == show_on_page:
             page += 1
             request_items = self.request_channel_items(
                 page, keyword=keyword, show_linked=linked,
