@@ -91,7 +91,7 @@ class ChannelLinking:
         request = GetChannelItems(
             self.api_session, self.channel_id, self.source, self.sub_source,
             show_linked=show_linked, show_unlinked=show_unlinked, page=page,
-            kewyword=keyword)
+            keyword=keyword)
         linking_list = LinkingList([self.channel_item_type(
             self.api_session, self.channel, item) for item in
             request.response_dict])
