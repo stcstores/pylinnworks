@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-
-"""This module contains the InventoryItem class to be used as a container for
-Linnworks Inventory Items."""
-
-import uuid
-import json
+"""Contains InventoryItem."""
 
 import pylinnworks.api_requests as api_requests
 from . extended_properties import ExtendedProperties
@@ -14,21 +8,38 @@ from . inventory_item_images import InventoryItemImages
 
 
 class InventoryItem:
+    """Wrapper for linnworks inventory items."""
 
-    def __init__(self, api_session, stock_id=None, sku=None, title=None):
+    def __init__(self, api_session, stock_id):
         self.api_session = api_session
-        self.extended_properties = ExtendedProperties(self, False)
-        if stock_id is not None:
-            self.stock_id = stock_id
-        if sku is not None:
-            self.sku = sku
-        if title is not None:
-            self.title = title
+        self.stock_id = stock_id
+
+    def __repr__(self):
+        return 'Inventory Item: {}'.format(self.stock_id)
 
     def __str__(self):
-        return str(self.sku) + ': ' + str(self.title)
+        return '{}: {}'.format(self.sku, self.title)
+
+    def get_item_data(self):
+        """Download current information for item."""
+        get_item_request = api_requests.GetInventoryItemByID(
+            self.api_session, self.stock_id)
+        item_data = get_item_request.response_dict
+        return item_data
+
+    def get_prop(self, prop):
+        """Get item property."""
+        item_data = self.get_item_data()
+        return item_data[prop]
+
+    def set_prop(self, prop, value):
+        """Set item property."""
+        item_data = self.get_item_data()
+        item_data[prop] = value
+        self.update_item(item_data)
 
     def update_item(self, item_data):
+        """Save item data for item."""
         self.last_update_item_request = api_requests.UpdateInventoryItem(
             self.api_session, item_data['StockItemId'],
             item_data['ItemNumber'], item_data['ItemTitle'],
@@ -43,6 +54,165 @@ class InventoryItem:
             postage_service_id=item_data['PostalServiceId'],
             weight=item_data['Weight'], width=item_data['Width'],
             depth=item_data['Depth'], height=item_data['Height'])
+
+    @property
+    def sku(self):
+        """Get item SKU."""
+        return self.get_prop('ItemNumber')
+
+    @sku.setter
+    def sku(self, sku):
+        """Set item SKU."""
+        return self.set_prop('ItemNumber', str(sku))
+
+    @property
+    def title(self):
+        """Get item title."""
+        return self.get_prop('ItemTitle')
+
+    @title.setter
+    def title(self, title):
+        """Set item title."""
+        return self.set_prop('ItemTitle', str(title))
+
+    @property
+    def barcode(self):
+        """Get item barcode."""
+        return self.get_prop('BarcodeNumber')
+
+    @barcode.setter
+    def barcode(self, barcode):
+        """Set item barcode."""
+        return self.set_prop('BarcodeNumber', str(barcode))
+
+    @property
+    def category_id(self):
+        """Get item category ID."""
+        return self.get_prop('CategoryId')
+
+    @category_id.setter
+    def category_id(self, cateogry_id):
+        """Get item category ID."""
+        return self.set_prop('CategoryId', str(cateogry_id))
+
+    @property
+    def package_group_id(self):
+        """Get item package group ID."""
+        return self.get_prop('PackageGroupId')
+
+    @package_group_id.setter
+    def package_group_id(self, package_group_id):
+        """Set item package group ID."""
+        return self.set_prop('PackageGroupId', str(package_group_id))
+
+    @property
+    def postage_service_id(self):
+        """Get item postage service ID."""
+        return self.get_prop('PostalServiceId')
+
+    @postage_service_id.setter
+    def postage_service_id(self, postage_service_id):
+        """Set item postage service ID."""
+        return self.set_prop('PostalServiceId', str(postage_service_id))
+
+    @property
+    def meta_data(self):
+        """Get item meta data."""
+        return self.get_prop('MetaData')
+
+    @meta_data.setter
+    def meta_data(self, meta_data):
+        """Set item meta data."""
+        return self.set_prop('MetaData', str(meta_data))
+
+    @property
+    def depth(self):
+        """Get item depth."""
+        return self.get_prop('Depth')
+
+    @depth.setter
+    def depth(self, depth):
+        """Set item depth."""
+        return self.set_prop('Depth', str(float(depth)))
+
+    @property
+    def width(self):
+        """Get item width."""
+        return self.get_prop('Width')
+
+    @width.setter
+    def width(self, width):
+        """Set item width."""
+        return self.set_prop('Width', str(float(width)))
+
+    @property
+    def height(self):
+        """Get item height."""
+        return self.get_prop('Height')
+
+    @height.setter
+    def height(self, height):
+        """Set item height."""
+        return self.set_prop('Height', str(float(height)))
+
+    @property
+    def purchase_price(self):
+        """Get item purchase price."""
+        return self.get_prop('PurchasePrice')
+
+    @purchase_price.setter
+    def purchase_price(self, purchase_price):
+        """Set item purchase price."""
+        return self.set_prop('PurchasePrice', str(float(purchase_price)))
+
+    @property
+    def retail_price(self):
+        """Get item retail price."""
+        return self.get_prop('RetailPrice')
+
+    @retail_price.setter
+    def retail_price(self, retail_price):
+        """Set item retail price."""
+        return self.set_prop('RetailPrice', str(float(retail_price)))
+
+    @property
+    def tax_rate(self):
+        """Get item tax rate."""
+        return self.get_prop('TaxRate')
+
+    @tax_rate.setter
+    def tax_rate(self, tax_rate):
+        """Set item tax rate."""
+        return self.set_prop('TaxRate', int(tax_rate))
+
+    @property
+    def quantity(self):
+        """Get item quantity."""
+        return self.get_prop('Quantity')
+
+    @quantity.setter
+    def quantity(self, quantity):
+        """Set item quantity."""
+        return self.set_prop('Quantity', int(quantity))
+
+    def get_stock_levels(self):
+        request = api_requests.GetStockLevel(self.api_session, self.stock_id)
+        stock_levels = {}
+        for location in request.response_dict:
+            stock_levels[location['Location']['StockLocationId']] = {
+                'available': location['Available'],
+                'stock_level': location['StockLevel'],
+                'in_orders': location['InOrders'],
+                'due': location['Due'],
+            }
+        return stock_levels
+
+    def get_available(
+            self, location_id=None):
+        if location_id is None:
+            location_id = self.api_session.locations['Default'].guid
+        stock_levels = self.get_stock_levels()
+        return stock_levels[location_id]["Available"]
 
     def load_extended_properties(self):
         request = api_requests.GetInventoryItemExtendedProperties(
@@ -95,7 +265,7 @@ class InventoryItem:
             property_type -- Type of new extended property
                 Defaults to 'Attribute'.
         """
-        prop = _ExtendedProperty(self)
+        prop = ExtendedProperty(self)
         prop.name = name
         prop.value = value
         prop.type = property_type
@@ -128,139 +298,3 @@ class InventoryItem:
         image_guid = upload_response[0]['FileId']
         return api_requests.UploadImagesToInventoryItem(
             self.api_session, self.stock_id, [image_guid])
-
-    def get_item_data(self):
-        get_item_request = api_requests.GetInventoryItemByID(
-            self.api_session, self.stock_id)
-        item_data = get_item_request.response_dict
-        return item_data
-
-    def get_prop(self, prop):
-        item_data = self.get_item_data()
-        return item_data[prop]
-
-    def set_prop(self, prop, value):
-        item_data = self.get_item_data()
-        item_data[prop] = value
-        self.update_item(item_data)
-
-    def get_sku(self):
-        return self.get_prop('ItemNumber')
-
-    def get_title(self):
-        return self.get_prop('ItemTitle')
-
-    def get_barcode(self):
-        return self.get_prop('BarcodeNumber')
-
-    def get_category(self):
-        return self.api_session.categories[
-            self.get_prop('CategoryId')]
-
-    def get_package_group(self):
-        return self.api_session.package_groups[
-            self.get_prop('PackageGroupId')]
-
-    def get_postage_service(self):
-        return self.api_session.postage_services[
-            self.get_prop('PostalServiceId')]
-
-    def get_category_id(self):
-        return self.get_prop('CategoryId')
-
-    def get_package_group_id(self):
-        return self.get_prop('PackageGroupId')
-
-    def get_postage_service_id(self):
-        return self.get_prop('PostalServiceId')
-
-    def get_meta_data(self):
-        return self.get_prop('MetaData')
-
-    def get_depth(self):
-        return self.get_prop('Depth')
-
-    def get_width(self):
-        return self.get_prop('Width')
-
-    def get_height(self):
-        return self.get_prop('Height')
-
-    def get_purchase_price(self):
-        return self.get_prop('PurchasePrice')
-
-    def get_retail_price(self):
-        return self.get_prop('RetailPrice')
-
-    def get_tax_rate(self):
-        return self.get_prop('TaxRate')
-
-    def get_stock_levels(self):
-        request = api_requests.GetStockLevel(self.api_session, self.stock_id)
-        stock_levels = {}
-        for location in request.response_dict:
-            stock_levels[location['Location']['StockLocationId']] = {
-                'available': location['Available'],
-                'stock_level': location['StockLevel'],
-                'in_orders': location['InOrders'],
-                'due': location['Due'],
-            }
-        return stock_levels
-
-    def get_available(
-            self, location_id=None):
-        if location_id is None:
-            location_id = self.api_session.locations['Default'].guid
-        stock_levels = self.get_stock_levels()
-        return stock_levels[location_id]["Available"]
-
-    def set_sku(self, sku):
-        return self.set_prop('ItemNumber', str(sku))
-
-    def set_title(self, title):
-        return self.set_prop('ItemTitle', str(title))
-
-    def set_barcode(self, barcode):
-        return self.set_prop('BarcodeNumber', str(barcode))
-
-    def set_category_id(self, cateogry_id):
-        return self.set_prop('CategoryId', str(cateogry_id))
-
-    def set_package_group_id(self, package_group_id):
-        return self.set_prop('PackageGroupId', str(package_group_id))
-
-    def set_postage_service_id(self, postage_service_id):
-        return self.set_prop('PostalServiceId', str(postage_service_id))
-
-    def set_category(self, cateogry):
-        return self.set_prop('CategoryId', str(cateogry_id.guid))
-
-    def set_package_group(self, package_group):
-        return self.set_prop('PackageGroupId', str(package_group_id.guid))
-
-    def set_postage_service(self, postage_service):
-        return self.set_prop('PostalServiceId', str(postage_service_id.guid))
-
-    def set_meta_data(self, meta_data):
-        return self.set_prop('MetaData', str(meta_data))
-
-    def set_depth(self, depth):
-        return self.set_prop('Depth', str(float(depth)))
-
-    def set_width(self, width):
-        return self.set_prop('Width', str(float(width)))
-
-    def set_height(self, height):
-        return self.set_prop('Height', str(float(height)))
-
-    def set_purchase_price(self, purchase_price):
-        return self.set_prop('PurchasePrice', str(float(purchase_price)))
-
-    def set_retail_price(self, retail_price):
-        return self.set_prop('RetailPrice', str(float(retail_price)))
-
-    def set_tax_rate(self, tax_rate):
-        return self.set_prop('TaxRate', int(tax_rate))
-
-    def set_quantity(self, quantity):
-        return self.set_prop('Quantity', int(quantity))

@@ -4,6 +4,7 @@ from . inventory_view_filter import InventoryViewFilter
 from . inventory_view_column import InventoryViewColumns
 from .. api_requests import GetInventoryItems
 from . inventory_list import InventoryList
+from . inventory_item import InventoryItem
 
 
 class InventorySearch:
@@ -48,5 +49,5 @@ class InventorySearch:
     def get_item(self):
         inventory_list = self.get_items()
         if len(inventory_list) == 1:
-            return inventory_list[0]
+            return InventoryItem(self.api_session, inventory_list[0]['Id'])
         raise ValueError
