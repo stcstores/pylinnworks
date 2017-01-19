@@ -17,6 +17,9 @@ class ChannelItem:
         """Set object attributes from API response."""
         self.api_session = api_session
         self.channel = channel
+        self.source = channel.source
+        self.sub_source = channel.sub_source
+        self.channel_id = channel.channel_id
         self.channel_reference_id = data['ChannelReferenceId']
         self.end_when_stock = data['EndWhenStock']
         self.ignore_sync = data['IgnoreSync']
