@@ -7,27 +7,26 @@ from . inventory_view_filter import InventoryViewFilter
 
 class InventoryView():
 
-    def __init__(self, name=None, _id=None):
-        self.channels = []
-        self.columns = []
-        self.country_code = None
-        self.filters = [InventoryViewFilter(
-            filter_name='General', display_name='None', filter_name_exact=None,
-            field='String', condition='Contains',
-            condition_display_name='Contains', filter_logic='AND', value=None)]
-        self._id = None
-        self.include_products = 'ALL'
-        self.listing = 'ALL'
-        self.mode = 'ALL'
-        self.name = 'Default'
-        self.show_only_changed = False
-        self.source = None
-        self.sub_source = None
-        self.include_archived = False
-        if _id is None:
-            self._id = str(uuid.uuid4())
-        else:
-            self._id = _id
+    def __init__(
+            self, channels=[], columns=[], filters=[], country_code=None,
+            name=None, id_=None, include_products='ALL', listing='ALL',
+            mode='ALL', show_only_changed=False, source=None, sub_source=None,
+            include_archived=False):
+        self.channels = channels
+        self.columns = columns
+        self.country_code = country_code
+        self.filters = filters
+        self.id_ = id_
+        self.include_products = include_products
+        self.listing = listing
+        self.mode = mode
+        self.name = name
+        self.show_only_changed = show_only_changed
+        self.source = source
+        self.sub_source = sub_source
+        self.include_archived = include_archived
+        if self.id_ is None:
+            self.id_ = str(uuid.uuid4())
 
     def load_from_dict(self, view_dict):
         self.channels = view_dict['Channels']
@@ -42,7 +41,7 @@ class InventoryView():
             new_filter = InventoryViewFilter()
             new_filter.load_from_dict(view_filter)
             self.filters.append(new_filter)
-        self._id = view_dict['Id']
+        self.id_ = view_dict['Id']
         self.include_products = view_dict['IncludeProducts']
         self.listing = view_dict['Listing']
         self.mode = view_dict['Mode']
@@ -70,7 +69,7 @@ class InventoryView():
             'CountryCode': self.country_code,
             'CountryName': None,
             'Filters': self.get_filters_list(),
-            'Id': self._id,
+            'Id': self.id_,
             'IncludeProducts': 'ALL',
             'Listing': self.listing,
             'Mode': self.mode,

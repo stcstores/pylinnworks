@@ -1,9 +1,8 @@
-import pylinnworks.api_requests as api_requests
+from .. import api_requests
 from . single_inventory_item import SingleInventoryItem
 from . variation_group import VariationGroup
 from . variation_inventory_item import VariationInventoryItem
 from . inventory_items import InventoryItems
-from pylinnworks.functions import get_inventory_item_count
 
 
 class InventoryList:
@@ -153,7 +152,7 @@ class InventoryList:
         columns_request = api_requests.GetInventoryColumnTypes(
             self.api_session)
         view.columns = columns_request.columns
-        total_items = get_inventory_item_count(self.api_session)
+        # total_items = get_inventory_item_count(self.api_session) DEPRICATED
         start = 1
         item_count = 0
         count = 100

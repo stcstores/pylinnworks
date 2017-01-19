@@ -10,15 +10,13 @@ Keyword arguments:
 import json
 
 from pylinnworks.api_requests.request import Request
-from pylinnworks.functions import is_guid
-from . get_inventory_views import GetInventoryViews
 
 
 class GetInventoryItems(Request):
     url_server = 'https://eu3.linnworks.net'
     url_extension = '/api/Inventory/GetInventoryItems'
 
-    def __init__(self, api_session, start=1, count=100, view=None,
+    def __init__(self, api_session, start=1, count=500, view=None,
                  locations=None):
         self.count = count
         self.start = start
