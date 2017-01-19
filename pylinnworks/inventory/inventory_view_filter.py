@@ -1,7 +1,7 @@
 import json
 
 
-class InventoryViewFilter():
+class InventoryViewFilter:
 
     def __init__(
             self, filter_name='General', field='String', value=None,

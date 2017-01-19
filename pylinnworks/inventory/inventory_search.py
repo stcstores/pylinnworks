@@ -39,6 +39,9 @@ class InventorySearch:
             start += count
         return items
 
+    def count_items(self):
+        return self.request_page(count=1)['TotalItems']
+
     def get_items(self):
         return self.request_all()
 
