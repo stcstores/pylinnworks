@@ -129,3 +129,12 @@ class ChannelLinking:
                 show_unlinked=unlinked)
             items = items + request_items
         return items
+
+    def get_item_by_sku(self, sku, linked=True, unlinked=True):
+        items = self.get_items(keyword=sku, linked=linked, unlinked=unlinked)
+        if len(items) < 1:
+            raise IndexError('No Items Found.')
+        elif len(items) > 1:
+            raise IndexError('Multiple Items Found.')
+        else:
+            return items[0]
