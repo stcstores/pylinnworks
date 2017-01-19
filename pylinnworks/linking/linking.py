@@ -37,6 +37,15 @@ class Linking(PyLinnworks):
                 return ChannelLinking(cls, channel)
         raise IndexError('Channel ID non existant')
 
+    @classmethod
+    def get_channel_by_sub_source(cls, sub_source):
+        """Get channel by channel Sub Source."""
+        channels = Channels(cls)
+        for channel in channels:
+            if channel.sub_source == sub_source:
+                return ChannelLinking(cls, channel)
+        raise IndexError('Sub Source non existant')
+
     def __iter__(self):
         for channel in self.linking:
             yield channel
