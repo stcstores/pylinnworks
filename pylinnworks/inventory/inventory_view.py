@@ -2,18 +2,19 @@ import json
 import uuid
 
 from . inventory_view_column import InventoryViewColumn
+from . inventory_view_column import InventoryViewColumns
 from . inventory_view_filter import InventoryViewFilter
+from .. pylinnworks import PyLinnworks
 
 
 class InventoryView():
 
     def __init__(
-            self, channels=[], columns=[], filters=[], country_code=None,
-            name=None, id_=None, include_products='ALL', listing='ALL',
-            mode='ALL', show_only_changed=False, source=None, sub_source=None,
-            include_archived=False):
+            self, channels=[], columns=None, filters=[], country_code=None,
+            name=None, id_=None, include_products='NotArchived', listing='ALL',
+            mode='ALL', show_only_changed=False, source='All',
+            sub_source='Show all', include_archived=False):
         self.channels = channels
-        self.columns = columns
         self.country_code = country_code
         self.filters = filters
         self.id_ = id_
@@ -27,6 +28,10 @@ class InventoryView():
         self.include_archived = include_archived
         if self.id_ is None:
             self.id_ = str(uuid.uuid4())
+        if columns is None:
+            self.columns = InventoryViewColumns(PyLinnworks).columns
+        else:
+            self.columns = columns
 
     def load_from_dict(self, view_dict):
         self.channels = view_dict['Channels']
@@ -51,21 +56,15 @@ class InventoryView():
         self.sub_source = view_dict['SubSource']
 
     def get_columns_list(self):
-        column_list = []
-        for column in self.columns:
-            column_list.append(column.to_dict())
-        return column_list
+        return [col.to_dict() for col in self.columns]
 
     def get_filters_list(self):
-        filter_list = []
-        for _filter in self.filters:
-            filter_list.append(_filter.to_dict())
-        return filter_list
+        return [fil.to_dict() for fil in self.filters]
 
     def to_dict(self):
         view_dict = {
             'Channels': self.channels,
-            'Columns': [],  # self.get_columns_list(),
+            'Columns': self.get_columns_list(),
             'CountryCode': self.country_code,
             'CountryName': None,
             'Filters': self.get_filters_list(),
@@ -77,7 +76,7 @@ class InventoryView():
             'ShowOnlyChanged': self.show_only_changed,
             'Source': self.source,
             'SubSource': self.sub_source,
-            "IsPredefined": True,
+            # "IsPredefined": True,
             "IsSearchRequired": True}
         return view_dict
 

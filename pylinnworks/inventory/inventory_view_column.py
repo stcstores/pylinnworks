@@ -53,6 +53,7 @@ class InventoryViewColumn:
         self.is_editable = column_dict['IsEditable']
         self.sort_direction = column_dict['SortDirection']
         self.width = column_dict['Width']
+        return self
 
     def to_dict(self):
         column_dict = {}
@@ -65,7 +66,8 @@ class InventoryViewColumn:
         column_dict['Width'] = float(self.width)
         return column_dict
 
-    def to_json(self):
+    @property
+    def json(self):
         return json.dumps(self.to_dict())
 
     def load_from_json(self, column_json):

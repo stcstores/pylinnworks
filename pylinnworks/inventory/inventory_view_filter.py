@@ -36,7 +36,8 @@ class InventoryViewFilter:
         self.filter_name_exact = filter_dict['FilterNameExact']
         self.condition = filter_dict['Condition']
 
-    def to_json(self):
+    @property
+    def json(self):
         return json.dumps(self.to_dict())
 
     def load_from_json(self, filter_json):

@@ -46,6 +46,19 @@ class Inventory(PyLinnworks):
         return item
 
     @classmethod
+    def search_by_SKU(cls, sku, locations=None):
+        """Search inventory by SKU.
+
+        Returns InventoryList.
+        """
+        filters = [InventoryViewFilter(
+            filter_name='SKU', field='String', value=sku,
+            condition='Contains')]
+        inventory_list = InventorySearch(
+            cls, filters=filters, locations=locations).get_items()
+        return inventory_list
+
+    @classmethod
     def get_item_by_stock_ID(cls, stock_id, locations=None):
         """Return Inventory Item with stock ID stock_id."""
         filters = [InventoryViewFilter(

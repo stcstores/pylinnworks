@@ -26,8 +26,10 @@ class InventorySearch:
     def request_page(self, start=1, count=500):
         response = GetInventoryItems(
             self.api_session, view=self.view, locations=self.locations,
-            start=start, count=count).response_dict
-        return response
+            start=start, count=count)
+        import json
+        print(json.dumps(response.data))
+        return response.response_dict
 
     def request_all(self, count=500):
         first_response = self.request_page(1, count)
@@ -44,7 +46,9 @@ class InventorySearch:
         return self.request_page(count=1)['TotalItems']
 
     def get_items(self):
-        return self.request_all()
+        inventory_items = [InventoryItem(
+            self.api_session, data['Id']) for data in self.request_all()]
+        return InventoryList(self.api_session, items=inventory_items)
 
     def get_item(self):
         inventory_list = self.get_items()
