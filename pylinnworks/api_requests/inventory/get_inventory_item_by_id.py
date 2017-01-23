@@ -5,7 +5,6 @@ Arguments:
 """
 
 from pylinnworks.api_requests.request import Request
-from pylinnworks.functions import is_guid
 
 
 class GetInventoryItemByID(Request):
@@ -16,14 +15,8 @@ class GetInventoryItemByID(Request):
         super().__init__(api_session, test=test)
 
     def test_request(self):
-        assert is_guid(self.stock_id), "Stock ID must be vaild GUID."
         return super().test_request()
 
     def get_data(self):
         data = {'id': self.stock_id}
         return data
-
-    def test_response(self, response):
-        assert isinstance(response.json(), dict), \
-            "Error message recieved: " + response.text
-        return super().test_response(response)

@@ -27,8 +27,6 @@ class InventorySearch:
         response = GetInventoryItems(
             self.api_session, view=self.view, locations=self.locations,
             start=start, count=count)
-        import json
-        print(json.dumps(response.data))
         return response.response_dict
 
     def request_all(self, count=500):

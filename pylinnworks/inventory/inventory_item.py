@@ -5,6 +5,7 @@ from . extended_properties import ExtendedProperties
 from . extended_property import ExtendedProperty
 from . inventory_item_image import InventoryItemImage
 from . inventory_item_images import InventoryItemImages
+from .. settings import Settings
 
 
 class InventoryItem:
@@ -13,6 +14,7 @@ class InventoryItem:
     def __init__(self, api_session, stock_id):
         self.api_session = api_session
         self.stock_id = stock_id
+        self.refresh()
 
     def __repr__(self):
         return 'Inventory Item: {}'.format(self.stock_id)
@@ -27,173 +29,51 @@ class InventoryItem:
         item_data = get_item_request.response_dict
         return item_data
 
-    def get_prop(self, prop):
-        """Get item property."""
+    def refresh(self):
+        """Populate this inventory item from linnworks.net servers."""
         item_data = self.get_item_data()
-        return item_data[prop]
-
-    def set_prop(self, prop, value):
-        """Set item property."""
-        item_data = self.get_item_data()
-        item_data[prop] = value
-        self.update_item(item_data)
+        self.sku = item_data['ItemNumber']
+        self.title = item_data['ItemTitle']
+        self.barcode = item_data['BarcodeNumber']
+        self.purchase_price = item_data['PurchasePrice']
+        self.retail_price = item_data['RetailPrice']
+        self.category = Settings.get_category_by_ID(item_data['CategoryId'])
+        self.package_group = Settings.get_package_group_by_ID(
+            item_data['PackageGroupId'])
+        self.postal_service = Settings.get_postage_service_by_ID(
+            item_data['PostalServiceId'])
+        self.quantity = item_data['Quantity']
+        self.in_order = item_data['InOrder']
+        self.due = item_data['Due']
+        self.minimum_level = item_data['MinimumLevel']
+        self.available = item_data['Available']
+        self.weight = item_data['Weight']
+        self.width = item_data['Width']
+        self.height = item_data['Height']
+        self.depth = item_data['Depth']
+        self.creation_date = item_data['CreationDate']
+        self.is_composite_parent = item_data['IsCompositeParent']
 
     def update_item(self, item_data):
         """Save item data for item."""
-        self.last_update_item_request = api_requests.UpdateInventoryItem(
-            self.api_session, item_data['StockItemId'],
-            item_data['ItemNumber'], item_data['ItemTitle'],
-            barcode=item_data['BarcodeNumber'],
-            purchase_price=item_data['PurchasePrice'],
-            retail_price=item_data['RetailPrice'],
-            quantity=item_data['Quantity'], tax_rate=item_data['TaxRate'],
-            variation_group_name=item_data['VariationGroupName'],
-            meta_data=item_data['MetaData'],
-            category_id=item_data['CategoryId'],
-            package_group_id=item_data['PackageGroupId'],
-            postage_service_id=item_data['PostalServiceId'],
-            weight=item_data['Weight'], width=item_data['Width'],
-            depth=item_data['Depth'], height=item_data['Height'])
-
-    @property
-    def sku(self):
-        """Get item SKU."""
-        return self.get_prop('ItemNumber')
-
-    @sku.setter
-    def sku(self, sku):
-        """Set item SKU."""
-        return self.set_prop('ItemNumber', str(sku))
-
-    @property
-    def title(self):
-        """Get item title."""
-        return self.get_prop('ItemTitle')
-
-    @title.setter
-    def title(self, title):
-        """Set item title."""
-        return self.set_prop('ItemTitle', str(title))
-
-    @property
-    def barcode(self):
-        """Get item barcode."""
-        return self.get_prop('BarcodeNumber')
-
-    @barcode.setter
-    def barcode(self, barcode):
-        """Set item barcode."""
-        return self.set_prop('BarcodeNumber', str(barcode))
-
-    @property
-    def category_id(self):
-        """Get item category ID."""
-        return self.get_prop('CategoryId')
-
-    @category_id.setter
-    def category_id(self, cateogry_id):
-        """Get item category ID."""
-        return self.set_prop('CategoryId', str(cateogry_id))
-
-    @property
-    def package_group_id(self):
-        """Get item package group ID."""
-        return self.get_prop('PackageGroupId')
-
-    @package_group_id.setter
-    def package_group_id(self, package_group_id):
-        """Set item package group ID."""
-        return self.set_prop('PackageGroupId', str(package_group_id))
-
-    @property
-    def postage_service_id(self):
-        """Get item postage service ID."""
-        return self.get_prop('PostalServiceId')
-
-    @postage_service_id.setter
-    def postage_service_id(self, postage_service_id):
-        """Set item postage service ID."""
-        return self.set_prop('PostalServiceId', str(postage_service_id))
-
-    @property
-    def meta_data(self):
-        """Get item meta data."""
-        return self.get_prop('MetaData')
-
-    @meta_data.setter
-    def meta_data(self, meta_data):
-        """Set item meta data."""
-        return self.set_prop('MetaData', str(meta_data))
-
-    @property
-    def depth(self):
-        """Get item depth."""
-        return self.get_prop('Depth')
-
-    @depth.setter
-    def depth(self, depth):
-        """Set item depth."""
-        return self.set_prop('Depth', str(float(depth)))
-
-    @property
-    def width(self):
-        """Get item width."""
-        return self.get_prop('Width')
-
-    @width.setter
-    def width(self, width):
-        """Set item width."""
-        return self.set_prop('Width', str(float(width)))
-
-    @property
-    def height(self):
-        """Get item height."""
-        return self.get_prop('Height')
-
-    @height.setter
-    def height(self, height):
-        """Set item height."""
-        return self.set_prop('Height', str(float(height)))
-
-    @property
-    def purchase_price(self):
-        """Get item purchase price."""
-        return self.get_prop('PurchasePrice')
-
-    @purchase_price.setter
-    def purchase_price(self, purchase_price):
-        """Set item purchase price."""
-        return self.set_prop('PurchasePrice', str(float(purchase_price)))
-
-    @property
-    def retail_price(self):
-        """Get item retail price."""
-        return self.get_prop('RetailPrice')
-
-    @retail_price.setter
-    def retail_price(self, retail_price):
-        """Set item retail price."""
-        return self.set_prop('RetailPrice', str(float(retail_price)))
-
-    @property
-    def tax_rate(self):
-        """Get item tax rate."""
-        return self.get_prop('TaxRate')
-
-    @tax_rate.setter
-    def tax_rate(self, tax_rate):
-        """Set item tax rate."""
-        return self.set_prop('TaxRate', int(tax_rate))
-
-    @property
-    def quantity(self):
-        """Get item quantity."""
-        return self.get_prop('Quantity')
-
-    @quantity.setter
-    def quantity(self, quantity):
-        """Set item quantity."""
-        return self.set_prop('Quantity', int(quantity))
+        api_requests.UpdateInventoryItem(
+            self.api_session, stock_id=self.stock_id, sku=self.sku,
+            title=self.title, barcode=self.barcode,
+            purchase_price=self.purchase_price, retail_price=self.retail_price,
+            category_id=self.category.guid,
+            PackageGroupId=self.package_group.guid,
+            package_group_id=self.package_group.guid,
+            postal_service_id=self.postal_service.id,
+            category_name=self.category.name,
+            package_group_name=self.package_group.name,
+            postal_service_name=self.postal_service.name,
+            meta_data=self.meta_data, quantity=self.quantity,
+            in_order=self.in_order, due=self.due,
+            minimum_level=self.minimum_level, available=self.available,
+            weight=self.weight, width=self.width, height=self.height,
+            depth=self.depth, variation_group_name=self.variation_group_name,
+            tax_rate=self.tax_rate, creation_date=self.creation_date,
+            is_composite_parent=self.is_composite_parent, dim=self.dim)
 
     def get_stock_levels(self):
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)

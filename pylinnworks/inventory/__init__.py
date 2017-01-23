@@ -1,4 +1,3 @@
-from . basic_item import BasicItem
 from . extended_property import ExtendedProperty
 from . inventory_item_image import InventoryItemImage
 from . inventory import Inventory

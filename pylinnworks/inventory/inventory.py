@@ -4,10 +4,15 @@ Inventory Class used for managing Linnworks stock inventory.
 Provides methods for finding and manipulating inventory items.
 """
 
+import uuid
+
 from .. pylinnworks import PyLinnworks
 from pylinnworks.api_requests import SKUExists
+from pylinnworks.api_requests import GetNewSKU
+from pylinnworks.api_requests import AddInventoryItem
 from . inventory_search import InventorySearch
 from . inventory_view_filter import InventoryViewFilter
+from . inventory_item import InventoryItem
 
 
 class Inventory(PyLinnworks):
@@ -31,10 +36,27 @@ class Inventory(PyLinnworks):
             return cls.get_item_by_stock_ID(stock_id)
 
     @classmethod
+    def create_new_item(
+            cls, stock_id=None, sku=None, title='', barcode=''):
+        """Create new inventory item."""
+        if stock_id is None:
+            stock_id = uuid.uuid4()
+        if sku is None:
+            sku = cls.get_new_SKU()
+        AddInventoryItem(
+            cls, stock_id=stock_id, sku=sku, title=title, barcode=barcode)
+        return InventoryItem(cls, stock_id=stock_id)
+
+    @classmethod
     def get_stock_id_by_SKU(cls, sku):
         """Return stock ID (GUID) of item with SKU sku."""
         item = cls.get_item_by_SKU(sku)
         return item.stock_id
+
+    @classmethod
+    def get_new_SKU(cls):
+        """Return unused SKU as str."""
+        return GetNewSKU(cls).response_dict
 
     @classmethod
     def get_item_by_SKU(cls, sku, locations=None):
@@ -72,13 +94,9 @@ class Inventory(PyLinnworks):
         return inventory_list
 
     @classmethod
-    def get_item_by_stock_ID(cls, stock_id, locations=None):
+    def get_item_by_stock_ID(cls, stock_id):
         """Return Inventory Item with stock ID stock_id."""
-        filters = [InventoryViewFilter(
-            field='StockId', value=stock_id)]
-        item = InventorySearch(
-            cls, filters=filters, locations=locations).get_item()
-        return item
+        return InventoryItem(cls, stock_id=stock_id)
 
     @classmethod
     def get_inventory_item_count(
