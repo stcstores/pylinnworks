@@ -51,5 +51,5 @@ class InventorySearch:
     def get_item(self):
         inventory_list = self.get_items()
         if len(inventory_list) == 1:
-            return InventoryItem(self.api_session, inventory_list[0]['Id'])
+            return inventory_list[0]
         raise ValueError
