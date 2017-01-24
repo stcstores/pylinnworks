@@ -3,7 +3,6 @@
 import pylinnworks.api_requests as api_requests
 from . extended_properties import ExtendedProperties
 from . extended_property import ExtendedProperty
-from . inventory_item_image import InventoryItemImage
 from . inventory_item_images import InventoryItemImages
 from .. settings import Settings
 
@@ -154,20 +153,8 @@ class InventoryItem:
         prop.type = property_type
         self.extended_properties.append(prop)
 
-    def get_images_data(self):
-        request = api_requests.GetInventoryItemImages(
-            self.api_session, self.stock_id)
-        return request.response_dict
-
     def get_images(self):
-        images = []
-        image_data = self.get_images_data()
-        for image in image_data:
-            images.append(InventoryItemImage(
-                self.api_session, image['pkRowId'], self.stock_id,
-                image['Source'], image['IsMain']))
-        return InventoryItemImages(
-            self.api_session, self, images=images)
+        return InventoryItemImages(self.api_session, self.stock_id)
 
     def add_image(self, filepath):
         """Add image to item.
