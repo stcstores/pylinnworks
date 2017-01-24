@@ -32,6 +32,7 @@ class InventoryItem:
     def refresh(self):
         """Populate this inventory item from linnworks.net servers."""
         item_data = self.get_item_data()
+        self.variation_group_name = item_data['VariationGroupName']
         self.sku = item_data['ItemNumber']
         self.title = item_data['ItemTitle']
         self.barcode = item_data['BarcodeNumber']
@@ -42,6 +43,7 @@ class InventoryItem:
             item_data['PackageGroupId'])
         self.postal_service = Settings.get_postage_service_by_ID(
             item_data['PostalServiceId'])
+        self.meta_data = item_data['MetaData']
         self.quantity = item_data['Quantity']
         self.in_order = item_data['InOrder']
         self.due = item_data['Due']
@@ -51,19 +53,19 @@ class InventoryItem:
         self.width = item_data['Width']
         self.height = item_data['Height']
         self.depth = item_data['Depth']
+        self.tax_rate = item_data['TaxRate']
         self.creation_date = item_data['CreationDate']
         self.is_composite_parent = item_data['IsCompositeParent']
 
-    def update_item(self, item_data):
+    def save(self):
         """Save item data for item."""
-        api_requests.UpdateInventoryItem(
+        request = api_requests.UpdateInventoryItem(
             self.api_session, stock_id=self.stock_id, sku=self.sku,
             title=self.title, barcode=self.barcode,
             purchase_price=self.purchase_price, retail_price=self.retail_price,
             category_id=self.category.guid,
-            PackageGroupId=self.package_group.guid,
             package_group_id=self.package_group.guid,
-            postal_service_id=self.postal_service.id,
+            postal_service_id=self.postal_service.guid,
             category_name=self.category.name,
             package_group_name=self.package_group.name,
             postal_service_name=self.postal_service.name,
@@ -73,7 +75,8 @@ class InventoryItem:
             weight=self.weight, width=self.width, height=self.height,
             depth=self.depth, variation_group_name=self.variation_group_name,
             tax_rate=self.tax_rate, creation_date=self.creation_date,
-            is_composite_parent=self.is_composite_parent, dim=self.dim)
+            is_composite_parent=self.is_composite_parent, dim='')
+        return request
 
     def get_stock_levels(self):
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)

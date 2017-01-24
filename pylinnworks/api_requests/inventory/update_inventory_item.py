@@ -1,3 +1,5 @@
+import json
+
 from .. request import Request
 
 
@@ -40,9 +42,10 @@ class UpdateInventoryItem(Request):
         self.creation_date = creation_date
         self.is_composite_parent = is_composite_parent
         self.dim = dim
+        super().__init__(api_session)
 
     def get_data(self):
-        self.data = {
+        inventory_item = {
             "StockItemId": str(self.stock_id),
             "ItemNumber": str(self.sku),
             "ItemTitle": str(self.title),
@@ -64,11 +67,12 @@ class UpdateInventoryItem(Request):
             "Weight": int(self.weight),
             "Width": self.width,
             "Depth": self.depth,
-            "Height": self.hgight,
+            "Height": self.height,
             "VariationGroupName": self.variation_group_name,
             "TaxRate": int(self.tax_rate),
             "CreationDate": self.creation_date,
             "IsCompositeParent": self.is_composite_parent,
             "Dim": self.dim,
         }
+        self.data = {'inventoryItem': json.dumps(inventory_item)}
         return self.data
