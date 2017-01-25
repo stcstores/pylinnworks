@@ -5,3 +5,5 @@ from . get_inventory_item_extended_properties \
     import GetInventoryItemExtendedProperties
 from . update_inventory_item_extended_properties \
     import UpdateInventoryItemExtendedProperties
+from . delete_inventory_item_extended_properties \
+    import DeleteInventoryItemExtendedProperties

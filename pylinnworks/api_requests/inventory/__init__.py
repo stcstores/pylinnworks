@@ -2,6 +2,7 @@
 
 from . update_inventory import *
 from . images import *
+from . extended_properties import *
 from . add_inventory_item import AddInventoryItem
 from . create_variation_group import CreateVariationGroup
 from . get_inventory_column_types import GetInventoryColumnTypes

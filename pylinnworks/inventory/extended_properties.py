@@ -1,10 +1,28 @@
+import uuid
+
+import pylinnworks.api_requests as api_requests
+from . extended_property import ExtendedProperty
+
+
 class ExtendedProperties():
 
-    def __init__(self, item, load=True):
+    def __init__(self, item):
         self.item = item
+        self.refresh()
+
+    def refresh(self):
         self.extended_properties = []
-        if load is True:
-            self.load()
+        extended_property_data = api_requests.\
+            GetInventoryItemExtendedProperties(
+                self.item.stock_id).response_dict
+        for property_data in extended_property_data:
+            new_property = ExtendedProperty(
+                property_id=property_data['pkRowId'],
+                property_type=property_data['PropertyType'],
+                name=property_data['ProperyName'],
+                value=property_data['PropertyValue'],
+                stock_id=self.item.stock_id)
+            self.extended_properties.append(new_property)
 
     def __getitem__(self, key):
         if type(key) == int:
@@ -25,68 +43,9 @@ class ExtendedProperties():
         self.extended_properties.append(extended_property)
 
     def create(self, name='', value='', property_type='Attribute'):
-        prop = ExtendedProperty(self.item)
-        prop.name = name
-        prop.value = value
-        prop.type = property_type
-        self.extended_properties.append(prop)
-        return prop
-
-    def create_on_server(self, name='', value='', property_type='Attribute'):
-        prop = self.create(name=name, value=value, property_type=property_type)
-        prop.create()
-
-    def upload_new(self):
-        new_properties = []
-        for prop in self.extended_properties:
-            if prop.on_server is False:
-                new_properties.append(prop)
-        if len(new_properties) > 0:
-            item_arrays = []
-            for prop in new_properties:
-                item_arrays.append(prop.get_json())
-            data = {
-                'inventoryItemExtendedProperties': json.dumps(item_arrays)}
-            api_session = self.item.api_session
-            url = api_session.server + ('/api/Inventory/'
-                                'CreateInventoryItemExtendedProperties')
-            response = api_session.request(url, data)
-            return response
-
-    def update_existing(self):
-        new_properties = []
-        for prop in self.extended_properties:
-            if prop.on_server is True:
-                new_properties.append(prop)
-        if len(new_properties) > 0:
-            item_arrays = []
-            for prop in new_properties:
-                item_arrays.append(prop.get_json())
-            data = {
-                'inventoryItemExtendedProperties': json.dumps(item_arrays)}
-            api_session = self.item.api_session
-            url = api_session.server + ('/api/Inventory/'
-                                'UpdateInventoryItemExtendedProperties')
-            response = api_session.request(url, data)
-            return response
-
-    def remove_deleted(self):
-        api_session = self.item.api_session
-        items_to_delete = []
-        for prop in self:
-            if prop.delete is True:
-                items_to_delete.append(prop.guid)
-        if len(items_to_delete) > 0:
-            data = {
-                'inventoryItemId': self.item.stock_id,
-                'inventoryItemExtendedPropertyIds': json.dumps(
-                    items_to_delete)}
-            url = api_session.server + ('/api/Inventory/'
-                                'DeleteInventoryItemExtendedProperties')
-            response = api_session.request(url, data)
-            return response
-
-    def update(self):
-        self.upload_new()
-        self.update_existing()
-        self.remove_deleted()
+        extended_property = ExtendedProperty(
+            property_id=str(uuid.uuid4()), property_type=property_type,
+            name=name, value=value, stock_id=self.item.stock_id)
+        api_requests.CreateInventoryItemExtendedProperties(
+            [extended_property])
+        self.refresh()

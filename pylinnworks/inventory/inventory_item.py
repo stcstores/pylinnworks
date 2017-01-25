@@ -17,6 +17,9 @@ class InventoryItem:
         images: Defaults to None. get_images method sets this to an instance
             of InventoryItemImages providing attributes of, and methods for
             working with this item's images.
+        extended_properties: Defaults to None. get_extended_properties method
+            sets this to instance of `ExtendedProperties` providing attributes
+            of and method for working with this items's extended properties.
     """
 
     def __init__(self, api_session, stock_id):
@@ -30,6 +33,7 @@ class InventoryItem:
         self.api_session = api_session
         self.stock_id = stock_id
         self.images = None
+        self.extended_properties = None
         self.refresh()
 
     def __repr__(self):
@@ -106,62 +110,16 @@ class InventoryItem:
         stock_levels = self.get_stock_levels()
         return stock_levels[location_id]["Available"]
 
-    def load_extended_properties(self):
-        request = api_requests.GetInventoryItemExtendedProperties(
-            self.api_session, self.stock_id)
-        response = request.response_dict
-        for extended_property in response:
-            new_property = ExtendedProperty(
-                property_type=extended_property['PropertyType'],
-                value=extended_property['PropertyValue'],
-                name=extended_property['ProperyName'],
-                property_id=extended_property['pkRowId'],
-                item_stock_id=self.stock_id)
-            self.extended_properties.append(new_property)
+    def get_extended_properties(self):
+        """Get extended properties for this inventory item.
 
-    def get_extended_properties_dict(self):
-        """Return ``dict`` containing *extended_properties* names and
-        values.
+        Sets attribue `extended_properties` to `ExtendedProperties` allowing
+        interaction with this item's extended properties.
+
+        Returns:
+            :obj: `ExtendedProperties`
         """
-        properties = {}
-        for prop in self.extended_properties:
-            if prop.delete is False:
-                properties[prop.name] = prop.value
-        return properties
-
-    def get_extended_properties_list(self):
-        """Return ``list`` containing ``dict``s of *extended properties*
-        details.
-        """
-        properties = []
-        for prop in self.extended_properties:
-            if prop.delete is False:
-                new_prop = {
-                    'name': prop.name,
-                    'value': prop.value,
-                    'type': prop.type,
-                    'guid': prop.guid
-                }
-                properties.append(new_prop)
-        return properties
-
-    def create_extended_property(self, name='', value='',
-                                 property_type='Attribute'):
-        """Add extended property to item.
-
-        Arguments:
-            name -- Name of new extended property.
-            value -- Value of new extended prperty.
-
-        Keyword Arguments:
-            property_type -- Type of new extended property
-                Defaults to 'Attribute'.
-        """
-        prop = ExtendedProperty(self)
-        prop.name = name
-        prop.value = value
-        prop.type = property_type
-        self.extended_properties.append(prop)
+        self.extended_properties = ExtendedProperties(self)
 
     def get_images(self):
         """Get images for this inventory item.
