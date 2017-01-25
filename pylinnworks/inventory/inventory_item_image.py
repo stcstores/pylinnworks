@@ -28,8 +28,8 @@ class InventoryItemImage:
         """Initialize self.
 
         Args:
-            api_session (pylinnworks.PyLinnworks): API session and login
-                details.
+            api_session (:obj: `pylinnworks.PyLinnworks`): API session and
+                login details.
             image_id (str): Image ID (GUID) for image.
             stock_id (str): Stock ID (GUID) for inventory item to which this
                 image belongs.
