@@ -18,4 +18,5 @@ class ExtendedProperty():
             value=self.value, property_type=self.property_type)
 
     def delete(self):
-        api_requests.DeleteInventoryItemExtendedProperties([self.stock_id])
+        api_requests.DeleteInventoryItemExtendedProperties(
+            stock_id=self.stock_id, property_ids=[self.property_id])
