@@ -4,6 +4,7 @@ from . info_entry import InfoEntry
 
 
 class PostageServices(InfoClass):
+    name = 'Postage Services'
     request_class = api_requests.GetPostageServices
     name_field = 'PostalServiceName'
     id_field = 'pkPostalServiceId'
