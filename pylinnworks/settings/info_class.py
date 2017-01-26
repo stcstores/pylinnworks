@@ -32,7 +32,10 @@ class InfoClass:
         self.name_lookup[entry[self.name_field]] = new_entry_index
 
     def get_by_ID(self, guid):
-        return self.info_list[self.id_lookup[guid]]
+        try:
+            return self.info_list[self.id_lookup[guid]]
+        except:
+            raise KeyError('{} found no GUID {}'.format(self.name, guid))
 
     def get_by_name(self, name):
         return self.info_list[self.name_lookup[name]]
