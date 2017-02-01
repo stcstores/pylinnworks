@@ -6,5 +6,5 @@ class InfoEntry:
         self.guid = guid
         self.name = name
 
-    def __str__(self):
+    def __repr__(self):
         return self.name

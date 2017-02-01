@@ -1,6 +1,6 @@
 """Contains InventoryItem."""
 
-import pylinnworks.api_requests as api_requests
+from pylinnworks import api_requests
 from . extended_properties import ExtendedProperties
 from . extended_property import ExtendedProperty
 from . inventory_item_images import InventoryItemImages
@@ -90,6 +90,11 @@ class InventoryItem:
             tax_rate=self.tax_rate, creation_date=self.creation_date,
             is_composite_parent=self.is_composite_parent, dim='')
         return request
+
+    def add_location(self, location=None):
+        if location is None:
+            location = Settings.get_location_by_name('Default')
+        api_requests.AddItemLocations(data=[(self.stock_id, location)])
 
     def get_stock_levels(self):
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)
