@@ -96,6 +96,11 @@ class InventoryItem:
             location = Settings.get_location_by_name('Default')
         api_requests.AddItemLocations(data=[(self.stock_id, location)])
 
+    def update_bin_rack(self, bin_rack, location=None):
+        if location is None:
+            location = Settings.get_location_by_name('Default')
+        api_requests.UpdateItemLocations([(self.stock_id, bin_rack, location)])
+
     def get_stock_levels(self):
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)
         stock_levels = {}

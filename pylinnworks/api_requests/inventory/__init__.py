@@ -19,3 +19,4 @@ from . search_variation_groups import SearchVariationGroups
 from . sku_exists import SKUExists
 from . update_inventory_item import UpdateInventoryItem
 from . add_item_locations import AddItemLocations
+from . update_item_locations import UpdateItemLocations
