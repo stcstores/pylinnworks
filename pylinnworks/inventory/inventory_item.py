@@ -2,7 +2,7 @@
 
 from pylinnworks import api_requests
 from . extended_properties import ExtendedProperties
-from . extended_property import ExtendedProperty
+from . inventory_item_locations import InventoryItemLocations
 from . inventory_item_images import InventoryItemImages
 from .. settings import Settings
 
@@ -91,15 +91,16 @@ class InventoryItem:
             is_composite_parent=self.is_composite_parent, dim='')
         return request
 
-    def add_location(self, location=None):
-        if location is None:
-            location = Settings.get_location_by_name('Default')
-        api_requests.AddItemLocations(data=[(self.stock_id, location)])
+    def get_locations(self):
+        """Get locations for this inventory item.
 
-    def update_bin_rack(self, bin_rack, location=None):
-        if location is None:
-            location = Settings.get_location_by_name('Default')
-        api_requests.UpdateItemLocations([(self.stock_id, bin_rack, location)])
+        Sets attribute location to InventoryItemLocations containing locations,
+        to in which this item exists and it's bin/rack location.
+
+        Returns :class: `InventoryItemLocations`
+        """
+        self.locations = InventoryItemLocations(self.stock_id)
+        return self.locations
 
     def get_stock_levels(self):
         request = api_requests.GetStockLevel(self.api_session, self.stock_id)

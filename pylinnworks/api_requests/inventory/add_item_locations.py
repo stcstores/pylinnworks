@@ -25,7 +25,7 @@ class AddItemLocations(Request):
             self.add_item_locations(stock_id, location)
         super().__init__(PyLinnworks)
 
-    @classmethod
+    @staticmethod
     def make_item_location(
             cls, stock_id, location_id, location_name, is_added, id_):
         return {
