@@ -12,6 +12,13 @@ class AddItemLocations(Request):
     url_extension = '/api/Inventory/AddItemLocations'
 
     def __init__(self, data):
+        """Adds stock locations to inventory items.
+
+        Args:
+            data (list): List of tuples where each tuple contains the stock
+                ID (GUID) of the inventory item and the Location object
+                containing the location to be added - (stock_id, location).
+        """
         self.item_locations = []
         for item_location in data:
             stock_id, location = item_location
