@@ -24,4 +24,17 @@ class InventoryItemLocations:
         return self.locations[index]
 
     def add_location(self, location):
+        """Add inventory item to location."""
         api_requests.AddItemLocations(data=[(self.stock_id, location)])
+
+    def get_location_by_ID(self, id_):
+        for location in self.locations:
+            if location.guid == id_:
+                return location
+        raise IndexError('Item not in location with ID {}'.format(id_))
+
+    def get_location_by_name(self, name):
+        for location in self.locations:
+            if location.name == name:
+                return location
+        raise IndexError('Item not in location with name {}'.format(name))
