@@ -29,12 +29,12 @@ class InventoryItemLocations:
 
     def get_location_by_ID(self, id_):
         for location in self.locations:
-            if location.guid == id_:
+            if location.location_id == id_:
                 return location
         raise IndexError('Item not in location with ID {}'.format(id_))
 
     def get_location_by_name(self, name):
         for location in self.locations:
-            if location.name == name:
+            if location.location_name == name:
                 return location
         raise IndexError('Item not in location with name {}'.format(name))
