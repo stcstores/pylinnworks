@@ -34,6 +34,7 @@ class InventoryItem:
         self.stock_id = stock_id
         self.images = None
         self.extended_properties = None
+        self.locations = None
         self.refresh()
 
     def __repr__(self):
