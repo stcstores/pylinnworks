@@ -27,7 +27,7 @@ class AddItemLocations(Request):
 
     @staticmethod
     def make_item_location(
-            cls, stock_id, location_id, location_name, is_added, id_):
+            stock_id, location_id, location_name, is_added, id_):
         return {
             'StockItemId': stock_id,
             'StockLocationId': location_id,
