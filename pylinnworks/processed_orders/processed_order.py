@@ -48,7 +48,7 @@ class ProcessedOrder:
         self.postal_service_name = order_data['PostalServiceName']
         self.town = order_data['Town']
         self.billing_address1 = order_data['BillingAddress1']
-        self.order_id = order_data['nOrderId']
+        self.order_number = order_data['nOrderId']
         self.external_reference = order_data['ExternalReference']
         self.postage_cost_ex_tax = order_data['PostageCostExTax']
         self.hold_or_cancel = order_data['HoldOrCancel']
