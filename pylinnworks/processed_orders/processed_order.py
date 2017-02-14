@@ -1,5 +1,15 @@
+"""ProcessedOrder class."""
+
+from pylinnworks.api_requests import GetProcessedItemDetails
+from . processed_order_item import ProcessedOrderItem
+
+
 class ProcessedOrder:
+    """Container for processed order."""
+
     def __init__(self, order_data):
+        """Load data for order from SearchProcessedOrdersPaged request."""
+        self.items = None
         self.account_name = order_data['AccountName']
         self.address1 = order_data['Address1']
         self.post_code = order_data['cPostCode']
@@ -59,3 +69,12 @@ class ProcessedOrder:
 
     def __repr__(self):
         return 'ProcessedOrder OrderID: {}'.format(self.order_id)
+
+    def get_items(self):
+        """Get list of items for this order."""
+        request = GetProcessedItemDetails(self.order_id)
+        items = [
+            ProcessedOrderItem(item_data) for
+            item_data in request.response_dict]
+        self.items = items
+        return items
